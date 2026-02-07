@@ -2,9 +2,6 @@
 #include <string>
 #include <functional>
 #include <unordered_set>
-#include <vector>
-
-#include "config.hpp"
 
 #include <Geode/Geode.hpp>
 using namespace geode::prelude;
@@ -24,15 +21,21 @@ namespace GDH {
         void setName(const std::string& n) { m_name = n; }
         void setDesc(const std::string& d) { m_desc = d; }
         void setCheating(bool value) { m_cheating = value; }
-        void setHandler(std::function<void(bool)> func) { m_handlerFunc = std::move(func); }
+        void setHandler(std::function<void(bool)> func);
         void addHookPtr(geode::Hook* ptr);
-        void setKeybind(int key) { m_keybind = key; }
+        void setKeybind(int key) { m_keybind = key; }        
+        void setCustomWindowImGui(std::function<void()> func) { m_handlerImGui = std::move(func); };
+        void setCustomWindowCocos(std::function<void()> func) { m_handlerCocos = std::move(func); };
 
         const std::string& getID() const { return m_ID; }
         const std::string& getName() const { return m_name; }
         const std::string& getDesc() const { return m_desc; }
         bool isCheating() const { return m_cheating; }
         int getKeybind() const { return m_keybind; }
+        void callCustomWindowImGui() { if (m_handlerFunc) m_handlerImGui(); };
+        void callCustomWindowCocos() { if (m_handlerCocos) m_handlerCocos(); };
+        bool avaibleCustomWindowImGui() { return m_handlerImGui != nullptr; };
+        bool avaibleCustomWindowCocos() { return m_handlerCocos != nullptr;  };
 
         void callHandler(bool state);
         void enableHooks(bool state);
@@ -46,5 +49,8 @@ namespace GDH {
         std::function<void(bool)> m_handlerFunc = nullptr;
         std::unordered_set<geode::Hook*> m_hooksPtr;
         int m_keybind = 0;
+
+        std::function<void()> m_handlerImGui = nullptr;
+        std::function<void()> m_handlerCocos = nullptr;
     };
 } // namespace GDH

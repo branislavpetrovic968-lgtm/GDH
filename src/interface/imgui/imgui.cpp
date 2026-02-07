@@ -6,6 +6,7 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/CCEGLView.hpp>
+#include <Geode/modify/CCKeyboardDispatcher.hpp>
 
 using namespace geode::prelude;
 
@@ -37,6 +38,26 @@ void RenderMain() {
             if (ImGui::Checkbox(hack.getName().c_str(), &state)) {
                 config.set(id, state);
                 hack.enableHooks(state);
+                hack.callHandler(state);
+            }
+
+            if (ImGui::IsItemHovered())
+                ImGui::SetTooltip("%s", hack.getDesc().c_str());
+
+            if (hack.avaibleCustomWindowImGui()) {
+                ImGui::SameLine();
+                if (ImGui::ArrowButton(fmt::format("{} Settings", hack.getName()).c_str(), ImGuiDir_Right)) {
+                    ImGui::OpenPopup(fmt::format("{} Settings##Popup", hack.getName()).c_str());
+                }
+
+                if (ImGui::BeginPopupModal(fmt::format("{} Settings##Popup", hack.getName()).c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+                    hack.callCustomWindowImGui();
+
+                    if (ImGui::Button("Close", {400, NULL}))
+                        ImGui::CloseCurrentPopup();
+
+                    ImGui::EndPopup();
+                }
             }
         }
 
@@ -63,18 +84,13 @@ class $modify(MyMenuLayer, MenuLayer) {
     }
 };
 
-class $modify(cocos2d::CCEGLView) {
-    static void onModify(auto& self) {
-        (void)self.setHookPriority("cocos2d::CCEGLView::onGLFWKeyCallback", geode::Priority::First);
-    }
-
-    void onGLFWKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-        CCEGLView::onGLFWKeyCallback(window, key, scancode, action, mods);
-
-        if (action == GLFW_PRESS || action == GLFW_REPEAT) {
-            if (key == GLFW_KEY_TAB) ToggleUI();
-        } 
-    }    
+class $modify(CCKeyboardDispatcher) {
+	bool dispatchKeyboardMSG(enumKeyCodes key, bool down, bool repeat, double time) {
+        if (down || repeat) {
+            if (key == KEY_Tab) ToggleUI();
+        }
+		return CCKeyboardDispatcher::dispatchKeyboardMSG(key, down, repeat, time);
+	}
 };
 
 #endif

@@ -26,7 +26,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE libs libs/imgui)
 
 set(HAS_IMGUI ON)
 add_subdirectory(libs/imgui)
-CPMAddPackage("gh:matcool/gd-imgui-cocos#2ce1c9a")
+CPMAddPackage("gh:matcool/gd-imgui-cocos#9764333")
 
 target_link_libraries(${PROJECT_NAME} imgui-cocos imgui)
 

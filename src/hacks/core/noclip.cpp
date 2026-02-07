@@ -2,12 +2,12 @@
 #include <Geode/Modify/PlayLayer.hpp>
 #include "../../core/gui.hpp"
 
-GUI_HACK_CREATE("Level", "level.noclip", "Noclip", "The player will be invincible to obstacles", true);
+GUI_HACK_CREATE("Core", "core.noclip", "Noclip", "The player will be invincible to obstacles", true);
 
 class $modify(NoclipPlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Level").findHack("level.noclip");        
+        auto* hack = gui.getWindow("Core").findHack("core.noclip");        
         
         hack->addHookPtr(self.getHook("PlayLayer::destroyPlayer").unwrap());
     }
