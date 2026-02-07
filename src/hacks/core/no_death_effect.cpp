@@ -1,5 +1,5 @@
 #include <Geode/Geode.hpp>
-#include <Geode/Modify/PlayerObject.hpp>
+#include <Geode/modify/PlayerObject.hpp>
 #include "../../core/gui.hpp"
 
 GUI_HACK_CREATE("Core", "core.no_death_effect", "No Death Effect", "Upon death, the cube will not emit an exploding effect", false);

@@ -1,5 +1,5 @@
 #include <Geode/Geode.hpp>
-#include <Geode/Modify/CCTransitionFade.hpp>
+#include <Geode/modify/CCTransitionFade.hpp>
 #include "../../core/gui.hpp"
 
 GUI_HACK_CREATE("Core", "core.no_transition", "No Transition Old", "Fast transition between scenes (legacy)", false);

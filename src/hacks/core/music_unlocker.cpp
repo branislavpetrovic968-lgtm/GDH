@@ -1,5 +1,5 @@
 #include <Geode/Geode.hpp>
-#include <Geode/Modify/GameStatsManager.hpp>
+#include <Geode/modify/GameStatsManager.hpp>
 #include "../../core/gui.hpp"
 
 GUI_HACK_CREATE("Core", "core.music_unlocker", "Music Unlocker", "Unlocks RobTop's \"Practice Music Sync\" and Music Customizer", false);

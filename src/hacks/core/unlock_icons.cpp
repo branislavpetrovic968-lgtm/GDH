@@ -1,5 +1,5 @@
 #include <Geode/Geode.hpp>
-#include <Geode/Modify/GameManager.hpp>
+#include <Geode/modify/GameManager.hpp>
 #include "../../core/gui.hpp"
 
 GUI_HACK_CREATE("Core", "core.unlock_icons", "Unlock Icons", "Unlock All Icons", false);

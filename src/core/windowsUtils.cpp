@@ -1,5 +1,4 @@
 
-#include <consoleapi3.h>
 #ifdef GEODE_IS_WINDOWS
 
 #include "windowsUtils.hpp"

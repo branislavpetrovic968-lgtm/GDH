@@ -1,5 +1,5 @@
 #include <Geode/Geode.hpp>
-#include <Geode/Modify/PlayLayer.hpp>
+#include <Geode/modify/PlayLayer.hpp>
 #include "../../core/gui.hpp"
 
 GUI_HACK_CREATE("Core", "core.noclip", "Noclip", "The player will be invincible to obstacles", true);

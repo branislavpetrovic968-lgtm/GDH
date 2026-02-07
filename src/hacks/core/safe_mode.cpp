@@ -1,6 +1,6 @@
 #include <Geode/Geode.hpp>
-#include <Geode/Modify/PlayLayer.hpp>
-#include <Geode/Modify/PlayerObject.hpp>
+#include <Geode/modify/PlayLayer.hpp>
+#include <Geode/modify/PlayerObject.hpp>
 #include "../../core/gui.hpp"
 
 GUI_HACK_CREATE("Core", "core.safe_mode", "Safe Mode", "Disables progress on levels", false);
