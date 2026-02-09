@@ -3,12 +3,12 @@
 #include <Geode/modify/PlayerObject.hpp>
 #include "../../core/gui.hpp"
 
-GUI_HACK_CREATE("Core", "core.safe_mode", "Safe Mode", "Disables progress on levels", false);
+GUI_HACK_CREATE("Core", "Safe Mode", "Disables progress on levels", false);
 
 class $modify(SafeModePlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Core").findHack("core.safe_mode");        
+        auto* hack = gui.getWindow("Core").findHackByName("Safe Mode");        
         
         hack->addHookPtr(self.getHook("PlayLayer::destroyPlayer").unwrap());
         hack->addHookPtr(self.getHook("PlayLayer::resetLevel").unwrap());
@@ -38,7 +38,7 @@ class $modify(SafeModePlayLayer, PlayLayer) {
 class $modify(SafeModePlayerObject, PlayerObject) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Core").findHack("core.safe_mode");        
+        auto* hack = gui.getWindow("Core").findHackByName("Safe Mode");        
         
         hack->addHookPtr(self.getHook("PlayerObject::incrementJumps").unwrap());
     }

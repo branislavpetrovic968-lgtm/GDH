@@ -1,4 +1,5 @@
 #include "gui.hpp"
+#include "utils.hpp"
 
 using namespace GDH;
 
@@ -18,11 +19,20 @@ Window& Gui::getWindow(const std::string& name) {
 }
 
 Hack& Window::createHack(
-    const std::string& config,
     const std::string& name,
     const std::string& desc,
     bool cheating
 ) {
+    std::string config = fmt::format("{}.{}",
+        Utils::String::toLowerCase(this->m_name),
+        Utils::String::replaceChar(
+            Utils::String::toLowerCase(name),
+            ' ', '_'
+        )
+    );
+
+    geode::log::debug("Initalized - {}", config);
+
     auto it = std::find_if(
         m_hacks.begin(),
         m_hacks.end(),
@@ -37,12 +47,12 @@ Hack& Window::createHack(
     return m_hacks.emplace_back(config, name, desc, cheating);
 }
 
-Hack* Window::findHack(const std::string& config) {
+Hack* Window::findHackByName(const std::string& name) {
     auto it = std::find_if(
         m_hacks.begin(),
         m_hacks.end(),
-        [&config](const Hack& h) {
-            return h.getID() == config;
+        [&name](const Hack& h) {
+            return h.getName() == name;
         }
     );
     

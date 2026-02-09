@@ -1,6 +1,5 @@
 #pragma once
 #include "hacks.hpp"
-#include "config.hpp"
 
 namespace GDH {
     class Window {
@@ -10,10 +9,9 @@ namespace GDH {
 
         const std::string& getName() const { return m_name; }
 
-        Hack& createHack(const std::string& config, const std::string& name,
-            const std::string& desc, bool cheating);
+        Hack& createHack(const std::string& name, const std::string& desc, bool cheating);
 
-        Hack* findHack(const std::string& config);
+        Hack* findHackByName(const std::string& name);
 
         std::vector<Hack>& getHacks() { return m_hacks; }
     private:
@@ -40,9 +38,9 @@ namespace GDH {
     };
 } // namespace GDH
 
-#define GUI_HACK_CREATE(window_name, config, name, desc, cheating) \
+#define GUI_HACK_CREATE(window_name, name, desc, cheating) \
 $execute \
 { \
     auto& win = GDH::Gui::get().getWindow(window_name); \
-    win.createHack(config, name, desc, cheating); \
+    win.createHack(name, desc, cheating); \
 }

@@ -2,12 +2,12 @@
 #include <Geode/modify/CCTransitionFade.hpp>
 #include "../../core/gui.hpp"
 
-GUI_HACK_CREATE("Core", "core.no_transition", "No Transition Old", "Fast transition between scenes (legacy)", false);
+GUI_HACK_CREATE("Core", "No Transition Old", "Fast transition between scenes (legacy)", false);
 
 class $modify(NoTransitionCCTransitionFade, cocos2d::CCTransitionFade) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Core").findHack("core.no_transition");        
+        auto* hack = gui.getWindow("Core").findHackByName("No Transition Old");        
         
         hack->addHookPtr(self.getHook("cocos2d::CCTransitionFade::create").unwrap());
     }

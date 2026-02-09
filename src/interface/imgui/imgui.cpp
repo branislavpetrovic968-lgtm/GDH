@@ -11,6 +11,7 @@
 using namespace geode::prelude;
 
 #include "../../core/gui.hpp"
+#include "../../core/config.hpp"
 
 bool toggle = false;
 

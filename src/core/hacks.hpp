@@ -32,13 +32,17 @@ namespace GDH {
         const std::string& getDesc() const { return m_desc; }
         bool isCheating() const { return m_cheating; }
         int getKeybind() const { return m_keybind; }
-        void callCustomWindowImGui() { if (m_handlerFunc) m_handlerImGui(); };
+        void callCustomWindowImGui() { if (m_handlerImGui) m_handlerImGui(); };
         void callCustomWindowCocos() { if (m_handlerCocos) m_handlerCocos(); };
         bool avaibleCustomWindowImGui() { return m_handlerImGui != nullptr; };
         bool avaibleCustomWindowCocos() { return m_handlerCocos != nullptr;  };
 
         void callHandler(bool state);
         void enableHooks(bool state);
+        
+        std::string formatAdditionalSetting(const std::string& setting) {
+            return fmt::format("{}::{}", m_ID, setting);
+        }
 
     private:
         std::string m_ID;
