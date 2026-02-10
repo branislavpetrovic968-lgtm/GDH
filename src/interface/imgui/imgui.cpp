@@ -13,8 +13,13 @@ using namespace geode::prelude;
 
 #include "../../core/gui.hpp"
 #include "../../core/config.hpp"
+#include "../../core/utils.hpp"
 
-bool m_toggle = false;
+bool m_show = false;
+bool m_isAnimating = false;
+bool m_isFadingIn = false;
+float m_animTime = 0.0f;
+
 bool m_inited = false;
 
 std::vector<std::vector<std::string>> m_layout = {
@@ -22,12 +27,59 @@ std::vector<std::vector<std::string>> m_layout = {
     {"Level"}
 };
 
-void ToggleUI() {
-    m_toggle = !m_toggle;
-    if (!m_toggle) {
-        Config::get().save(fileDataPath);
+void onOpen() {
+    GDH::Utils::updateCursorState(m_show);
+}
+
+void onClose() {
+    GDH::Utils::updateCursorState(m_show);
+    Config::get().save(fileDataPath);
+}
+
+void animateAlpha()
+{
+    if (!m_isAnimating)
+        return;
+
+    ImGuiStyle& style = ImGui::GetStyle();
+    float deltaTime   = ImGui::GetIO().DeltaTime;
+
+    float duration = 100 / 1000.0f;
+    m_animTime += deltaTime;
+
+    float t = m_animTime / duration;
+    if (t >= 1.0f)
+    {
+        style.Alpha = m_isFadingIn ? 1.0f : 0.0f;
+        m_isAnimating = false;
+
+        if (!m_isFadingIn)
+        {
+            m_show = false;
+            onClose();
+        }
+
+        return;
+    }
+
+    style.Alpha = m_isFadingIn ? t : 1.0f - t;
+}
+
+void ToggleUI()
+{
+    if (m_isAnimating)
+        return;
+
+    m_isFadingIn = !m_show;
+    m_isAnimating = true;
+    m_animTime = 0.0f;
+
+    if (m_isFadingIn) {
+        m_show = true;
+        onOpen();
     }
 }
+
 
 void RenderMain() {
     auto& gui = GDH::Gui::get();
@@ -35,7 +87,9 @@ void RenderMain() {
     auto& config = Config::get();
     auto& layoutManager = GDH::Layout::Manager::get();
 
-    if (!m_toggle) return;
+    animateAlpha();
+
+    if (!m_show) return;
 
     for (auto& window : windows) {
         layoutManager.applyWindowTransform(window.getName());

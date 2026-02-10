@@ -30,3 +30,16 @@ std::string GDH::Utils::formatTime(double sec, bool ms = false) {
                       : fmt::format("{:02d}:{:02d}", m, s);
     return ms ? fmt::format("{}.{:02d}", base, cs) : base;
 }
+
+void GDH::Utils::updateCursorState(bool show) {
+    bool canShowInLevel = true;
+    if (auto* playLayer = PlayLayer::get()) {
+        canShowInLevel = playLayer->m_hasCompletedLevel ||
+                         playLayer->m_isPaused ||
+                         GameManager::sharedState()->getGameVariable("0024");
+    }
+    if (show || canShowInLevel)
+        PlatformToolbox::showCursor();
+    else
+        PlatformToolbox::hideCursor();
+}
