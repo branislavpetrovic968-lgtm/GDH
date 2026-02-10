@@ -3,6 +3,7 @@
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
 #include "layout.hpp"
+#include "popup.hpp"
 
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
@@ -83,11 +84,13 @@ void ToggleUI()
 
 void RenderMain() {
     auto& gui = GDH::Gui::get();
+    auto& popup = GDH::Popup::get();
     auto& windows = gui.getWindows();
     auto& config = Config::get();
     auto& layoutManager = GDH::Layout::Manager::get();
 
     animateAlpha();
+    popup.render();
 
     if (!m_show) return;
 
@@ -145,6 +148,8 @@ void RenderMain() {
         layoutManager.setLayout(m_layout);
         layoutManager.startCollecting();
         m_inited = true;
+
+        popup.add("GDH is currently in alpha stage, expect bugs/unfinished features");
     }
 }
 
