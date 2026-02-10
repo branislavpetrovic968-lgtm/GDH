@@ -1,0 +1,57 @@
+#pragma once
+#include <string>
+#include <vector>
+
+namespace GDH { namespace Layout {
+    struct WindowInfo {
+        std::string window_name;
+        float w, h, x, y;
+    };
+
+    class Manager {
+    public:
+        static Manager& get() {
+            static Manager instance;
+            return instance;
+        }
+
+        void setLayout(const std::vector<std::vector<std::string>>& layout);        
+
+        void startCollecting();       
+        bool isCollecting();        
+        void finishCollecting();        
+        void addWindowInfo(const std::string& name, float width, float height);        
+        
+        bool isApplying();    
+        void finishApplying();   
+
+        bool applyWindowTransform(const std::string& name);
+        
+        WindowInfo* getWindowInfo(const std::string& name);        
+        
+        void reset();
+    private:
+        Manager() = default;
+
+        WindowInfo* findWindow(const std::string& name);
+        float getMaxWidthInColumn(const std::vector<std::string>& column);
+        float getColumnHeight(const std::vector<std::string>& column);
+        void calculateWindowPositions();
+
+    private:
+        enum class Stage {
+            Idle = 0,
+            Collecting = 1,
+            Calculating = 2,
+            Applying = 3
+        };
+
+        std::vector<WindowInfo> m_windows;
+        std::vector<std::vector<std::string>> m_layout;
+        Stage m_stage = Stage::Idle;
+        
+        const float PADDING_X = 10.0f;
+        const float PADDING_Y = 10.0f;
+        const float SPACING_Y = 10.0f;
+    };
+} }

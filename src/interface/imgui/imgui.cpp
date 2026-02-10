@@ -2,6 +2,7 @@
 #include <imgui-cocos.hpp>
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
+#include "layout.hpp"
 
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
@@ -13,11 +14,17 @@ using namespace geode::prelude;
 #include "../../core/gui.hpp"
 #include "../../core/config.hpp"
 
-bool toggle = false;
+bool m_toggle = false;
+bool m_inited = false;
+
+std::vector<std::vector<std::string>> m_layout = {
+    {"Core", "Bypass"},
+    {"Level"}
+};
 
 void ToggleUI() {
-    toggle = !toggle;
-    if (!toggle) {
+    m_toggle = !m_toggle;
+    if (!m_toggle) {
         Config::get().save(fileDataPath);
     }
 }
@@ -26,10 +33,13 @@ void RenderMain() {
     auto& gui = GDH::Gui::get();
     auto& windows = gui.getWindows();
     auto& config = Config::get();
+    auto& layoutManager = GDH::Layout::Manager::get();
 
-    if (!toggle) return;
+    if (!m_toggle) return;
 
     for (auto& window : windows) {
+        layoutManager.applyWindowTransform(window.getName());
+
         ImGui::Begin(window.getName().c_str());
 
         for (auto& hack : window.getHacks()) {
@@ -62,7 +72,25 @@ void RenderMain() {
             }
         }
 
+        if (layoutManager.isCollecting()) {
+            auto size = ImGui::GetWindowSize();
+            layoutManager.addWindowInfo(window.getName(), size.x, size.y);
+        }
+
         ImGui::End();
+    }
+
+
+    if (layoutManager.isCollecting())
+        layoutManager.finishCollecting();
+    else if (layoutManager.isApplying())
+        layoutManager.finishApplying();
+    
+    static bool m_inited = false;
+    if (!m_inited) {
+        layoutManager.setLayout(m_layout);
+        layoutManager.startCollecting();
+        m_inited = true;
     }
 }
 
