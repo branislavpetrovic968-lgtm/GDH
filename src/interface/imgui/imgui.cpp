@@ -25,7 +25,7 @@ bool m_inited = false;
 
 std::vector<std::vector<std::string>> m_layout = {
     {"Core", "Bypass"},
-    {"Level"}
+    {"Level", "Framerate"}
 };
 
 void onOpen() {
@@ -95,18 +95,23 @@ void RenderMain() {
     if (!m_show) return;
 
     for (auto& window : windows) {
-        layoutManager.applyWindowTransform(window.getName());
+        std::string windowName = window.getName();
+        if (windowName == "Invisible") continue;
+        
+        layoutManager.applyWindowTransform(windowName);
 
-        ImGui::Begin(window.getName().c_str());
+        ImGui::Begin(windowName.c_str());
+
+        if (window.avaibleCustomWindowImGui()) window.callCustomWindowImGui();
 
         for (auto& hack : window.getHacks()) {
             std::string id = hack.getID();
+            std::string hackName = hack.getName();
+
             bool state = config.get(id, false);
 
-            if (ImGui::Checkbox(hack.getName().c_str(), &state)) {
-                config.set(id, state);
-                hack.enableHooks(state);
-                hack.callHandler(state);
+            if (ImGui::Checkbox(hackName.c_str(), &state)) {
+                hack.toggle();
             }
 
             if (ImGui::IsItemHovered())
@@ -114,11 +119,11 @@ void RenderMain() {
 
             if (hack.avaibleCustomWindowImGui()) {
                 ImGui::SameLine();
-                if (ImGui::ArrowButton(fmt::format("{} Settings", hack.getName()).c_str(), ImGuiDir_Right)) {
-                    ImGui::OpenPopup(fmt::format("{} Settings##Popup", hack.getName()).c_str());
+                if (ImGui::ArrowButton(fmt::format("{} Settings", hackName).c_str(), ImGuiDir_Right)) {
+                    ImGui::OpenPopup(fmt::format("{} Settings##Popup", hackName).c_str());
                 }
 
-                if (ImGui::BeginPopupModal(fmt::format("{} Settings##Popup", hack.getName()).c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+                if (ImGui::BeginPopupModal(fmt::format("{} Settings##Popup", hackName).c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
                     hack.callCustomWindowImGui();
 
                     if (ImGui::Button("Close", {400, NULL}))
@@ -131,10 +136,11 @@ void RenderMain() {
 
         if (layoutManager.isCollecting()) {
             auto size = ImGui::GetWindowSize();
-            layoutManager.addWindowInfo(window.getName(), size.x, size.y);
+            layoutManager.addWindowInfo(windowName, size.x, size.y);
         }
-
+        
         ImGui::End();
+
     }
 
 

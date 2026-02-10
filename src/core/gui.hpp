@@ -12,11 +12,24 @@ namespace GDH {
         Hack& createHack(const std::string& name, const std::string& desc, bool cheating);
 
         Hack* findHackByName(const std::string& name);
+        Hack* findHackByID(const std::string& ID);
 
         std::vector<Hack>& getHacks() { return m_hacks; }
+
+        void setCustomWindowImGui(std::function<void()> func) { m_handlerImGui = std::move(func); };
+        void setCustomWindowCocos(std::function<void()> func) { m_handlerCocos = std::move(func); };
+
+        void callCustomWindowImGui() { if (m_handlerImGui) m_handlerImGui(); };
+        void callCustomWindowCocos() { if (m_handlerCocos) m_handlerCocos(); };
+        
+        bool avaibleCustomWindowImGui() { return m_handlerImGui != nullptr; };
+        bool avaibleCustomWindowCocos() { return m_handlerCocos != nullptr;  };
     private:
         std::string m_name;
         std::vector<Hack> m_hacks;
+
+        std::function<void()> m_handlerImGui = nullptr;
+        std::function<void()> m_handlerCocos = nullptr;
     };
 
     class Gui {

@@ -3,8 +3,7 @@
 #include "../../core/gui.hpp"
 #include "../../core/config.hpp"
 #include "../../core/utils.hpp"
-#include "Geode/cocos/CCDirector.h"
-#include "imgui.h"
+#include "../../interface/imgui/widget_helper.hpp"
 #include <imgui-cocos.hpp>
 
 GUI_HACK_CREATE("Level", "Accurate Percentage", "Shows decimals in level progress", false);
@@ -44,12 +43,7 @@ $execute {
     auto showMillisecondsKey = hack->formatAdditionalSetting("showMilliseconds");
 
     hack->setCustomWindowImGui([&config, hackID, decimalsKey, showMillisecondsKey]{
-        int demicals = config.get<int>(decimalsKey, 2);
-        if (ImGui::InputInt("Demicals", &demicals, 1))
-            config.set<int>(decimalsKey, demicals);
-
-        bool showMilliseconds = config.get<bool>(showMillisecondsKey, true);
-        if (ImGui::Checkbox("Show time in Milliseconds", &showMilliseconds))
-            config.set<bool>(showMillisecondsKey, showMilliseconds);
+        ImGuiWidgetConfig::InputInt("Demicals", decimalsKey, 2);
+        ImGuiWidgetConfig::Checkbox("Show time in Milliseconds", showMillisecondsKey, true);
     });
 }

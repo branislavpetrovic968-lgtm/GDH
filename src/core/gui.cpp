@@ -24,7 +24,10 @@ Hack& Window::createHack(
     bool cheating
 ) {
     std::string config = fmt::format("{}.{}",
-        Utils::String::toLowerCase(this->m_name),
+        Utils::String::replaceChar(
+            Utils::String::toLowerCase(this->m_name),
+            ' ', '_'
+        ),
         Utils::String::replaceChar(
             Utils::String::toLowerCase(name),
             ' ', '_'
@@ -53,6 +56,18 @@ Hack* Window::findHackByName(const std::string& name) {
         m_hacks.end(),
         [&name](const Hack& h) {
             return h.getName() == name;
+        }
+    );
+    
+    return it != m_hacks.end() ? &(*it) : nullptr;
+}
+
+Hack* Window::findHackByID(const std::string& ID) {
+    auto it = std::find_if(
+        m_hacks.begin(),
+        m_hacks.end(),
+        [&ID](const Hack& h) {
+            return h.getID() == ID;
         }
     );
     

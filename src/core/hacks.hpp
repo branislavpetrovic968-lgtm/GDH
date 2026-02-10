@@ -27,6 +27,9 @@ namespace GDH {
         void setCustomWindowImGui(std::function<void()> func) { m_handlerImGui = std::move(func); };
         void setCustomWindowCocos(std::function<void()> func) { m_handlerCocos = std::move(func); };
 
+        bool getEnabled() const;
+        void toggle();
+
         const std::string& getID() const { return m_ID; }
         const std::string& getName() const { return m_name; }
         const std::string& getDesc() const { return m_desc; }

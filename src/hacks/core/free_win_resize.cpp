@@ -9,6 +9,7 @@ using namespace geode::prelude;
 #include "../../core/gui.hpp"
 #include "../../core/config.hpp"
 #include "../../core/windowsUtils.hpp"
+#include "../../interface/imgui/widget_helper.hpp"
 
 
 GUI_HACK_CREATE("Core", "Free Window Resize", "Allows free window resizing", false);
@@ -38,9 +39,7 @@ $execute {
     auto maximizeKey = hack->formatAdditionalSetting("maximaze_window");
 
     hack->setCustomWindowImGui([&config, hackID, maximizeKey]{
-        bool maximaze_window = config.get<bool>(maximizeKey, true);
-        if (ImGui::Checkbox("Maximize on Startup", &maximaze_window))
-            config.set<bool>(maximizeKey, maximaze_window);
+        ImGuiWidgetConfig::Checkbox("Maximize on Startup", maximizeKey, true);
     });
 }
 

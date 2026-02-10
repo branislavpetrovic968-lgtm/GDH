@@ -10,6 +10,19 @@ void Hack::callHandler(bool state) {
     geode::log::debug("{} - handler called", m_ID);
 }
 
+bool Hack::getEnabled() const {
+    return Config::get().get<bool>(m_ID, false);
+}
+
+void Hack::toggle() {
+    auto& config = Config::get();
+    bool state = !getEnabled();
+
+    config.set(m_ID, state);
+    enableHooks(state);
+    callHandler(state);
+}
+
 void Hack::setHandler(std::function<void(bool)> func) {
     auto& config = Config::get();
     m_handlerFunc = std::move(func);
