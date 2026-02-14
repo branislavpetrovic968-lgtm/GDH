@@ -3,12 +3,12 @@
 #include <Geode/modify/OptionsLayer.hpp>
 #include "../../core/gui.hpp"
 
-GUI_HACK_CREATE("Level", "Allow Low Volume", "Removes the limit on minimum volume percentage", false);
+GUI_HACK_CREATE("Bypass", "Allow Low Volume", "Removes the limit on minimum volume percentage", false);
 
 class $modify(AllowLowVolumePauseLayer, PauseLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Level").findHackByName("Allow Low Volume");        
+        auto* hack = gui.getWindow("Bypass").findHackByName("Allow Low Volume");        
         
         hack->addHookPtr(self.getHook("PauseLayer::musicSliderChanged").unwrap());
         hack->addHookPtr(self.getHook("PauseLayer::sfxSliderChanged").unwrap());
@@ -36,7 +36,7 @@ class $modify(AllowLowVolumePauseLayer, PauseLayer) {
 class $modify(AllowLowVolumeOptionsLayer, OptionsLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Level").findHackByName("Allow Low Volume");        
+        auto* hack = gui.getWindow("Bypass").findHackByName("Allow Low Volume");        
         
         hack->addHookPtr(self.getHook("OptionsLayer::musicSliderChanged").unwrap());
         hack->addHookPtr(self.getHook("OptionsLayer::sfxSliderChanged").unwrap());

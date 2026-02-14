@@ -1,0 +1,26 @@
+#include <Geode/Geode.hpp>
+#include <Geode/modify/UILayer.hpp>
+#include "../../core/gui.hpp"
+
+GUI_HACK_CREATE("Level", "Hide Pause Button", "Removes the pause button when the cursor is shown", false);
+
+class $modify(HidePauseButtonUILayer, UILayer) {
+    static void onModify(auto& self) {
+        auto& gui = GDH::Gui::get();
+        auto* hack = gui.getWindow("Level").findHackByName("Hide Pause Button");        
+        
+        hack->addHookPtr(self.getHook("UILayer::init").unwrap());
+    }
+
+    bool init(GJBaseGameLayer* p0) {
+        if (!UILayer::init(p0)) return false;        
+        
+        auto menu = getChildByType<cocos2d::CCMenu>(0);
+        auto btn = menu->getChildByType<CCMenuItemSpriteExtra>(0);
+
+        if (menu && btn)
+            btn->getNormalImage()->setVisible(false);
+
+        return true;
+    }
+};

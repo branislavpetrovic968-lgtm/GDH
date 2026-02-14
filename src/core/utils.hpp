@@ -10,4 +10,5 @@ namespace GDH { namespace Utils {
 
     std::string formatTime(double sec, bool ms);
     void updateCursorState(bool show);
+    void UncompleteLevel();
 } }

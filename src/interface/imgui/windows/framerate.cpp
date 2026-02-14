@@ -1,3 +1,5 @@
+
+#ifdef GEODE_IS_WINDOWS
 #include <Geode/Geode.hpp>
 #include "../../../core/gui.hpp"
 #include "../../../core/config.hpp"
@@ -21,3 +23,4 @@ $execute {
         ImGuiWidgetConfig::HackCheckbox("Speedhack Audio", "Invisible", "invisible.speedhack_audio", false);
     });
 }
+#endif

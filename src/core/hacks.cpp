@@ -14,6 +14,14 @@ bool Hack::getEnabled() const {
     return Config::get().get<bool>(m_ID, false);
 }
 
+void Hack::setGameVariableID(const std::string& key) {
+    auto& config = Config::get();
+
+    this->m_key = key;
+    bool enabled = GameManager::get()->getGameVariable(key.c_str());
+    config.set<bool>(m_ID, enabled);
+}
+
 void Hack::toggle() {
     auto& config = Config::get();
     bool state = !getEnabled();
@@ -21,6 +29,9 @@ void Hack::toggle() {
     config.set(m_ID, state);
     enableHooks(state);
     callHandler(state);
+
+    if (!m_key.empty()) 
+        GameManager::get()->setGameVariable(this->m_key.c_str(), state);
 }
 
 void Hack::setHandler(std::function<void(bool)> func) {

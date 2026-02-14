@@ -25,7 +25,8 @@ bool m_inited = false;
 
 std::vector<std::vector<std::string>> m_layout = {
     {"Core", "Bypass"},
-    {"Level", "Framerate"}
+    {"Level", "Framerate"},
+    {"Shortcuts"}
 };
 
 void onOpen() {
@@ -114,7 +115,7 @@ void RenderMain() {
                 hack.toggle();
             }
 
-            if (ImGui::IsItemHovered())
+            if (!hack.getDesc().empty() && ImGui::IsItemHovered())
                 ImGui::SetTooltip("%s", hack.getDesc().c_str());
 
             if (hack.avaibleCustomWindowImGui()) {

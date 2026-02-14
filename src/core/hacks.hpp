@@ -24,6 +24,8 @@ namespace GDH {
         void setHandler(std::function<void(bool)> func);
         void addHookPtr(geode::Hook* ptr);
         void setKeybind(int key) { m_keybind = key; }        
+        void setGameVariableID(const std::string& key);
+
         void setCustomWindowImGui(std::function<void()> func) { m_handlerImGui = std::move(func); };
         void setCustomWindowCocos(std::function<void()> func) { m_handlerCocos = std::move(func); };
 
@@ -35,8 +37,10 @@ namespace GDH {
         const std::string& getDesc() const { return m_desc; }
         bool isCheating() const { return m_cheating; }
         int getKeybind() const { return m_keybind; }
+
         void callCustomWindowImGui() { if (m_handlerImGui) m_handlerImGui(); };
         void callCustomWindowCocos() { if (m_handlerCocos) m_handlerCocos(); };
+
         bool avaibleCustomWindowImGui() { return m_handlerImGui != nullptr; };
         bool avaibleCustomWindowCocos() { return m_handlerCocos != nullptr;  };
 
@@ -52,6 +56,8 @@ namespace GDH {
         std::string m_name;
         std::string m_desc;
         bool m_cheating = false;
+
+        std::string m_key = "";
 
         std::function<void(bool)> m_handlerFunc = nullptr;
         std::unordered_set<geode::Hook*> m_hooksPtr;
