@@ -8,11 +8,11 @@ GUI_HACK_CREATE("Core", "Safe Mode", "Disables progress on levels", false);
 class $modify(SafeModePlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Core").findHackByName("Safe Mode");        
+        auto& hack = gui.getWindow("Core").findHackByName("Safe Mode");        
         
-        hack->addHookPtr(self.getHook("PlayLayer::destroyPlayer").unwrap());
-        hack->addHookPtr(self.getHook("PlayLayer::resetLevel").unwrap());
-        hack->addHookPtr(self.getHook("PlayLayer::levelComplete").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::destroyPlayer").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::resetLevel").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::levelComplete").unwrap());
     }
 
     void destroyPlayer(PlayerObject* player, GameObject* obj) {
@@ -38,9 +38,9 @@ class $modify(SafeModePlayLayer, PlayLayer) {
 class $modify(SafeModePlayerObject, PlayerObject) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Core").findHackByName("Safe Mode");        
+        auto& hack = gui.getWindow("Core").findHackByName("Safe Mode");        
         
-        hack->addHookPtr(self.getHook("PlayerObject::incrementJumps").unwrap());
+        hack.addHookPtr(self.getHook("PlayerObject::incrementJumps").unwrap());
     }
 
     void incrementJumps() {}

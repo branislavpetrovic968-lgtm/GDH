@@ -8,8 +8,8 @@ GUI_HACK_CREATE("Bypass", "Slider Limit", "Removes the limit on sliding beyond s
 #ifdef GEODE_IS_WINDOWS
 $execute {
     auto& gui = GDH::Gui::get();
-    auto* hack = gui.getWindow("Bypass").findHackByName("Slider Limit");   
-    hack->setHandler([](bool enabled) {
+    auto& hack = gui.getWindow("Bypass").findHackByName("Slider Limit");   
+    hack.setHandler([](bool enabled) {
         static auto patches = []() {
             auto* mod = geode::Mod::get();
             auto base = geode::base::get();
@@ -38,9 +38,9 @@ $execute {
 class $modify(SliderLimitSliderTouchLogic, SliderTouchLogic) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Bypass").findHackByName("Slider Limit");        
+        auto& hack = gui.getWindow("Bypass").findHackByName("Slider Limit");        
         
-        hack->addHookPtr(self.getHook("SliderTouchLogic::ccTouchMoved").unwrap());
+        hack.addHookPtr(self.getHook("SliderTouchLogic::ccTouchMoved").unwrap());
     }
 
     void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) override {
@@ -63,9 +63,9 @@ class $modify(SliderLimitSliderTouchLogic, SliderTouchLogic) {
 class $modify(SliderLimitGJScaleControl, GJScaleControl) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Bypass").findHackByName("Slider Limit");        
+        auto& hack = gui.getWindow("Bypass").findHackByName("Slider Limit");        
         
-        hack->addHookPtr(self.getHook("GJScaleControl::ccTouchMoved").unwrap());
+        hack.addHookPtr(self.getHook("GJScaleControl::ccTouchMoved").unwrap());
     }
 
     void ccTouchMoved(cocos2d::CCTouch* touch, cocos2d::CCEvent* event) {

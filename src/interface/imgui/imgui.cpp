@@ -1,3 +1,4 @@
+#include "imgui.h"
 #ifdef GEODE_IS_WINDOWS
 #include <imgui-cocos.hpp>
 #include <imgui_internal.h>
@@ -124,11 +125,11 @@ void RenderMain() {
                     ImGui::OpenPopup(fmt::format("{} Settings##Popup", hackName).c_str());
                 }
 
-                if (ImGui::BeginPopupModal(fmt::format("{} Settings##Popup", hackName).c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+                if (ImGui::BeginPopup(fmt::format("{} Settings##Popup", hackName).c_str(), NULL)) {
                     hack.callCustomWindowImGui();
 
-                    if (ImGui::Button("Close", {400, NULL}))
-                        ImGui::CloseCurrentPopup();
+                    // if (ImGui::Button("Close", {400, NULL}))
+                    //     ImGui::CloseCurrentPopup();
 
                     ImGui::EndPopup();
                 }

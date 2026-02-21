@@ -18,39 +18,26 @@ Window& Gui::getWindow(const std::string& name) {
     return m_windows.emplace_back(name);
 }
 
+std::string Window::formatID(const std::string& windowName, const std::string& hackName) {
+    std::string config = fmt::format("{}.{}",
+        Utils::String::replaceChar(
+            Utils::String::toLowerCase(windowName),
+            ' ', '_'
+        ),
+        Utils::String::replaceChar(
+            Utils::String::toLowerCase(hackName),
+            ' ', '_'
+        )
+    );
+
+    return config;
+}
+
 Hack& Window::createHack(
     const std::string& name,
     const std::string& desc,
     bool cheating
 ) {
-    std::string config = fmt::format("{}.{}",
-        Utils::String::replaceChar(
-            Utils::String::toLowerCase(this->m_name),
-            ' ', '_'
-        ),
-        Utils::String::replaceChar(
-            Utils::String::toLowerCase(name),
-            ' ', '_'
-        )
-    );
-
-    geode::log::debug("Initalized - {}", config);
-
-    auto it = std::find_if(
-        m_hacks.begin(),
-        m_hacks.end(),
-        [&config](const Hack& h) {
-            return h.getID() == config;
-        }
-    );
-
-    if (it != m_hacks.end())
-        return *it;
-    
-    return m_hacks.emplace_back(config, name, desc, cheating);
-}
-
-Hack* Window::findHackByName(const std::string& name) {
     auto it = std::find_if(
         m_hacks.begin(),
         m_hacks.end(),
@@ -58,8 +45,32 @@ Hack* Window::findHackByName(const std::string& name) {
             return h.getName() == name;
         }
     );
-    
-    return it != m_hacks.end() ? &(*it) : nullptr;
+
+    if (it != m_hacks.end()) {
+        it->setDesc(desc);
+        it->setCheating(cheating);
+
+        return *it;
+    }
+        
+    std::string config = formatID(this->m_name, name);
+    return m_hacks.emplace_back(config, name, desc, cheating);
+}
+
+Hack& Window::findHackByName(const std::string& name) {
+    auto it = std::find_if(
+        m_hacks.begin(),
+        m_hacks.end(),
+        [&name](const Hack& h) {
+            return h.getName() == name;
+        }
+    );
+
+    if (it != m_hacks.end())
+        return *it;
+
+    std::string config = formatID(this->m_name, name);    
+    return m_hacks.emplace_back(config, name, "", false);
 }
 
 Hack* Window::findHackByID(const std::string& ID) {
@@ -70,6 +81,6 @@ Hack* Window::findHackByID(const std::string& ID) {
             return h.getID() == ID;
         }
     );
-    
+
     return it != m_hacks.end() ? &(*it) : nullptr;
 }

@@ -46,6 +46,8 @@ namespace GDH {
 
         void callHandler(bool state);
         void enableHooks(bool state);
+
+        std::string formatID();
         
         std::string formatAdditionalSetting(const std::string& setting) {
             return fmt::format("{}::{}", m_ID, setting);

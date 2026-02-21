@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Bypass", "Character Filter", "Lets you input any character in a
 class $modify(CharacterFilterCCTextInputNode, CCTextInputNode) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Bypass").findHackByName("Character Filter");        
+        auto& hack = gui.getWindow("Bypass").findHackByName("Character Filter");        
         
-        hack->addHookPtr(self.getHook("CCTextInputNode::updateLabel").unwrap());
+        hack.addHookPtr(self.getHook("CCTextInputNode::updateLabel").unwrap());
     }
 
     void updateLabel(gd::string str)

@@ -11,7 +11,7 @@ namespace GDH {
 
         Hack& createHack(const std::string& name, const std::string& desc, bool cheating);
 
-        Hack* findHackByName(const std::string& name);
+        Hack& findHackByName(const std::string& name);
         Hack* findHackByID(const std::string& ID);
 
         std::vector<Hack>& getHacks() { return m_hacks; }
@@ -24,6 +24,8 @@ namespace GDH {
         
         bool avaibleCustomWindowImGui() { return m_handlerImGui != nullptr; };
         bool avaibleCustomWindowCocos() { return m_handlerCocos != nullptr;  };
+
+        std::string formatID(const std::string& windowName, const std::string& hackName);
     private:
         std::string m_name;
         std::vector<Hack> m_hacks;

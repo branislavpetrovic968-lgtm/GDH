@@ -6,6 +6,6 @@ GUI_HACK_CREATE("Level", "Hide Playtest Text", "Hides text in the top left when 
 
 $execute {
     auto& gui = GDH::Gui::get();
-    auto* hack = gui.getWindow("Level").findHackByName("Hide Playtest Text");   
-    hack->setGameVariableID(GameVar::HidePlaytestText);
+    auto& hack = gui.getWindow("Level").findHackByName("Hide Playtest Text");   
+    hack.setGameVariableID(GameVar::HidePlaytestText);
 }

@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Level", "Auto Song Download", "Automatic downloading of song wh
 class $modify(AutoSongDownloadLevelInfoLayer, LevelInfoLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Level").findHackByName("Auto Practice Mode");        
+        auto& hack = gui.getWindow("Level").findHackByName("Auto Song Download");        
         
-        hack->addHookPtr(self.getHook("LevelInfoLayer::init").unwrap());
+        hack.addHookPtr(self.getHook("LevelInfoLayer::init").unwrap());
     }
 
     bool init(GJGameLevel* p0, bool p1) {

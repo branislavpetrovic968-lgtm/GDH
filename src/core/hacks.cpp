@@ -1,4 +1,5 @@
 #include "hacks.hpp"
+#include "utils.hpp"
 #include "config.hpp"
 
 using namespace GDH;
@@ -21,6 +22,7 @@ void Hack::setGameVariableID(const std::string& key) {
     bool enabled = GameManager::get()->getGameVariable(key.c_str());
     config.set<bool>(m_ID, enabled);
 }
+        
 
 void Hack::toggle() {
     auto& config = Config::get();

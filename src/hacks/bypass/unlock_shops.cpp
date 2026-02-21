@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Bypass", "Unlock Shops", "Unlocks all shops", false);
 class $modify(UnlockShopsGameManager, GameManager) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Bypass").findHackByName("Treasure Room");        
+        auto& hack = gui.getWindow("Bypass").findHackByName("Unlock Shops");        
         
-        hack->addHookPtr(self.getHook("GameManager::getUGV").unwrap());
+        hack.addHookPtr(self.getHook("GameManager::getUGV").unwrap());
     }
 
     bool getUGV(char const* p0) {

@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Core", "Noclip", "The player will be invincible to obstacles", 
 class $modify(NoclipPlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Core").findHackByName("Noclip");        
+        auto& hack = gui.getWindow("Core").findHackByName("Noclip");        
         
-        hack->addHookPtr(self.getHook("PlayLayer::destroyPlayer").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::destroyPlayer").unwrap());
     }
 
     void destroyPlayer(PlayerObject* player, GameObject* obj) {

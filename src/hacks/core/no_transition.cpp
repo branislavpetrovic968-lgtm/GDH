@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Core", "No Transition Old", "Fast transition between scenes (le
 class $modify(NoTransitionCCTransitionFade, cocos2d::CCTransitionFade) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Core").findHackByName("No Transition Old");        
+        auto& hack = gui.getWindow("Core").findHackByName("No Transition Old");        
         
-        hack->addHookPtr(self.getHook("cocos2d::CCTransitionFade::create").unwrap());
+        hack.addHookPtr(self.getHook("cocos2d::CCTransitionFade::create").unwrap());
     }
 
     static cocos2d::CCTransitionFade* create(float t, cocos2d::CCScene *scene) {

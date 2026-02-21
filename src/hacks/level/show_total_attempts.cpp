@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Level", "Show Total Attempts", "", false);
 class $modify(ShowTotalAttemptsPlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Level").findHackByName("Show Total Attempts");        
+        auto& hack = gui.getWindow("Level").findHackByName("Show Total Attempts");        
         
-        hack->addHookPtr(self.getHook("PlayLayer::resetLevel").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::resetLevel").unwrap());
     }
 
     void resetLevel() {

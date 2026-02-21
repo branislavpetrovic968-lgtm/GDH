@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Core", "No Death Effect", "Upon death, the cube will not emit a
 class $modify(NoDeathEffectPlayerObject, PlayerObject) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Core").findHackByName("No Death Effect");        
+        auto& hack = gui.getWindow("Core").findHackByName("No Death Effect");        
         
-        hack->addHookPtr(self.getHook("PlayerObject::playDeathEffect").unwrap());
+        hack.addHookPtr(self.getHook("PlayerObject::playDeathEffect").unwrap());
     }
 
     void playDeathEffect() {}

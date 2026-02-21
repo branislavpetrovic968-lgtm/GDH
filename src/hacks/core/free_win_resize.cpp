@@ -17,8 +17,8 @@ GUI_HACK_CREATE("Core", "Free Window Resize", "Allows free window resizing", fal
 $execute {
     auto& config = Config::get();
     auto& gui = GDH::Gui::get();
-    auto* hack = gui.getWindow("Core").findHackByName("Free Window Resize");   
-    hack->setHandler([](bool enabled) {
+    auto& hack = gui.getWindow("Core").findHackByName("Free Window Resize");   
+    hack.setHandler([](bool enabled) {
         static auto patches = []() {
             auto* mod = geode::Mod::get();
             auto base = geode::base::getCocos();
@@ -35,10 +35,10 @@ $execute {
         }
     });
 
-    auto hackID = hack->getID();
-    auto maximizeKey = hack->formatAdditionalSetting("maximaze_window");
+    auto hackID = hack.getID();
+    auto maximizeKey = hack.formatAdditionalSetting("maximaze_window");
 
-    hack->setCustomWindowImGui([&config, hackID, maximizeKey]{
+    hack.setCustomWindowImGui([&config, hackID, maximizeKey]{
         ImGuiWidgetConfig::Checkbox("Maximize on Startup", maximizeKey, true);
     });
 }
@@ -46,9 +46,9 @@ $execute {
 class $modify(FreeWindowResizeAppDelegate, AppDelegate) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Core").findHackByName("Free Window Resize");        
+        auto& hack = gui.getWindow("Core").findHackByName("Free Window Resize");        
         
-        hack->addHookPtr(self.getHook("AppDelegate::setupGLView").unwrap());
+        hack.addHookPtr(self.getHook("AppDelegate::setupGLView").unwrap());
     }
 
     void setupGLView() {

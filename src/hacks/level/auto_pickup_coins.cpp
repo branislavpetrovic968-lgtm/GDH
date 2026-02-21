@@ -11,10 +11,10 @@ class $modify(AutoPickupCoinsPlayLayer, PlayLayer) {
 
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Level").findHackByName("Auto Pickup Coins");        
+        auto& hack = gui.getWindow("Level").findHackByName("Auto Pickup Coins");        
         
-        hack->addHookPtr(self.getHook("PlayLayer::addObject").unwrap());
-        hack->addHookPtr(self.getHook("PlayLayer::resetLevel").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::addObject").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::resetLevel").unwrap());
     }
 
     void addObject(GameObject* obj) {

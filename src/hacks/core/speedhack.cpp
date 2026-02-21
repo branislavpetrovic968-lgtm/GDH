@@ -8,9 +8,9 @@ GUI_HACK_CREATE("Invisible", "Speedhack", "", false);
 class $modify(SpeedhackCCScheduler, cocos2d::CCScheduler) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Invisible").findHackByName("Speedhack");        
+        auto& hack = gui.getWindow("Invisible").findHackByName("Speedhack");        
         
-        hack->addHookPtr(self.getHook("cocos2d::CCScheduler::update").unwrap());
+        hack.addHookPtr(self.getHook("cocos2d::CCScheduler::update").unwrap());
     }
 
     void update(float dt) {

@@ -8,9 +8,9 @@ GUI_HACK_CREATE("Bypass", "Main Levels", "Unlocks all main levels", false);
 class $modify(MyGameLevelManager, GameLevelManager) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Bypass").findHackByName("Main Levels");        
+        auto& hack = gui.getWindow("Bypass").findHackByName("Main Levels");        
         
-        hack->addHookPtr(self.getHook("GameLevelManager::getMainLevel").unwrap());
+        hack.addHookPtr(self.getHook("GameLevelManager::getMainLevel").unwrap());
     }
 
     GJGameLevel* getMainLevel(int levelID, bool dontGetLevelString) {
@@ -25,9 +25,9 @@ class $modify(MyGameLevelManager, GameLevelManager) {
 class $modify(MyLevelAreaInnerLayer, LevelAreaInnerLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Bypass").findHackByName("Main Levels");        
+        auto& hack = gui.getWindow("Bypass").findHackByName("Main Levels");        
         
-        hack->addHookPtr(self.getHook("LevelAreaInnerLayer::init").unwrap());
+        hack.addHookPtr(self.getHook("LevelAreaInnerLayer::init").unwrap());
     }
 
     bool init(bool returning) {

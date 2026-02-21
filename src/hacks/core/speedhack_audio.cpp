@@ -8,9 +8,9 @@ GUI_HACK_CREATE("Invisible", "Speedhack Audio", "", false);
 class $modify(SpeedhackAudioFMODAudioEngine, FMODAudioEngine) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Invisible").findHackByName("Speedhack Audio");        
+        auto& hack = gui.getWindow("Invisible").findHackByName("Speedhack Audio");        
         
-        hack->addHookPtr(self.getHook("FMODAudioEngine::update").unwrap());
+        hack.addHookPtr(self.getHook("FMODAudioEngine::update").unwrap());
     }
 
     void update(float dt) {
@@ -27,8 +27,8 @@ class $modify(SpeedhackAudioFMODAudioEngine, FMODAudioEngine) {
 
 $execute {
     auto& gui = GDH::Gui::get();
-    auto* hack = gui.getWindow("Invisible").findHackByName("Speedhack Audio");    
-    hack->setHandler([](bool enabled) {
+    auto& hack = gui.getWindow("Invisible").findHackByName("Speedhack Audio");    
+    hack.setHandler([](bool enabled) {
         if (!enabled) {
             auto audioEngine = FMODAudioEngine::get();
             FMOD::ChannelGroup* group;

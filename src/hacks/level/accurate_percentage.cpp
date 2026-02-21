@@ -11,9 +11,9 @@ GUI_HACK_CREATE("Level", "Accurate Percentage", "Shows decimals in level progres
 class $modify(AccuratePercentagePlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Level").findHackByName("Accurate Percentage");        
+        auto& hack = gui.getWindow("Level").findHackByName("Accurate Percentage");        
         
-        hack->addHookPtr(self.getHook("PlayLayer::updateProgressbar").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::updateProgressbar").unwrap());
     }
 
     void updateProgressbar() {
@@ -36,13 +36,13 @@ class $modify(AccuratePercentagePlayLayer, PlayLayer) {
 $execute {
     auto& config = Config::get();
     auto& gui = GDH::Gui::get();
-    auto* hack = gui.getWindow("Level").findHackByName("Accurate Percentage");   
+    auto& hack = gui.getWindow("Level").findHackByName("Accurate Percentage");   
 
-    auto hackID = hack->getID();
-    auto decimalsKey = hack->formatAdditionalSetting("demicals");
-    auto showMillisecondsKey = hack->formatAdditionalSetting("showMilliseconds");
+    auto hackID = hack.getID();
+    auto decimalsKey = hack.formatAdditionalSetting("demicals");
+    auto showMillisecondsKey = hack.formatAdditionalSetting("showMilliseconds");
 
-    hack->setCustomWindowImGui([&config, hackID, decimalsKey, showMillisecondsKey]{
+    hack.setCustomWindowImGui([&config, hackID, decimalsKey, showMillisecondsKey]{
         ImGuiWidgetConfig::InputInt("Demicals", decimalsKey, 2);
         ImGuiWidgetConfig::Checkbox("Show time in Milliseconds", showMillisecondsKey, true);
     });

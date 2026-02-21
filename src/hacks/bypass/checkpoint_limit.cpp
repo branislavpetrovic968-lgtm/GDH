@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Bypass", "Checkpoint Limit", "Removes the limit that deletes pr
 class $modify(CheckpointLimitPlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Bypass").findHackByName("Checkpoint Limit");        
+        auto& hack = gui.getWindow("Bypass").findHackByName("Checkpoint Limit");        
         
-        hack->addHookPtr(self.getHook("PlayLayer::storeCheckpoint").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::storeCheckpoint").unwrap());
     }
 
     void storeCheckpoint(CheckpointObject* obj) {        

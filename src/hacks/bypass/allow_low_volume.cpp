@@ -8,10 +8,10 @@ GUI_HACK_CREATE("Bypass", "Allow Low Volume", "Removes the limit on minimum volu
 class $modify(AllowLowVolumePauseLayer, PauseLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Bypass").findHackByName("Allow Low Volume");        
+        auto& hack = gui.getWindow("Bypass").findHackByName("Allow Low Volume");        
         
-        hack->addHookPtr(self.getHook("PauseLayer::musicSliderChanged").unwrap());
-        hack->addHookPtr(self.getHook("PauseLayer::sfxSliderChanged").unwrap());
+        hack.addHookPtr(self.getHook("PauseLayer::musicSliderChanged").unwrap());
+        hack.addHookPtr(self.getHook("PauseLayer::sfxSliderChanged").unwrap());
     }
 
     void musicSliderChanged(cocos2d::CCObject* sender) {
@@ -36,10 +36,10 @@ class $modify(AllowLowVolumePauseLayer, PauseLayer) {
 class $modify(AllowLowVolumeOptionsLayer, OptionsLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Bypass").findHackByName("Allow Low Volume");        
+        auto& hack = gui.getWindow("Bypass").findHackByName("Allow Low Volume");        
         
-        hack->addHookPtr(self.getHook("OptionsLayer::musicSliderChanged").unwrap());
-        hack->addHookPtr(self.getHook("OptionsLayer::sfxSliderChanged").unwrap());
+        hack.addHookPtr(self.getHook("OptionsLayer::musicSliderChanged").unwrap());
+        hack.addHookPtr(self.getHook("OptionsLayer::sfxSliderChanged").unwrap());
     }
 
     void musicSliderChanged(cocos2d::CCObject* sender) {

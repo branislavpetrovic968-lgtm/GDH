@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Level", "Hide Pause Button", "Removes the pause button when the
 class $modify(HidePauseButtonUILayer, UILayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Level").findHackByName("Hide Pause Button");        
+        auto& hack = gui.getWindow("Level").findHackByName("Hide Pause Button");        
         
-        hack->addHookPtr(self.getHook("UILayer::init").unwrap());
+        hack.addHookPtr(self.getHook("UILayer::init").unwrap());
     }
 
     bool init(GJBaseGameLayer* p0) {

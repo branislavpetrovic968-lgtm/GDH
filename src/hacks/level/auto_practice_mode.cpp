@@ -7,9 +7,9 @@ GUI_HACK_CREATE("Level", "Auto Practice Mode", "Auto-enables practice mode", fal
 class $modify(AutoPracticeModePlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow("Level").findHackByName("Auto Practice Mode");        
+        auto& hack = gui.getWindow("Level").findHackByName("Auto Practice Mode");        
         
-        hack->addHookPtr(self.getHook("PlayLayer::init").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::init").unwrap());
     }
 
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
