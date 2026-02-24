@@ -2,12 +2,12 @@
 #include <Geode/modify/ShaderLayer.hpp>
 #include "../../core/gui.hpp"
 
-GUI_HACK_CREATE("Level", "No Shaders", "Disabling shaders in levels", false);
+GUI_HACK_CREATE("Cosmetic", "No Shaders", "Disabling shaders in levels", false);
 
 class $modify(NoShadersShaderLayer, ShaderLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Level").findHackByName("No Shaders");        
+        auto& hack = gui.getWindow("Cosmetic").findHackByName("No Shaders");        
         
         hack.addHookPtr(self.getHook("ShaderLayer::performCalculations").unwrap());
     }

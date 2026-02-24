@@ -2,12 +2,12 @@
 #include <Geode/modify/GJBaseGameLayer.hpp>
 #include "../../core/gui.hpp"
 
-GUI_HACK_CREATE("Level", "No Camera Zoom", "Disables camera zooming via trigger", false);
+GUI_HACK_CREATE("Cosmetic", "No Camera Zoom", "Disables camera zooming via trigger", false);
 
 class $modify(NoCameraMoveGJBaseGameLayer, GJBaseGameLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Level").findHackByName("No Camera Zoom");        
+        auto& hack = gui.getWindow("Cosmetic").findHackByName("No Camera Zoom");        
         
         hack.addHookPtr(self.getHook("GJBaseGameLayer::updateZoom").unwrap());
     }

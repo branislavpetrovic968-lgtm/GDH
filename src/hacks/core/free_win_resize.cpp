@@ -1,9 +1,8 @@
+#include "Geode/loader/Loader.hpp"
 #ifdef GEODE_IS_WINDOWS
 
 #include <Geode/Geode.hpp>
 using namespace geode::prelude;
-
-#include <Geode/modify/AppDelegate.hpp>
 
 #include <imgui-cocos.hpp>
 #include "../../core/gui.hpp"
@@ -41,24 +40,11 @@ $execute {
     hack.setCustomWindowImGui([&config, hackID, maximizeKey]{
         ImGuiWidgetConfig::Checkbox("Maximize on Startup", maximizeKey, true);
     });
-}
 
-class $modify(FreeWindowResizeAppDelegate, AppDelegate) {
-    static void onModify(auto& self) {
-        auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Core").findHackByName("Free Window Resize");        
-        
-        hack.addHookPtr(self.getHook("AppDelegate::setupGLView").unwrap());
-    }
-
-    void setupGLView() {
-        AppDelegate::setupGLView();
-
-        auto& config = Config::get();        
+    geode::queueInMainThread([&config]() {
         if (config.get<bool>("core.free_window_resize", false) &&
             config.get<bool>("core.free_window_resize::maximaze_window", true))
-            ShowWindow(GDH::WindowUtils::FindMainHWND(), SW_MAXIMIZE);            
-    }
-};
-
+            ShowWindow(GDH::WindowUtils::FindMainHWND(), SW_MAXIMIZE);    
+    });
+}
 #endif

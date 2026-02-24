@@ -26,6 +26,7 @@ bool m_inited = false;
 
 std::vector<std::vector<std::string>> m_layout = {
     {"Core", "Bypass"},
+    {"Cosmetic"},
     {"Level", "Framerate"},
     {"Shortcuts"}
 };
@@ -156,8 +157,6 @@ void RenderMain() {
         layoutManager.setLayout(m_layout);
         layoutManager.startCollecting();
         m_inited = true;
-
-        popup.add("GDH is currently in alpha stage, expect bugs/unfinished features");
     }
 }
 

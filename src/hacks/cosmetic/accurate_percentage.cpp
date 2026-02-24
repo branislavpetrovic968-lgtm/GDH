@@ -6,14 +6,23 @@
 #include "../../interface/imgui/widget_helper.hpp"
 #include <imgui-cocos.hpp>
 
-GUI_HACK_CREATE("Level", "Accurate Percentage", "Shows decimals in level progress", false);
+GUI_HACK_CREATE("Cosmetic", "Accurate Percentage", "Shows decimals in level progress", false);
 
 class $modify(AccuratePercentagePlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Level").findHackByName("Accurate Percentage");        
-        
+        auto& hack = gui.getWindow("Cosmetic").findHackByName("Accurate Percentage");
+
         hack.addHookPtr(self.getHook("PlayLayer::updateProgressbar").unwrap());
+
+        auto hackID = hack.getID();
+        auto decimalsKey = hack.formatAdditionalSetting("demicals");
+        auto showMillisecondsKey = hack.formatAdditionalSetting("showMilliseconds");
+
+        hack.setCustomWindowImGui([hackID, decimalsKey, showMillisecondsKey]{
+            ImGuiWidgetConfig::InputInt("Demicals", decimalsKey, 2);
+            ImGuiWidgetConfig::Checkbox("Show time in Milliseconds", showMillisecondsKey, true);
+        });
     }
 
     void updateProgressbar() {
@@ -32,18 +41,3 @@ class $modify(AccuratePercentagePlayLayer, PlayLayer) {
         }
     }
 };
-
-$execute {
-    auto& config = Config::get();
-    auto& gui = GDH::Gui::get();
-    auto& hack = gui.getWindow("Level").findHackByName("Accurate Percentage");   
-
-    auto hackID = hack.getID();
-    auto decimalsKey = hack.formatAdditionalSetting("demicals");
-    auto showMillisecondsKey = hack.formatAdditionalSetting("showMilliseconds");
-
-    hack.setCustomWindowImGui([&config, hackID, decimalsKey, showMillisecondsKey]{
-        ImGuiWidgetConfig::InputInt("Demicals", decimalsKey, 2);
-        ImGuiWidgetConfig::Checkbox("Show time in Milliseconds", showMillisecondsKey, true);
-    });
-}

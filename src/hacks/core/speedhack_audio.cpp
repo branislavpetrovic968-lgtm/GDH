@@ -9,7 +9,17 @@ class $modify(SpeedhackAudioFMODAudioEngine, FMODAudioEngine) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
         auto& hack = gui.getWindow("Invisible").findHackByName("Speedhack Audio");        
-        
+        hack.setHandler([](bool enabled) {
+            if (!enabled) {
+                auto audioEngine = FMODAudioEngine::get();
+                FMOD::ChannelGroup* group;
+                
+                if (audioEngine->m_system->getMasterChannelGroup(&group) == FMOD_OK) {
+                    group->setPitch(1.f);
+                }
+            }
+        });
+
         hack.addHookPtr(self.getHook("FMODAudioEngine::update").unwrap());
     }
 
@@ -24,18 +34,3 @@ class $modify(SpeedhackAudioFMODAudioEngine, FMODAudioEngine) {
         }
     }
 };
-
-$execute {
-    auto& gui = GDH::Gui::get();
-    auto& hack = gui.getWindow("Invisible").findHackByName("Speedhack Audio");    
-    hack.setHandler([](bool enabled) {
-        if (!enabled) {
-            auto audioEngine = FMODAudioEngine::get();
-            FMOD::ChannelGroup* group;
-            
-            if (audioEngine->m_system->getMasterChannelGroup(&group) == FMOD_OK) {
-                group->setPitch(1.f);
-            }
-        }
-    });
-}

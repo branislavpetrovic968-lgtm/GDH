@@ -11,7 +11,14 @@ class $modify(MusicUnlockerGameStatsManager, GameStatsManager) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
         auto& hack = gui.getWindow("Core").findHackByName("Practice Music");        
-        
+        hack.setHandler([](bool enabled) {
+            auto gsm = GameStatsManager::get();
+            auto gjbgl = GJBaseGameLayer::get();
+
+            if (gsm) gsm->toggleEnableItem(UnlockType::GJItem, 17, enabled);
+            if (gjbgl) gjbgl->toggleMusicInPractice();
+        });
+
         hack.addHookPtr(self.getHook("GameStatsManager::isItemUnlocked").unwrap());
     }
 
@@ -24,15 +31,3 @@ class $modify(MusicUnlockerGameStatsManager, GameStatsManager) {
         return false;
     }
 };
-
-$execute {
-    auto& gui = GDH::Gui::get();
-    auto& hack = gui.getWindow("Core").findHackByName("Practice Music");   
-    hack.setHandler([](bool enabled) {
-        auto gsm = GameStatsManager::get();
-        auto gjbgl = GJBaseGameLayer::get();
-
-        if (gsm) gsm->toggleEnableItem(UnlockType::GJItem, 17, enabled);
-        if (gjbgl) gjbgl->toggleMusicInPractice();
-    });
-}

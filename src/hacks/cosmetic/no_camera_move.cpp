@@ -2,12 +2,12 @@
 #include <Geode/modify/CameraTriggerGameObject.hpp>
 #include "../../core/gui.hpp"
 
-GUI_HACK_CREATE("Level", "No Camera Move", "Disables camera movement via trigger", false);
+GUI_HACK_CREATE("Cosmetic", "No Camera Move", "Disables camera movement via trigger", false);
 
 class $modify(NoCameraMoveCameraTriggerGameObject, CameraTriggerGameObject) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Level").findHackByName("No Camera Move");        
+        auto& hack = gui.getWindow("Cosmetic").findHackByName("No Camera Move");        
         
         hack.addHookPtr(self.getHook("CameraTriggerGameObject::triggerObject").unwrap());
     }

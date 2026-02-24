@@ -2,12 +2,12 @@
 #include <Geode/modify/UILayer.hpp>
 #include "../../core/gui.hpp"
 
-GUI_HACK_CREATE("Level", "Hide Pause Button", "Removes the pause button when the cursor is shown", false);
+GUI_HACK_CREATE("Cosmetic", "Hide Pause Button", "Removes the pause button when the cursor is shown", false);
 
 class $modify(HidePauseButtonUILayer, UILayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Level").findHackByName("Hide Pause Button");        
+        auto& hack = gui.getWindow("Cosmetic").findHackByName("Hide Pause Button");        
         
         hack.addHookPtr(self.getHook("UILayer::init").unwrap());
     }

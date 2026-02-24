@@ -5,12 +5,12 @@
 #include <Geode/modify/CurrencyRewardLayer.hpp>
 #include "../../core/gui.hpp"
 
-GUI_HACK_CREATE("Level", "Hide Complete Window", "", false);
+GUI_HACK_CREATE("Cosmetic", "Hide Complete Window", "", false);
 
 class $modify(HideCompleteWindowEndLevelLayer, EndLevelLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Level").findHackByName("Hide Complete Window");        
+        auto& hack = gui.getWindow("Cosmetic").findHackByName("Hide Complete Window");        
         
         hack.addHookPtr(self.getHook("EndLevelLayer::showLayer").unwrap());
     }
@@ -33,7 +33,7 @@ class $modify(HideCompleteWindowEndLevelLayer, EndLevelLayer) {
 class $modify(HideCompleteWindowCurrencyRewardLayer, CurrencyRewardLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Level").findHackByName("Hide Complete Window");    
+        auto& hack = gui.getWindow("Cosmetic").findHackByName("Hide Complete Window");    
         
         hack.addHookPtr(self.getHook("CurrencyRewardLayer::init").unwrap());
     }
