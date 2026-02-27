@@ -1,23 +1,31 @@
+
+<p align=center>
+  <img src="logo_original.png" alt="GDH Logo" width=200 />
+</p>
+
 # GDH
-This is where she makes a mod.
+GDH is a mod menu for Geometry Dash featuring gameplay enhancements and a beautiful interface inspired by Material Design
 
-<img src="logo.png" width="150" alt="the mod's logo" />
+## Gallery
+Have not done yet
 
-*Update logo.png to change your mod's icon (please)*
+## Features
+- A lot of hacks
+- Work in progress..
 
-## Getting started
-We recommend heading over to [the getting started section on our docs](https://docs.geode-sdk.org/getting-started/) for useful info on what to do next.
+## Install GDH directly through the mod catalogue in Geode itself (Recommended)
+1. Make sure [Geode](https://geode-sdk.org/) is installed
+2. In the mod install menu, under the Discover page, find GDH and install it
+3. Restart the game
+4. Press <kbd>Tab</kbd> to show the integrated menu
 
-## Build instructions
-For more info, see [our docs](https://docs.geode-sdk.org/getting-started/create-mod#build)
-```sh
-# Assuming you have the Geode CLI set up already
-geode build
-```
+## Install GDH manually
+1. Make sure [Geode](https://geode-sdk.org/) is installed
+2. Download [tobyadd.gdh.geode](https://github.com/TobyAdd/GDH/releases/latest/download/tobyadd.gdh.geode)
+3. Move it to `geode/mods/` folder in Geometry Dash directory (Library → GD → Right click → Browse local files)
+4. Run GD and press <kbd>Tab</kbd> to show the integrated menu
 
-# Resources
-* [Geode SDK Documentation](https://docs.geode-sdk.org/)
-* [Geode SDK Source Code](https://github.com/geode-sdk/geode/)
-* [Geode CLI](https://github.com/geode-sdk/cli)
-* [Bindings](https://github.com/geode-sdk/bindings/)
-* [Dev Tools](https://github.com/geode-sdk/DevTools)
+---
+
+Thanks to the [aciddev_](https://github.com/thisisignitedoreo) for the logo.<br/>
+Thanks to all the [contributors](https://github.com/TobyAdd/GDH/graphs/contributors).

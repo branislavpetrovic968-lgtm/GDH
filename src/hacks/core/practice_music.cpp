@@ -7,7 +7,7 @@
 
 GUI_HACK_CREATE("Core", "Practice Music", "Unlocks RobTop's \"Practice Music Sync\"", false);
 
-class $modify(MusicUnlockerGameStatsManager, GameStatsManager) {
+class $modify(PracticeMusicGameStatsManager, GameStatsManager) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
         auto& hack = gui.getWindow("Core").findHackByName("Practice Music");        

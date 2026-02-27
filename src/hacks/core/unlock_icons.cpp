@@ -4,7 +4,7 @@
 
 GUI_HACK_CREATE("Core", "Unlock Icons", "Unlock All Icons", false);
 
-class $modify(UnlockItemsGameManager, GameManager) {
+class $modify(UnlockIconsGameManager, GameManager) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
         auto& hack = gui.getWindow("Core").findHackByName("Unlock Icons");        

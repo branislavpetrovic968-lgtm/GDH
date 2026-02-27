@@ -4,7 +4,7 @@
 
 GUI_HACK_CREATE("Cosmetic", "Hide Pause Menu", "Hides the pause menu, useful for taking screenshots", false);
 
-class $modify(HidePauseButtonPauseLayer, PauseLayer) {
+class $modify(HidePauseMenuPauseLayer, PauseLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
         auto& hack = gui.getWindow("Cosmetic").findHackByName("Hide Pause Menu");  

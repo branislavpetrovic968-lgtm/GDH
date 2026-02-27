@@ -8,6 +8,6 @@
 	"name": "GDH",
 	"version": "v5.1.0-alpha.1",
 	"developer": "TobyAdd",
-	"description": "",
+	"description": "Mod menu for Geometry Dash",
 	"early-load": true
 }

@@ -28,6 +28,7 @@ std::vector<std::vector<std::string>> m_layout = {
     {"Core", "Bypass"},
     {"Cosmetic"},
     {"Level", "Framerate"},
+    {"Creator"},
     {"Shortcuts"}
 };
 

@@ -4,7 +4,7 @@
 
 GUI_HACK_CREATE("Cosmetic", "No Camera Zoom", "Disables camera zooming via trigger", false);
 
-class $modify(NoCameraMoveGJBaseGameLayer, GJBaseGameLayer) {
+class $modify(NoCameraZoomGJBaseGameLayer, GJBaseGameLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
         auto& hack = gui.getWindow("Cosmetic").findHackByName("No Camera Zoom");        
