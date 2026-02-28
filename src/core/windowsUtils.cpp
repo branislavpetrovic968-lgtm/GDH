@@ -1,7 +1,9 @@
 
-#ifdef GEODE_IS_WINDOWS
+#include <Geode/Geode.hpp>
 
 #include "windowsUtils.hpp"
+
+#ifdef GEODE_IS_WINDOWS
 
 HWND hwnd_window = NULL;
 

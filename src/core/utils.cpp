@@ -2,6 +2,10 @@
 #include <algorithm>
 #include <cctype>
 
+#include <fmt/core.h>
+#include <Geode/Geode.hpp>
+#include <Geode/binding/FLAlertLayer.hpp>
+
 std::string GDH::Utils::String::toLowerCase(const std::string& input) {
     std::string result = input;
     std::transform(result.begin(), result.end(), result.begin(),
@@ -129,4 +133,8 @@ void GDH::Utils::UncompleteLevel() {
         auto key = level->getCoinKey(i + 1);
         gsm->m_verifiedUserCoins->removeObjectForKey(key);
     }
+}
+
+float GDH::Utils::easeInOut(float x) {
+    return -(cosf(M_PI * x) - 1) / 2;
 }
