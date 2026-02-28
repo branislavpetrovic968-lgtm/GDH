@@ -1,5 +1,6 @@
-#ifdef GEODE_IS_WINDOWS
 #include <Geode/Geode.hpp>
+
+#ifdef GEODE_IS_WINDOWS
 #include "../../../core/gui.hpp"
 #include "../../../core/utils.hpp"
 // #include "../popup.hpp"

@@ -1,4 +1,7 @@
 #include "imgui.h"
+
+#include <Geode/Geode.hpp>
+
 #ifdef GEODE_IS_WINDOWS
 #include <imgui-cocos.hpp>
 #include <imgui_internal.h>
@@ -6,7 +9,6 @@
 #include "layout.hpp"
 #include "popup.hpp"
 
-#include <Geode/Geode.hpp>
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/CCEGLView.hpp>
 #include <Geode/modify/CCKeyboardDispatcher.hpp>
@@ -28,7 +30,7 @@ std::vector<std::vector<std::string>> m_layout = {
     {"Core", "Bypass"},
     {"Cosmetic"},
     {"Level", "Framerate"},
-    {"Creator"},
+    {"Creator", "Labels"},
     {"Shortcuts"}
 };
 
@@ -68,6 +70,7 @@ void animateAlpha()
     }
 
     style.Alpha = m_isFadingIn ? t : 1.0f - t;
+    style.Alpha = GDH::Utils::easeInOut(style.Alpha);
 }
 
 void ToggleUI()

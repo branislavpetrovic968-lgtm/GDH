@@ -1,6 +1,6 @@
+#include <Geode/Geode.hpp>
 
 #ifdef GEODE_IS_WINDOWS
-#include <Geode/Geode.hpp>
 #include "../../../core/gui.hpp"
 #include "../../../core/config.hpp"
 #include "../widget_helper.hpp"
