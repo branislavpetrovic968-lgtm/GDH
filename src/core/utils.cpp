@@ -5,6 +5,7 @@
 #include <fmt/core.h>
 #include <Geode/Geode.hpp>
 #include <Geode/binding/FLAlertLayer.hpp>
+#include <imgui.h>
 
 std::string GDH::Utils::String::toLowerCase(const std::string& input) {
     std::string result = input;
@@ -137,4 +138,8 @@ void GDH::Utils::UncompleteLevel() {
 
 float GDH::Utils::easeInOut(float x) {
     return -(cosf(M_PI * x) - 1) / 2;
+}
+
+void GDH::Utils::hsvToRgb(float h, float s, float v, float &r, float &g, float &b) {
+    ImGui::ColorConvertHSVtoRGB(h, s, v, r, g, b);
 }
