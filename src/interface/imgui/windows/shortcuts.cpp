@@ -1,3 +1,4 @@
+#include "imgui.h"
 #include <Geode/Geode.hpp>
 
 #ifdef GEODE_IS_WINDOWS
@@ -11,7 +12,8 @@ $execute {
     auto& window = gui.getWindow("Shortcuts");
 
     window.setCustomWindowImGui([] {
-        float width = 140.f;
+        float width = ImGui::GetContentRegionAvail().x;
+        
         if (ImGui::Button("Options", {width, 0.f})) {
             auto options_layer = OptionsLayer::create();
             auto scene = cocos2d::CCScene::get();

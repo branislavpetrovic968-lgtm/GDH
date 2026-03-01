@@ -7,12 +7,21 @@ void Layout::Manager::setLayout(const std::vector<std::vector<std::string>>& lay
     m_layout = layout;
 }
 
+void Layout::Manager::setFixedWindowSizeInfo(const std::vector<WindowInfo>& fixedWindows) {
+    m_fixedWindows = fixedWindows;
+}
+
 void Layout::Manager::startCollecting() {
     m_windows.clear();
     m_stage = Stage::Collecting;
 }
 
 void Layout::Manager::addWindowInfo(const std::string& name, float width, float height) {
+    if (WindowInfo* window = findFixedWindow(name)) {
+        if (window->w != 0.f) width = window->w;
+        if (window->h != 0.f) height = window->h;
+    }
+
     m_windows.push_back({
         name,
         width, height,
@@ -64,6 +73,15 @@ void Layout::Manager::reset() {
 
 Layout::WindowInfo* Layout::Manager::findWindow(const std::string& name) {
     for (auto& window : m_windows) {
+        if (window.window_name == name) {
+            return &window;
+        }
+    }
+    return nullptr;
+}
+
+Layout::WindowInfo* Layout::Manager::findFixedWindow(const std::string& name) {
+    for (auto& window : m_fixedWindows) {
         if (window.window_name == name) {
             return &window;
         }

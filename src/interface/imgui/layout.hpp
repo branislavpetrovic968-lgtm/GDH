@@ -16,6 +16,7 @@ namespace GDH { namespace Layout {
         }
 
         void setLayout(const std::vector<std::vector<std::string>>& layout);        
+        void setFixedWindowSizeInfo(const std::vector<WindowInfo>& fixedWindows);        
 
         void startCollecting();       
         bool isCollecting();        
@@ -24,7 +25,7 @@ namespace GDH { namespace Layout {
         
         bool isApplying();    
         void finishApplying();   
-
+        
         bool applyWindowTransform(const std::string& name);
         
         WindowInfo* getWindowInfo(const std::string& name);        
@@ -34,6 +35,7 @@ namespace GDH { namespace Layout {
         Manager() = default;
 
         WindowInfo* findWindow(const std::string& name);
+        WindowInfo* findFixedWindow(const std::string& name);
         float getMaxWidthInColumn(const std::vector<std::string>& column);
         float getColumnHeight(const std::vector<std::string>& column);
         void calculateWindowPositions();
@@ -47,6 +49,7 @@ namespace GDH { namespace Layout {
         };
 
         std::vector<WindowInfo> m_windows;
+        std::vector<WindowInfo> m_fixedWindows;
         std::vector<std::vector<std::string>> m_layout;
         Stage m_stage = Stage::Idle;
         

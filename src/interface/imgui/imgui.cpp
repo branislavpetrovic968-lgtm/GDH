@@ -19,19 +19,24 @@ using namespace geode::prelude;
 #include "../../core/config.hpp"
 #include "../../core/utils.hpp"
 
-bool m_show = false;
-bool m_isAnimating = false;
-bool m_isFadingIn = false;
-float m_animTime = 0.0f;
+static bool m_show = false;
+static bool m_isAnimating = false;
+static bool m_isFadingIn = false;
+static float m_animTime = 0.0f;
 
-bool m_inited = false;
+static bool m_inited = false;
 
-std::vector<std::vector<std::string>> m_layout = {
+static std::vector<std::vector<std::string>> m_layout = {
     {"Core", "Bypass"},
     {"Cosmetic"},
     {"Level", "Framerate"},
     {"Creator", "Labels"},
     {"Shortcuts"}
+};
+
+static std::vector<GDH::Layout::WindowInfo> m_fixedWindowSizes = {
+    {"Labels", 240.f, 350.f},
+    {"Shortcuts", 160.f, 0.f}
 };
 
 void onOpen() {
@@ -159,6 +164,8 @@ void RenderMain() {
     static bool m_inited = false;
     if (!m_inited) {
         layoutManager.setLayout(m_layout);
+        layoutManager.setFixedWindowSizeInfo(m_fixedWindowSizes);
+
         layoutManager.startCollecting();
         m_inited = true;
     }

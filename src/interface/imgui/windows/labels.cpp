@@ -1,3 +1,4 @@
+#include "imgui.h"
 #include <Geode/Geode.hpp>
 
 #ifdef GEODE_IS_WINDOWS
@@ -138,7 +139,6 @@ $execute {
             g_openPopup = false;
         }
 
-        ImGui::SetNextWindowSize(ImVec2 { 200, 300 });
         if (ImGui::BeginPopupModal("Add a label")) {
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             ImGui::ColorEdit4("##Color", g_newLabelColor);
@@ -151,8 +151,14 @@ $execute {
                     ImGui::CloseCurrentPopup();
                 }
             }
-            if (ImGui::Button("Spacing", ImVec2 { ImGui::GetContentRegionAvail().x, 0 })) {
+            if (ImGui::Button("Spacing", ImVec2 { ImGui::GetContentRegionAvail().x, 0.f })) {
                 GDH::Labels::labels[g_popupCorner].push_back(GDH::Labels::Label(g_newLabelSize));
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::Separator();
+
+            if (ImGui::Button("Close", ImVec2 { 240.f, 0.f })) {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();

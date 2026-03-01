@@ -31,12 +31,12 @@ class $modify(AccuratePercentagePlayLayer, PlayLayer) {
 
         auto& config = Config::get();
         if (m_level->isPlatformer()) {
-            bool showMilliseconds = config.get<bool>("level.accurate_percentage::showMilliseconds", true);
+            bool showMilliseconds = config.get<bool>("cosmetic.accurate_percentage::showMilliseconds", true);
             m_percentageLabel->setString(GDH::Utils::formatTime(m_timePlayed, showMilliseconds).c_str());
         }
         else {
             float percentage = getCurrentPercent();
-            int decimals = config.get<int>("level.accurate_percentage::demicals", 2);
+            int decimals = config.get<int>("cosmetic.accurate_percentage::demicals", 2);
             m_percentageLabel->setString(fmt::format("{:.{}f}%", percentage, decimals).c_str());
         }
     }

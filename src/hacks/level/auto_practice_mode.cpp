@@ -9,14 +9,11 @@ class $modify(AutoPracticeModePlayLayer, PlayLayer) {
         auto& gui = GDH::Gui::get();
         auto& hack = gui.getWindow("Level").findHackByName("Auto Practice Mode");        
         
-        hack.addHookPtr(self.getHook("PlayLayer::init").unwrap());
+        hack.addHookPtr(self.getHook("PlayLayer::setupHasCompleted").unwrap());
     }
 
-    bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
-        if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
-
-        togglePracticeMode(true);
-
-        return true;
+    void setupHasCompleted() {
+        PlayLayer::setupHasCompleted();
+        this->togglePracticeMode(true);
     }
 };
