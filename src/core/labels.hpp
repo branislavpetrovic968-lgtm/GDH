@@ -51,7 +51,7 @@ namespace GDH {
                 this->size = spacing;
                 this->rainbow = false;
             }
-            
+
             std::string render(void) const;
         };
 

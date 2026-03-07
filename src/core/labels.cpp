@@ -16,38 +16,46 @@ std::unordered_map<Corner, std::vector<Label>> GDH::Labels::labels;
 std::chrono::steady_clock::time_point g_sessionStart;
 float g_rainbowHue = 0.0f;
 
-void renderVariable(std::stringstream &stream, std::string_view var_name) {
+void renderVariable(geode::utils::StringBuffer<> &stream, std::string_view var_name) {
     PlayLayer *pl = PlayLayer::get();
-    cocos2d::CCDirector *dr = cocos2d::CCDirector::get();
-    if (var_name.starts_with("TIME:")) {
-        var_name.remove_prefix(5);
-        auto now = std::chrono::system_clock::now();
-        std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
-        stream << std::put_time(std::localtime(&nowTime), std::string(var_name).c_str());
+    if (var_name == "TIME_24") {
+        stream.append(fmt::format("{:%T}", geode::localtime(std::time(nullptr)), var_name));
+    } else if (var_name == "TIME_12") {
+        stream.append(fmt::format("{:%I:%M:%S %p}", geode::localtime(std::time(nullptr)), var_name));
+    } else if (var_name == "DATE") {
+        stream.append(fmt::format("{:%F}", geode::localtime(std::time(nullptr)), var_name));
     } else if (var_name == "SESSION_TIME") {
         auto dur = std::chrono::steady_clock::now() - g_sessionStart;
         auto secs = std::chrono::duration_cast<std::chrono::seconds>(dur); secs %= 60;
         auto mins = std::chrono::duration_cast<std::chrono::minutes>(secs); mins %= 60;
         auto hours = std::chrono::duration_cast<std::chrono::hours>(mins);
-        stream << std::format("{:02}:{:02}:{:02}", hours.count(), mins.count(), secs.count());
+        stream.append(fmt::format("{:02}:{:02}:{:02}", hours.count(), mins.count(), secs.count()));
     } else if (var_name == "PROGRESS" || var_name.starts_with("PROGRESS:")) {
         var_name.remove_prefix(8);
         int decimal_points = 0;
         if (var_name.size()) {
             var_name.remove_prefix(1);
-            std::from_chars(var_name.data(), var_name.data() + var_name.size(), decimal_points);
+            auto parsed = geode::utils::numFromString<int>(var_name, 10);
+            if (parsed.ok()) decimal_points = *parsed;
         }
-        stream << std::fixed << std::setprecision(decimal_points) << (pl ? pl->getCurrentPercent() : 0.0f);
-    } else if (var_name == "FPS") {
-        stream << std::fixed << std::setprecision(0) << (dr ? 1.0f / dr->getDeltaTime() : 0.0f);
+        stream.append(fmt::format("{:.{}f}", (pl ? pl->getCurrentPercent() : 0.0f), decimal_points));
+    } else if (var_name == "FPS" || var_name.starts_with("FPS:")) {
+        var_name.remove_prefix(3);
+        int decimal_points = 0;
+        if (var_name.size()) {
+            var_name.remove_prefix(1);
+            auto parsed = geode::utils::numFromString<int>(var_name, 10);
+            if (parsed.ok()) decimal_points = *parsed;
+        }
+        stream.append(fmt::format("{:.{}f}", GDH::Utils::getFps(), decimal_points));
     } else {
-        stream << "<nil>";
+        stream.append("<nil>");
     }
 }
 
 std::string GDH::Labels::Label::render(void) const {
+    geode::utils::StringBuffer<> stream;
     std::string_view raw = text;
-    std::stringstream stream;
     int r = 255, g = 255, b = 255;
     while (raw.size()) {
         if (raw[0] == '$') {
@@ -55,14 +63,14 @@ std::string GDH::Labels::Label::render(void) const {
             if (raw[0] == '{') {
                 std::string_view::size_type ccurly = raw.find("}");
                 if (ccurly == std::string_view::npos) {
-                    stream << '$'; continue;
+                    stream.append('$'); continue;
                 }
                 std::string_view var = raw.substr(1, ccurly - 1);
                 raw.remove_prefix(ccurly + 1);
                 renderVariable(stream, var);
-            } else stream << '$';
+            } else stream.append('$');
         } else {
-            stream << raw[0];
+            stream.append(raw[0]);
             raw.remove_prefix(1);
         }
     }
