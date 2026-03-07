@@ -143,3 +143,26 @@ float GDH::Utils::easeInOut(float x) {
 void GDH::Utils::hsvToRgb(float h, float s, float v, float &r, float &g, float &b) {
     ImGui::ColorConvertHSVtoRGB(h, s, v, r, g, b);
 }
+
+float GDH::Utils::getFps(void) {
+    static constexpr int SAMPLE_COUNT = 60;
+    static std::chrono::high_resolution_clock::time_point lastTime = std::chrono::high_resolution_clock::now();
+    static float frameTimes[SAMPLE_COUNT] = {};
+    static float frameTimeSum = 0.0f;
+    static int index = 0;
+    static int count = 0;
+
+    auto now = std::chrono::high_resolution_clock::now();
+    float deltaTime = std::chrono::duration<float>(now - lastTime).count();
+    lastTime = now;
+
+    // Subtract the oldest value before overwriting it
+    frameTimeSum -= frameTimes[index];
+    frameTimes[index] = deltaTime;
+    frameTimeSum += deltaTime;
+
+    index = (index + 1) % SAMPLE_COUNT;
+    if (count < SAMPLE_COUNT) ++count;
+
+    return static_cast<float>(count) / frameTimeSum;
+}

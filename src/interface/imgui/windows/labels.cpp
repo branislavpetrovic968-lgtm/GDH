@@ -20,9 +20,9 @@ float g_newLabelSize = 0.3f;
 float g_newLabelColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 std::map<const char *, const char *> g_labelTemplates = {
-    {"Time (24h)", "${TIME:%T}"},
-    {"Time (12h)", "${TIME:%I:%M:%S %p}"},
-    {"Date", "${TIME:%F}"},
+    {"Time (24h)", "${TIME_24}"},
+    {"Time (12h)", "${TIME_12}"},
+    {"Date", "${DATE}"},
     {"Session time", "${SESSION_TIME}"},
     {"Level progress", "${PROGRESS:2}%"},
     {"FPS", "${FPS} FPS"},
@@ -105,7 +105,7 @@ $execute {
                 if (y == 2 && x == 2) corner = GDH::Labels::Corner::Bottom_Right;
                 ImVec2 start(pos.x + width*x + style.ItemSpacing.x*x, pos.y + ImGui::GetFrameHeight()*y + style.ItemSpacing.y*y);
                 ImVec2 end(pos.x + width*(1+x) + style.ItemSpacing.x*x, pos.y + ImGui::GetFrameHeight()*(1+y) + style.ItemSpacing.y*y);
-                ImGui::InvisibleButton(std::format("This thing but {}", y * 3 + x).c_str(), ImVec2 { end.x - start.x, end.y - start.y });
+                ImGui::InvisibleButton(fmt::format("This thing but {}", y * 3 + x).c_str(), ImVec2 { end.x - start.x, end.y - start.y });
                 if (x < 2) ImGui::SameLine();
                 ImU32 color = ImGui::GetColorU32(ImGuiCol_FrameBg);
                 if (ImGui::IsItemClicked() || corner == g_editCorner) {
