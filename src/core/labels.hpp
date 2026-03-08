@@ -52,7 +52,7 @@ namespace GDH {
                 this->rainbow = false;
             }
 
-            std::string render(void) const;
+            std::string render() const;
         };
 
         extern float cornerPadding, midPadding;

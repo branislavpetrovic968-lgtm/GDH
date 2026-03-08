@@ -1,13 +1,13 @@
-#include "imgui.h"
-
-#include <Geode/Geode.hpp>
-
 #ifdef GEODE_IS_WINDOWS
 #include <imgui-cocos.hpp>
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
 #include "layout.hpp"
 #include "popup.hpp"
+
+#include "widgetH.hpp"
+#include "theme.hpp"
+#include "font.hpp"
 
 #include <Geode/modify/MenuLayer.hpp>
 #include <Geode/modify/CCEGLView.hpp>
@@ -36,7 +36,7 @@ static std::vector<std::vector<std::string>> m_layout = {
 
 static std::vector<GDH::Layout::WindowInfo> m_fixedWindowSizes = {
     {"Labels", 240.f, 350.f},
-    {"Shortcuts", 160.f, 0.f}
+    {"Shortcuts", 180.f, 0.f}
 };
 
 void onOpen() {
@@ -93,7 +93,6 @@ void ToggleUI()
     }
 }
 
-
 void RenderMain() {
     auto& gui = GDH::Gui::get();
     auto& popup = GDH::Popup::get();
@@ -122,12 +121,12 @@ void RenderMain() {
 
             bool state = config.get(id, false);
 
-            if (ImGui::Checkbox(hackName.c_str(), &state)) {
+            // if (ImGui::Checkbox(hackName.c_str(), &state)) {
+            if (ImGuiH::Checkbox(hackName.c_str(), &state)) {
                 hack.toggle();
             }
 
-            if (!hack.getDesc().empty() && ImGui::IsItemHovered())
-                ImGui::SetTooltip("%s", hack.getDesc().c_str());
+            ImGuiH::Tooltip(hack.getDesc().c_str(), !hack.getDesc().empty() && ImGui::IsItemHovered());
 
             if (hack.avaibleCustomWindowImGui()) {
                 ImGui::SameLine();
@@ -180,6 +179,10 @@ class $modify(MyMenuLayer, MenuLayer) {
             ImGuiCocos::get().setup([] {
                 ImGuiIO &io = ImGui::GetIO();
 				io.IniFilename = NULL;
+                ApplyGuiColors(false);
+                ApplyStyle(1.f);
+
+                io.Fonts->AddFontFromMemoryCompressedTTF(roboto_font_data, roboto_font_size, 18.f, nullptr, io.Fonts->GetGlyphRangesCyrillic());
             }).draw([] {
                 RenderMain();
             });

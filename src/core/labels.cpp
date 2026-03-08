@@ -2,9 +2,6 @@
 #include "labels.hpp"
 #include "utils.hpp"
 
-#include <string_view>
-#include <sstream>
-
 #include <Geode/modify/PlayLayer.hpp>
 
 using namespace GDH::Labels;
@@ -53,7 +50,7 @@ void renderVariable(geode::utils::StringBuffer<> &stream, std::string_view var_n
     }
 }
 
-std::string GDH::Labels::Label::render(void) const {
+std::string GDH::Labels::Label::render() const {
     geode::utils::StringBuffer<> stream;
     std::string_view raw = text;
     int r = 255, g = 255, b = 255;

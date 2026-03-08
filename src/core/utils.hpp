@@ -15,5 +15,5 @@ namespace GDH { namespace Utils {
     float easeInOut(float t);
     void hsvToRgb(float h, float s, float v, float &r, float &g, float &b);
 
-    float getFps(void);
+    float getFps();
 } }

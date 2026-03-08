@@ -5,7 +5,7 @@
 #include "../../../core/gui.hpp"
 #include "../../../core/config.hpp"
 #include "../../../core/labels.hpp"
-// #include "../widget_helper.hpp"
+#include "../widgetH.hpp"
 #include <imgui-cocos.hpp>
 #include <imgui_stdlib.h>
 
@@ -42,23 +42,24 @@ void drawLabelCornerControls(GDH::Labels::Corner corner) {
     case GDH::Labels::Corner::Bottom_Center: ImGui::PushID("##LabelsBCCorner"); break;
     case GDH::Labels::Corner::Bottom_Right: ImGui::PushID("##LabelsBRCorner"); break;
     }
-    if (ImGui::Button("Add a label")) {
+    ImGui::Spacing();
+    if (ImGuiH::Button("Add a label")) {
         g_popupCorner = corner;
         g_openPopup = true;
     }
     ImGui::SameLine();
     ImGui::TextDisabled("?");
-    ImGui::SetItemTooltip("Labels are shown top-to-bottom in their corners as added here.\n"
+    ImGuiH::Tooltip("Labels are shown top-to-bottom in their corners as added here.\n"
                           "Text labels support variables that get substituted to different things like current date, level progress, etc.\n"
                           "Spacing labels add pixel spacing between text labels.\n"
                           "'Add a label' button adds a label with a pre-set text, there can be any number of any type of labels.\n"
                           "Every label has its own color and size.\n"
-                          "A single text label may contain any number of variables. Add a few examples and change them around to get the feel for it.");
+                          "A single text label may contain any number of variables. Add a few examples and change them around to get the feel for it.", ImGui::IsItemHovered());
     
     int id = 0;
     for (auto &label : GDH::Labels::labels[corner]) {
         ImGui::PushID(id++);
-        if (ImGui::Button("E")) {
+        if (ImGuiH::Button("E")) {
             g_editPopup = true;
             g_popupCorner = corner;
             g_popupId = id - 1;
@@ -67,7 +68,7 @@ void drawLabelCornerControls(GDH::Labels::Corner corner) {
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
         if (!label.enabled) ImGui::BeginDisabled(true);
         if (label.type == GDH::Labels::LabelType::Text) ImGui::InputText("##TextInput", &(label.text));
-        else if (label.type == GDH::Labels::LabelType::Spacing) ImGui::DragFloat("##Spacing", &(label.size), 1.0f, 1.0f, 256.0f, "Spacing: %.1fpx");
+        else if (label.type == GDH::Labels::LabelType::Spacing) ImGuiH::DragFloat("##Spacing", &(label.size), 1.0f, 1.0f, 256.0f, "Spacing: %.1fpx");
         if (!label.enabled) ImGui::EndDisabled();
        ImGui::PopID();
     }
@@ -82,9 +83,9 @@ $execute {
 
     window.setCustomWindowImGui([&config, &gui] {
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-        ImGui::DragFloat("##LabelCorPadDrag", &GDH::Labels::cornerPadding, 1.0f, 0.0f, 256.0f, "Corner Padding: %.1fpx");
+        ImGuiH::DragFloat("##LabelCorPadDrag", &GDH::Labels::cornerPadding, 1.0f, 0.0f, 256.0f, "Corner Padding: %.1fpx");
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-        ImGui::DragFloat("##LabelMidPadDrag", &GDH::Labels::midPadding, 1.0f, 0.0f, 256.0f, "Mid-label Padding: %.1fpx");
+        ImGuiH::DragFloat("##LabelMidPadDrag", &GDH::Labels::midPadding, 1.0f, 0.0f, 256.0f, "Mid-label Padding: %.1fpx");
 
         ImVec2 pos = ImGui::GetCursorScreenPos();
         ImDrawList *drawList = ImGui::GetWindowDrawList();
@@ -107,12 +108,12 @@ $execute {
                 ImVec2 end(pos.x + width*(1+x) + style.ItemSpacing.x*x, pos.y + ImGui::GetFrameHeight()*(1+y) + style.ItemSpacing.y*y);
                 ImGui::InvisibleButton(fmt::format("This thing but {}", y * 3 + x).c_str(), ImVec2 { end.x - start.x, end.y - start.y });
                 if (x < 2) ImGui::SameLine();
-                ImU32 color = ImGui::GetColorU32(ImGuiCol_FrameBg);
+                ImU32 color = ImColor(213, 196, 255);
                 if (ImGui::IsItemClicked() || corner == g_editCorner) {
-                    color = ImGui::GetColorU32(ImGuiCol_FrameBgActive);
+                    color = ImColor(228, 215, 255);
                     g_editCorner = corner;
-                } else if (ImGui::IsItemHovered()) color = ImGui::GetColorU32(ImGuiCol_FrameBgHovered);
-                drawList->AddRectFilled(start, end, color);
+                } else if (ImGui::IsItemHovered()) color = ImColor(185, 165, 240);
+                drawList->AddRectFilled(start, end, color, style.FrameRounding);
                 ImVec2 pad = style.ItemInnerSpacing, size = { style.ItemInnerSpacing.x * 3.0f, style.ItemInnerSpacing.y * 0.5f };
                 if (y == 0 && x == 0) { start.x += pad.x; start.y += pad.y; end.x = start.x + size.x; end.y = start.y + size.y; }
                 if (y == 0 && x == 1) { start.x += (end.x - start.x) / 2.0f - size.x / 2.0f; start.y += pad.y; end.x = start.x + size.x; end.y = start.y + size.y; }
@@ -123,7 +124,7 @@ $execute {
                 if (y == 2 && x == 0) { start.x += pad.x; start.y = end.y - pad.y - size.y; end.x = start.x + size.x; end.y = start.y + size.y; }
                 if (y == 2 && x == 1) { start.x += (end.x - start.x) / 2.0f - size.x / 2.0f; start.y = end.y - pad.y - size.y; end.x = start.x + size.x; end.y = start.y + size.y; }
                 if (y == 2 && x == 2) { start.x += (end.x - start.x) - pad.x - size.x; start.y = end.y - pad.y - size.y; end.x = start.x + size.x; end.y = start.y + size.y; }
-                drawList->AddRectFilled(start, end, ImGui::GetColorU32(ImGuiCol_Text));
+                drawList->AddRectFilled(start, end, ImColor(26, 26, 73));
             }
         }
 
@@ -143,22 +144,22 @@ $execute {
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             ImGui::ColorEdit4("##Color", g_newLabelColor);
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-            ImGui::DragFloat("##Size", &g_newLabelSize, 0.1f, 0.1f, 4.0f, "Size: %.1f");
+            ImGuiH::DragFloat("##Size", &g_newLabelSize, 0.1f, 0.1f, 4.0f, "Size: %.1f");
             ImGui::Separator();
             for (const auto &[name, value] : g_labelTemplates) {
-                if (ImGui::Button(name, ImVec2 { ImGui::GetContentRegionAvail().x, 0 })) {
+                if (ImGuiH::Button(name, ImVec2 { ImGui::GetContentRegionAvail().x, 0 })) {
                     GDH::Labels::labels[g_popupCorner].push_back(GDH::Labels::Label(value, g_newLabelColor, g_newLabelSize));
                     ImGui::CloseCurrentPopup();
                 }
             }
-            if (ImGui::Button("Spacing", ImVec2 { ImGui::GetContentRegionAvail().x, 0.f })) {
+            if (ImGuiH::Button("Spacing", ImVec2 { ImGui::GetContentRegionAvail().x, 0.f })) {
                 GDH::Labels::labels[g_popupCorner].push_back(GDH::Labels::Label(g_newLabelSize));
                 ImGui::CloseCurrentPopup();
             }
 
             ImGui::Separator();
 
-            if (ImGui::Button("Close", ImVec2 { 240.f, 0.f })) {
+            if (ImGuiH::Button("Close", ImVec2 { 240.f, 0.f })) {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
@@ -169,9 +170,8 @@ $execute {
             g_editPopup = false;
         }
 
-        ImGui::SetNextWindowSize(ImVec2 { 300, 180 });
         if (ImGui::BeginPopup("Editing the label")) {
-            ImGui::Checkbox("Enabled", &(GDH::Labels::labels[g_popupCorner][g_popupId].enabled));
+            ImGuiH::Checkbox("Enabled", &(GDH::Labels::labels[g_popupCorner][g_popupId].enabled));
             if (!GDH::Labels::labels[g_popupCorner][g_popupId].enabled) ImGui::BeginDisabled(true);
             std::map<GDH::Labels::LabelType, const char *> types = {
                 {GDH::Labels::LabelType::Text, "Text"},
@@ -188,26 +188,26 @@ $execute {
             if (GDH::Labels::labels[g_popupCorner][g_popupId].type == GDH::Labels::LabelType::Text) {
                 ImGui::InputText("Label Text", &(GDH::Labels::labels[g_popupCorner][g_popupId].text));
                 ImGui::ColorEdit4("Color", GDH::Labels::labels[g_popupCorner][g_popupId].color);
-                ImGui::Checkbox("Rainbow", &(GDH::Labels::labels[g_popupCorner][g_popupId].rainbow));
-                ImGui::DragFloat("Size", &(GDH::Labels::labels[g_popupCorner][g_popupId].size), 0.1f, 0.1f, 4.0f);
+                ImGuiH::Checkbox("Rainbow", &(GDH::Labels::labels[g_popupCorner][g_popupId].rainbow));
+                ImGuiH::DragFloat("Size", &(GDH::Labels::labels[g_popupCorner][g_popupId].size), 0.1f, 0.1f, 4.0f);
             } else if (GDH::Labels::labels[g_popupCorner][g_popupId].type == GDH::Labels::LabelType::Spacing) {
-                ImGui::DragFloat("Spacing", &(GDH::Labels::labels[g_popupCorner][g_popupId].size), 1.0f, 1.0f, 256.0f, "%.1fpx");
+                ImGuiH::DragFloat("##Spacing", &(GDH::Labels::labels[g_popupCorner][g_popupId].size), 1.0f, 1.0f, 256.0f, "Spacing: %.1fpx");
             }
             if (!GDH::Labels::labels[g_popupCorner][g_popupId].enabled) ImGui::EndDisabled();
-            if (ImGui::Button("Delete")) {
+            if (ImGuiH::Button("Delete")) {
                 GDH::Labels::labels[g_popupCorner].erase(std::next(GDH::Labels::labels[g_popupCorner].begin(), g_popupId));
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SameLine();
             ImGui::BeginDisabled(g_popupId == 0);
-            if (ImGui::Button("Move up")) {
+            if (ImGuiH::Button("Move up")) {
                 std::iter_swap(std::next(GDH::Labels::labels[g_popupCorner].begin(), g_popupId - 1), std::next(GDH::Labels::labels[g_popupCorner].begin(), g_popupId));
                 g_popupId--;
             }
             ImGui::EndDisabled();
             ImGui::SameLine();
             ImGui::BeginDisabled(g_popupId == GDH::Labels::labels[g_popupCorner].size() - 1);
-            if (ImGui::Button("Move down")) {
+            if (ImGuiH::Button("Move down")) {
                 std::iter_swap(std::next(GDH::Labels::labels[g_popupCorner].begin(), g_popupId), std::next(GDH::Labels::labels[g_popupCorner].begin(), g_popupId + 1));
                 g_popupId++;
             }
