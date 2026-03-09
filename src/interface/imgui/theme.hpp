@@ -1,34 +1,48 @@
 #include <imgui.h>
 
 static void ApplyGuiColors(bool invert) {
-
     auto* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_Text] = ImColor(225, 225, 225, 225).Value;
     colors[ImGuiCol_WindowBg] = ImColor(26, 26, 73, 250).Value;
     colors[ImGuiCol_Border] = ImColor(64, 64, 64).Value;
+
     colors[ImGuiCol_TitleBg] = ImColor(46, 46, 99).Value;
     colors[ImGuiCol_TitleBgActive] = colors[ImGuiCol_TitleBg];
     colors[ImGuiCol_TitleBgCollapsed] = colors[ImGuiCol_TitleBg];
-    colors[ImGuiCol_ScrollbarBg] = colors[ImGuiCol_WindowBg];
-    colors[ImGuiCol_FrameBg] = ImColor(52, 52, 52).Value;
-    colors[ImGuiCol_FrameBgHovered] = ImColor(72, 72, 72).Value;
-    colors[ImGuiCol_FrameBgActive] = ImColor(90, 90, 90).Value;
-    colors[ImGuiCol_ResizeGrip] = ImColor(58, 58, 58).Value;
-    colors[ImGuiCol_ResizeGripHovered] = ImColor(77, 77, 77).Value;
-    colors[ImGuiCol_ResizeGripActive] = ImColor(94, 94, 94).Value;
+
+    colors[ImGuiCol_ScrollbarBg] = ImColor(26, 26, 73, 0).Value;
+
+    colors[ImGuiCol_FrameBg] = ImColor(71, 71, 131).Value;
+    colors[ImGuiCol_FrameBgHovered] = ImColor(104, 104, 191).Value;
+    colors[ImGuiCol_FrameBgActive] = ImColor(55, 55, 110).Value;
+
+    colors[ImGuiCol_ResizeGrip] = ImColor(71, 71, 131).Value;
+    colors[ImGuiCol_ResizeGripHovered] = ImColor(104, 104, 191).Value;
+    colors[ImGuiCol_ResizeGripActive] = ImColor(213, 196, 255).Value;
+
     colors[ImGuiCol_PopupBg] = colors[ImGuiCol_WindowBg];
-    colors[ImGuiCol_Header] = ImColor(50, 50, 52).Value;
-    colors[ImGuiCol_HeaderHovered] = ImColor(70, 70, 72).Value;
-    colors[ImGuiCol_HeaderActive] = ImColor(88, 88, 90).Value;
+    colors[ImGuiCol_ModalWindowDimBg] = ImColor(0, 0, 0, 127).Value;
+
+    colors[ImGuiCol_Button] = ImColor(71, 71, 131).Value;
+    colors[ImGuiCol_ButtonHovered] = ImColor(104, 104, 191).Value;
+    colors[ImGuiCol_ButtonActive] = ImColor(55, 55, 110).Value;
+
+    colors[ImGuiCol_Header] = ImColor(71, 71, 131).Value;
+    colors[ImGuiCol_HeaderHovered] = ImColor(104, 104, 191).Value;
+    colors[ImGuiCol_HeaderActive] = ImColor(55, 55, 110).Value;
+
     colors[ImGuiCol_Tab] = ImColor(50, 50, 52).Value;
     colors[ImGuiCol_TabHovered] = ImColor(70, 70, 72).Value;
     colors[ImGuiCol_TabActive] = ImColor(88, 88, 90).Value;
-    colors[ImGuiCol_ModalWindowDimBg] = ImColor(0, 0, 0, 127).Value;
+
     colors[ImGuiCol_TableHeaderBg] = ImColor(60, 60, 60).Value;
     colors[ImGuiCol_TableBorderStrong] = ImColor(80, 80, 80).Value;
     colors[ImGuiCol_TableBorderLight] = ImColor(60, 60, 60).Value;
+
     colors[ImGuiCol_TableRowBg] = ImColor(30, 30, 30).Value;
     colors[ImGuiCol_TableRowBgAlt] = ImColor(35, 35, 35).Value;
+
+    colors[ImGuiCol_Separator] = ImColor(104, 104, 191).Value;
 }
 
 static void ApplyStyle(float scale) {

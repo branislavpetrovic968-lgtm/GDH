@@ -355,4 +355,54 @@ namespace ImGuiH {
         return changed;
     }
 
+    bool ArrowButton(const char* str_id, ImGuiDir dir)
+    {
+        struct ArrowState { float th, tHeld; };
+        static std::unordered_map<ImGuiID, ArrowState> s_states;
+
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+        if (window->SkipItems) return false;
+
+        ImGuiContext& g = *GImGui;
+        const ImGuiStyle& style = g.Style;
+        const ImGuiIO& io    = g.IO;
+        const float alpha = style.Alpha;
+
+        const ImGuiID id = window->GetID(str_id);
+        ArrowState& st = s_states.emplace(id, ArrowState{ 0.f, 0.f }).first->second;
+
+        auto Lerp = [&](float& val, float tgt, float spd) {
+            val += (tgt - val) * ImMin(1.f, io.DeltaTime * spd);
+            if (ImAbs(val - tgt) < 0.004f) val = tgt; else ImGui::MarkItemEdited(id);
+        };
+
+        const ImVec4 col_bg_idle = ImColor(213, 196, 255).Value;
+        const ImVec4 col_bg_hov = ImColor(228, 215, 255).Value;
+        const ImVec4 col_bg_held = ImColor(185, 165, 240).Value;
+
+        const ImVec4 col_arr_idle = ImColor(26, 26, 73).Value;
+        const ImVec4 col_arr_hov = ImColor(36, 36, 90).Value;
+        const ImVec4 col_arr_held = ImColor(18, 18, 55).Value;
+
+        const ImVec4 bg_now  = LerpC(LerpC(col_bg_idle, col_bg_hov,  st.th), col_bg_held,  st.tHeld);
+        const ImVec4 arr_now = LerpC(LerpC(col_arr_idle, col_arr_hov, st.th), col_arr_held, st.tHeld);
+
+        ImGui::PushStyleColor(ImGuiCol_Button, bg_now);
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, bg_now);
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, bg_now);
+        ImGui::PushStyleColor(ImGuiCol_Text, arr_now);
+
+        const bool pressed = ImGui::ArrowButton(str_id, dir);
+
+        ImGui::PopStyleColor(4);
+
+        const bool is_hov = ImGui::IsItemHovered();
+        const bool is_active = ImGui::IsItemActive();
+
+        Lerp(st.th, (is_hov || is_active) ? 1.f : 0.f,  9.f);
+        Lerp(st.tHeld, is_active ? 1.f : 0.f, 18.f);
+
+        return pressed;
+    }
+
 } // namespace ImGuiH

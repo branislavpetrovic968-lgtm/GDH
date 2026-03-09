@@ -10,4 +10,6 @@ namespace ImGuiH {
 
     bool DragInt(const char* label, int* v, float speed = 1.f, int v_min = 0,
         int v_max = 0, const char* fmt = "%d");
+
+    bool ArrowButton(const char* str_id, ImGuiDir dir);
 }

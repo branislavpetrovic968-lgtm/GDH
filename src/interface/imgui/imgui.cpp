@@ -130,7 +130,7 @@ void RenderMain() {
 
             if (hack.avaibleCustomWindowImGui()) {
                 ImGui::SameLine();
-                if (ImGui::ArrowButton(fmt::format("{} Settings", hackName).c_str(), ImGuiDir_Right)) {
+                if (ImGuiH::ArrowButton(fmt::format("{} Settings", hackName).c_str(), ImGuiDir_Right)) {
                     ImGui::OpenPopup(fmt::format("{} Settings##Popup", hackName).c_str());
                 }
 

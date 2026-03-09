@@ -145,7 +145,11 @@ $execute {
             ImGui::ColorEdit4("##Color", g_newLabelColor);
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             ImGuiH::DragFloat("##Size", &g_newLabelSize, 0.1f, 0.1f, 4.0f, "Size: %.1f");
+            
+            ImGui::Spacing();
             ImGui::Separator();
+            ImGui::Spacing();
+
             for (const auto &[name, value] : g_labelTemplates) {
                 if (ImGuiH::Button(name, ImVec2 { ImGui::GetContentRegionAvail().x, 0 })) {
                     GDH::Labels::labels[g_popupCorner].push_back(GDH::Labels::Label(value, g_newLabelColor, g_newLabelSize));
@@ -157,7 +161,9 @@ $execute {
                 ImGui::CloseCurrentPopup();
             }
 
+            ImGui::Spacing();
             ImGui::Separator();
+            ImGui::Spacing();
 
             if (ImGuiH::Button("Close", ImVec2 { 240.f, 0.f })) {
                 ImGui::CloseCurrentPopup();
