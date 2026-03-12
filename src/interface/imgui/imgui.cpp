@@ -21,79 +21,126 @@ using namespace geode::prelude;
 #include "../../core/utils.hpp"
 #include "../../core/labels.hpp"
 
-static bool m_show = false;
-static bool m_isAnimating = false;
-static bool m_isFadingIn = false;
-static float m_animTime = 0.0f;
+static bool g_show = false;
+static bool g_isAnimating = false;
+static bool g_isFadingIn = false;
+static float g_animTime = 0.0f;
 
-static bool m_inited = false;
+static bool g_inited = false;
+static std::string g_search_text = "";
 
-static std::vector<std::vector<std::string>> m_layout = {
+static std::vector<std::vector<std::string>> g_layout = {
     {"Core", "Bypass"},
     {"Cosmetic"},
-    {"Level", "Framerate"},
+    {"Level", "Framerate", "GDH Settings"},
     {"Creator", "Labels"},
     {"Shortcuts"}
 };
 
-static std::vector<GDH::Layout::WindowInfo> m_fixedWindowSizes = {
+static std::vector<GDH::Layout::WindowInfo> g_fixedWindowSizes = {
     {"Labels", 240.f, 350.f},
     {"Shortcuts", 180.f, 0.f}
 };
 
 void onOpen() {
-    GDH::Utils::updateCursorState(m_show);
+    GDH::Utils::updateCursorState(g_show);
 }
 
 void onClose() {
-    GDH::Utils::updateCursorState(m_show);
+    GDH::Utils::updateCursorState(g_show);
     Config::get().save(fileDataPath);
     GDH::Labels::save();
+    g_search_text = "";
 }
 
 void animateAlpha()
 {
-    if (!m_isAnimating)
+    if (!g_isAnimating)
         return;
 
     ImGuiStyle& style = ImGui::GetStyle();
     float deltaTime   = ImGui::GetIO().DeltaTime;
 
     float duration = 100 / 1000.0f;
-    m_animTime += deltaTime;
+    g_animTime += deltaTime;
 
-    float t = m_animTime / duration;
+    float t = g_animTime / duration;
     if (t >= 1.0f)
     {
-        style.Alpha = m_isFadingIn ? 1.0f : 0.0f;
-        m_isAnimating = false;
+        style.Alpha = g_isFadingIn ? 1.0f : 0.0f;
+        g_isAnimating = false;
 
-        if (!m_isFadingIn)
+        if (!g_isFadingIn)
         {
-            m_show = false;
+            g_show = false;
             onClose();
         }
 
         return;
     }
 
-    style.Alpha = m_isFadingIn ? t : 1.0f - t;
+    style.Alpha = g_isFadingIn ? t : 1.0f - t;
     style.Alpha = GDH::Utils::easeInOut(style.Alpha);
+}
+
+void PushAnimateFoundColor(const std::string& hackName) {
+    static std::unordered_map<std::string, float> anim;
+
+    std::string search_name = hackName;
+    std::string search_item = g_search_text;
+
+    std::transform(search_item.begin(), search_item.end(), search_item.begin(), ::tolower);
+    std::transform(search_name.begin(), search_name.end(), search_name.begin(), ::tolower);
+
+    bool founded = search_item.empty() ? true : (search_name.find(search_item) != std::string::npos);
+
+    float& t = anim[hackName];
+
+    float speed = 16.0f;
+    float target = founded ? 1.0f : 0.0f;
+
+    t = ImLerp(t, target, ImGui::GetIO().DeltaTime * speed);
+
+    ImVec4 normal = ImGui::GetStyle().Colors[ImGuiCol_Text];
+    ImVec4 faded  = ImColor(100, 100, 100);
+
+    ImVec4 col = ImLerp(faded, normal, t);
+
+    ImGui::PushStyleColor(ImGuiCol_Text, col);
 }
 
 void ToggleUI()
 {
-    if (m_isAnimating)
+    if (g_isAnimating)
         return;
 
-    m_isFadingIn = !m_show;
-    m_isAnimating = true;
-    m_animTime = 0.0f;
+    g_isFadingIn = !g_show;
+    g_isAnimating = true;
+    g_animTime = 0.0f;
 
-    if (m_isFadingIn) {
-        m_show = true;
+    if (g_isFadingIn) {
+        g_show = true;
         onOpen();
     }
+}
+
+void SettingsRender() {
+    auto& layoutManager = GDH::Layout::Manager::get();
+
+    std::string windowName = "GDH Settings";
+    layoutManager.applyWindowTransform(windowName);
+
+    ImGui::Begin("GDH Settings");
+
+    ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+    ImGui::InputTextWithHint("##Search", "Search:", &g_search_text);
+
+    if (layoutManager.isCollecting()) {
+        auto size = ImGui::GetWindowSize();
+        layoutManager.addWindowInfo(windowName, size.x, size.y);
+    }
+
+    ImGui::End();
 }
 
 void RenderMain() {
@@ -106,8 +153,9 @@ void RenderMain() {
     animateAlpha();
     popup.render();
 
-    if (!m_show) return;
+    if (!g_show) return;
 
+    SettingsRender();
     for (auto& window : windows) {
         std::string windowName = window.getName();
         if (windowName == "Invisible") continue;
@@ -125,9 +173,13 @@ void RenderMain() {
             bool state = config.get(id, false);
 
             // if (ImGui::Checkbox(hackName.c_str(), &state)) {
+
+
+            PushAnimateFoundColor(hackName);
             if (ImGuiH::Checkbox(hackName.c_str(), &state)) {
                 hack.toggle();
             }
+            ImGui::PopStyleColor();
 
             ImGuiH::Tooltip(hack.getDesc().c_str(), !hack.getDesc().empty() && ImGui::IsItemHovered());
 
@@ -163,13 +215,13 @@ void RenderMain() {
     else if (layoutManager.isApplying())
         layoutManager.finishApplying();
     
-    static bool m_inited = false;
-    if (!m_inited) {
-        layoutManager.setLayout(m_layout);
-        layoutManager.setFixedWindowSizeInfo(m_fixedWindowSizes);
+    static bool g_inited = false;
+    if (!g_inited) {
+        layoutManager.setLayout(g_layout);
+        layoutManager.setFixedWindowSizeInfo(g_fixedWindowSizes);
 
         layoutManager.startCollecting();
-        m_inited = true;
+        g_inited = true;
     }
 }
 
