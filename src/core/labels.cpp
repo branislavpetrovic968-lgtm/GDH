@@ -1,6 +1,12 @@
 
 #include "labels.hpp"
 #include "utils.hpp"
+#include "config.hpp"
+
+#include <string_view>
+#include <sstream>
+
+#include <json.hpp>
 
 #include <Geode/modify/PlayLayer.hpp>
 
@@ -12,6 +18,10 @@ std::unordered_map<Corner, std::vector<Label>> GDH::Labels::labels;
 
 std::chrono::steady_clock::time_point g_sessionStart;
 float g_rainbowHue = 0.0f;
+
+$execute {
+    load();
+}
 
 void renderVariable(geode::utils::StringBuffer<> &stream, std::string_view var_name) {
     PlayLayer *pl = PlayLayer::get();
@@ -72,6 +82,90 @@ std::string GDH::Labels::Label::render() const {
         }
     }
     return stream.str();
+}
+
+void GDH::Labels::save(void) {
+    nlohmann::json obj;
+    obj["cornerPadding"] = cornerPadding;
+    obj["midPadding"] = midPadding;
+    for (const auto &[corner, labelsCorner] : labels) {
+        std::string cornerIndice = corner == Corner::Top_Left ? "labelsTL" :
+            corner == Corner::Top_Center ? "labelsTC" :
+            corner == Corner::Top_Right ? "labelsTR" :
+            corner == Corner::Center_Left ? "labelsCL" :
+            corner == Corner::Center_Center ? "labelsCC" :
+            corner == Corner::Center_Right ? "labelsCR" :
+            corner == Corner::Bottom_Left ? "labelsBL" :
+            corner == Corner::Bottom_Center ? "labelsBC" : "labelsBR";
+        for (const auto &label : labelsCorner) {
+            nlohmann::json labelObj;
+            labelObj["enabled"] = label.enabled;
+            labelObj["type"] = label.type;
+            switch (label.type) {
+            case LabelType::Text: {
+                labelObj["text"] = label.text;
+                labelObj["color"] = { label.color[0], label.color[1], label.color[2], label.color[3] };
+                labelObj["rainbow"] = label.rainbow;
+                labelObj["size"] = label.size;
+            } break;
+            case LabelType::Spacing: {
+                labelObj["spacing"] = label.size;
+            } break;
+                // This should warn if you don't add a case here?
+                // At least any sane compiler would (MSVC, looking at you)
+            }
+            obj[cornerIndice].push_back(labelObj);
+        }
+    }
+    std::ofstream outFile(labelsDataPath);
+    if (outFile.is_open()) {
+        outFile << obj.dump(4);
+        outFile.close();
+    }
+}
+
+void GDH::Labels::load(void) {
+    std::ifstream ifs(labelsDataPath);
+    if (!ifs.is_open()) return;
+
+    labels[Corner::Top_Left] = std::vector<Label> {};
+    labels[Corner::Top_Center] = std::vector<Label> {};
+    labels[Corner::Top_Right] = std::vector<Label> {};
+    labels[Corner::Center_Left] = std::vector<Label> {};
+    labels[Corner::Center_Center] = std::vector<Label> {};
+    labels[Corner::Center_Right] = std::vector<Label> {};
+    labels[Corner::Bottom_Left] = std::vector<Label> {};
+    labels[Corner::Bottom_Center] = std::vector<Label> {};
+    labels[Corner::Bottom_Right] = std::vector<Label> {};
+    
+    nlohmann::json obj = nlohmann::json::parse(ifs);
+    ifs.close();
+
+    cornerPadding = obj["cornerPadding"];
+    midPadding = obj["midPadding"];
+
+    for (auto &[corner, labelsCorner] : labels) {
+        std::string cornerIndice = corner == Corner::Top_Left ? "labelsTL" :
+            corner == Corner::Top_Center ? "labelsTC" :
+            corner == Corner::Top_Right ? "labelsTR" :
+            corner == Corner::Center_Left ? "labelsCL" :
+            corner == Corner::Center_Center ? "labelsCC" :
+            corner == Corner::Center_Right ? "labelsCR" :
+            corner == Corner::Bottom_Left ? "labelsBL" :
+            corner == Corner::Bottom_Center ? "labelsBC" : "labelsBR";
+
+        for (const auto &i : obj[cornerIndice]) {
+            switch (i["type"].get<LabelType>()) {
+            case LabelType::Text: {
+                float color[4] = { i["color"][0], i["color"][1], i["color"][2], i["color"][3] };
+                labelsCorner.push_back(Label(i["text"], color, i["size"], i["rainbow"]));
+            } break;
+            case LabelType::Spacing: {
+                labelsCorner.push_back(Label(i["spacing"]));
+            } break;
+            }
+        }
+    }
 }
 
 class $modify(LabelsPlayLayer, PlayLayer) {

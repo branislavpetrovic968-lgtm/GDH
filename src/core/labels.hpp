@@ -57,5 +57,8 @@ namespace GDH {
 
         extern float cornerPadding, midPadding;
         extern std::unordered_map<Corner, std::vector<Label>> labels;
-    }
+
+        void save(void);
+        void load(void);
+    } // namespace Labels
 } // namespace GDH

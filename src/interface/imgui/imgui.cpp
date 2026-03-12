@@ -1,3 +1,4 @@
+#include <Geode/Geode.hpp>
 #ifdef GEODE_IS_WINDOWS
 #include <imgui-cocos.hpp>
 #include <imgui_internal.h>
@@ -18,6 +19,7 @@ using namespace geode::prelude;
 #include "../../core/gui.hpp"
 #include "../../core/config.hpp"
 #include "../../core/utils.hpp"
+#include "../../core/labels.hpp"
 
 static bool m_show = false;
 static bool m_isAnimating = false;
@@ -46,6 +48,7 @@ void onOpen() {
 void onClose() {
     GDH::Utils::updateCursorState(m_show);
     Config::get().save(fileDataPath);
+    GDH::Labels::save();
 }
 
 void animateAlpha()
