@@ -284,7 +284,7 @@ namespace ImGuiH {
 
         const ImGuiID id = window->GetID(label);
         DragState& st = s_states.emplace(id, DragState{ 0.f, 0.f }).first->second;
-
+        
         const ImVec2 pos = window->DC.CursorPos;
         const float  drag_w = ImGui::CalcItemWidth();
         const ImRect drag_bb = { pos, { pos.x + drag_w, pos.y + ImGui::GetFrameHeight() } };
@@ -294,7 +294,7 @@ namespace ImGuiH {
         {
             *v += io.MouseWheel > 0.f ? speed : -speed;
             if (v_min != v_max) *v = ImClamp(*v, v_min, v_max);
-            wheel_changed   = true;
+            wheel_changed = true;
             g.IO.MouseWheel = 0.f;
         }
 
@@ -305,15 +305,15 @@ namespace ImGuiH {
         Lerp(st.th, st.th, 9.f);
         Lerp(st.tHeld, st.tHeld, 18.f);
 
-        const ImVec4 col_bg_idle = ImColor(71, 71, 131).Value;
-        const ImVec4 col_bg_hov = ImColor(104, 104, 191).Value;
+        const ImVec4 col_bg_idle = ImColor(71,  71,  131).Value;
+        const ImVec4 col_bg_hov  = ImColor(104, 104, 191).Value;
         const ImVec4 col_bg_held = ImColor(213, 196, 255).Value;
-        const ImVec4 col_fill_idle = ImColor(99, 90, 180).Value;
+        const ImVec4 col_fill_idle = ImColor(99,  90,  180).Value;
         const ImVec4 col_fill_hov = ImColor(133, 120, 220).Value;
         const ImVec4 col_fill_held = ImColor(185, 165, 240).Value;
         const ImVec4 col_txt_idle = ImColor(199, 212, 250).Value;
         const ImVec4 col_txt_hov = ImColor(224, 235, 255).Value;
-        const ImVec4 col_txt_held = ImColor(26, 26, 73).Value;
+        const ImVec4 col_txt_held = ImColor(26,  26,  73 ).Value;
 
         const ImVec4 bg_now = LerpC(LerpC(col_bg_idle, col_bg_hov, st.th), col_bg_held, st.tHeld);
         const ImVec4 fill_now = LerpC(LerpC(col_fill_idle, col_fill_hov, st.th), col_fill_held, st.tHeld);
@@ -327,17 +327,33 @@ namespace ImGuiH {
         ImGui::PushStyleColor(ImGuiCol_Text, txt_now);
 
         ImGui::PushItemWidth(drag_w);
-        const bool native_changed = ImGui::DragFloat(label, v, speed, v_min, v_max, fmt);
+        const bool native_changed = ImGui::DragFloat(
+            fmt::format("##DragWidget_{}", label).c_str(),
+            v, speed, v_min, v_max,
+            fmt
+        );
         ImGui::PopItemWidth();
-
         ImGui::PopStyleColor(6);
+
+        const char* label_display = label;
+        if (label_display[0] == '#' && label_display[1] == '#')
+            label_display = "";
+
+        if (label_display[0] != '\0')
+        {
+            const ImVec2 label_pos = {
+                drag_bb.Max.x + style.ItemInnerSpacing.x,
+                drag_bb.Min.y + style.FramePadding.y
+            };
+            ImGui::RenderText(label_pos, label_display);
+        }
 
         const bool is_hov = ImGui::IsItemHovered();
         const bool is_active = ImGui::IsItemActive();
         const bool is_typing = ImGui::TempInputIsActive(id);
         const bool held = is_active && !is_typing;
 
-        Lerp(st.th, (is_hov || is_active) ? 1.f : 0.f,  9.f);
+        Lerp(st.th, (is_hov || is_active) ? 1.f : 0.f, 9.f);
         Lerp(st.tHeld, held ? 1.f : 0.f, 18.f);
 
         if (st.th != (is_hov || is_active ? 1.f : 0.f) ||
