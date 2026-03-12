@@ -90,6 +90,7 @@ $execute {
         ImVec2 pos = ImGui::GetCursorScreenPos();
         ImDrawList *drawList = ImGui::GetWindowDrawList();
         ImGuiStyle &style = ImGui::GetStyle();
+        int alpha = static_cast<int>(style.Alpha * 255);
 
         float width = (ImGui::GetContentRegionAvail().x - style.ItemSpacing.x*2)/3;
         for (int y = 0; y < 3; y++) {
@@ -108,11 +109,11 @@ $execute {
                 ImVec2 end(pos.x + width*(1+x) + style.ItemSpacing.x*x, pos.y + ImGui::GetFrameHeight()*(1+y) + style.ItemSpacing.y*y);
                 ImGui::InvisibleButton(fmt::format("This thing but {}", y * 3 + x).c_str(), ImVec2 { end.x - start.x, end.y - start.y });
                 if (x < 2) ImGui::SameLine();
-                ImU32 color = ImColor(213, 196, 255);
+                auto color = ImColor(213, 196, 255, alpha);
                 if (ImGui::IsItemClicked() || corner == g_editCorner) {
-                    color = ImColor(228, 215, 255);
+                    color = ImColor(228, 215, 255, alpha);
                     g_editCorner = corner;
-                } else if (ImGui::IsItemHovered()) color = ImColor(185, 165, 240);
+                } else if (ImGui::IsItemHovered()) color = ImColor(185, 165, 240, alpha);
                 drawList->AddRectFilled(start, end, color, style.FrameRounding);
                 ImVec2 pad = style.ItemInnerSpacing, size = { style.ItemInnerSpacing.x * 3.0f, style.ItemInnerSpacing.y * 0.5f };
                 if (y == 0 && x == 0) { start.x += pad.x; start.y += pad.y; end.x = start.x + size.x; end.y = start.y + size.y; }
@@ -124,7 +125,7 @@ $execute {
                 if (y == 2 && x == 0) { start.x += pad.x; start.y = end.y - pad.y - size.y; end.x = start.x + size.x; end.y = start.y + size.y; }
                 if (y == 2 && x == 1) { start.x += (end.x - start.x) / 2.0f - size.x / 2.0f; start.y = end.y - pad.y - size.y; end.x = start.x + size.x; end.y = start.y + size.y; }
                 if (y == 2 && x == 2) { start.x += (end.x - start.x) - pad.x - size.x; start.y = end.y - pad.y - size.y; end.x = start.x + size.x; end.y = start.y + size.y; }
-                drawList->AddRectFilled(start, end, ImColor(26, 26, 73));
+                drawList->AddRectFilled(start, end, ImColor(26, 26, 73, alpha));
             }
         }
 
