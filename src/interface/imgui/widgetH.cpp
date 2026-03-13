@@ -321,7 +321,7 @@ namespace ImGuiH {
 
         const ImGuiID id = window->GetID(label);
         DragState& st = s_states.emplace(id, DragState{ 0.f, 0.f }).first->second;
-
+        
         const ImVec2 pos = window->DC.CursorPos;
         const float  drag_w = ImGui::CalcItemWidth();
         const ImRect drag_bb = { pos, { pos.x + drag_w, pos.y + ImGui::GetFrameHeight() } };
@@ -331,7 +331,7 @@ namespace ImGuiH {
         {
             *v += io.MouseWheel > 0.f ? speed : -speed;
             if (v_min != v_max) *v = ImClamp(*v, v_min, v_max);
-            wheel_changed   = true;
+            wheel_changed = true;
             g.IO.MouseWheel = 0.f;
         }
 
@@ -364,17 +364,33 @@ namespace ImGuiH {
         ImGui::PushStyleColor(ImGuiCol_Text, txt_now);
 
         ImGui::PushItemWidth(drag_w);
-        const bool native_changed = ImGui::DragFloat(label, v, speed, v_min, v_max, fmt);
+        const bool native_changed = ImGui::DragFloat(
+            fmt::format("##DragWidget_{}", label).c_str(),
+            v, speed, v_min, v_max,
+            fmt
+        );
         ImGui::PopItemWidth();
-
         ImGui::PopStyleColor(6);
+
+        const char* label_display = label;
+        if (label_display[0] == '#' && label_display[1] == '#')
+            label_display = "";
+
+        if (label_display[0] != '\0')
+        {
+            const ImVec2 label_pos = {
+                drag_bb.Max.x + style.ItemInnerSpacing.x,
+                drag_bb.Min.y + style.FramePadding.y
+            };
+            ImGui::RenderText(label_pos, label_display);
+        }
 
         const bool is_hov = ImGui::IsItemHovered();
         const bool is_active = ImGui::IsItemActive();
         const bool is_typing = ImGui::TempInputIsActive(id);
         const bool held = is_active && !is_typing;
 
-        Lerp(st.th, (is_hov || is_active) ? 1.f : 0.f,  9.f);
+        Lerp(st.th, (is_hov || is_active) ? 1.f : 0.f, 9.f);
         Lerp(st.tHeld, held ? 1.f : 0.f, 18.f);
 
         if (st.th != (is_hov || is_active ? 1.f : 0.f) ||
