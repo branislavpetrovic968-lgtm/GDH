@@ -1,6 +1,44 @@
 #include <imgui-cocos.hpp>
 
 namespace ImGuiH {
+    enum Colors {
+        Button_Background,
+        Button_Background_Hover,
+        Button_Background_Active,
+        Button_Foreground,
+        Button_Foreground_Hover,
+        Button_Foreground_Active,
+        Button_Border,
+        Checkbox_Background_Off,
+        Checkbox_Background_Off_Hover,
+        Checkbox_Background_Off_Active,
+        Checkbox_Background_On,
+        Checkbox_Background_On_Hover,
+        Checkbox_Background_On_Active,
+        Checkbox_Knob_Off,
+        Checkbox_Knob_Off_Hover,
+        Checkbox_Knob_Off_Active,
+        Checkbox_Knob_On,
+        Checkbox_Knob_On_Hover,
+        Checkbox_Knob_On_Active,
+        Checkbox_Border,
+        Tooltip_Background,
+        Tooltip_Foreground,
+        Tooltip_Border,
+        Drag_Background,
+        Drag_Background_Hover,
+        Drag_Background_Active,
+        Drag_Middleground,
+        Drag_Middleground_Hover,
+        Drag_Middleground_Active,
+        Drag_Foreground,
+        Drag_Foreground_Hover,
+        Drag_Foreground_Active,
+        Colors_Count,
+    };
+
+    extern std::map<Colors, ImVec4> colors;
+    
     bool Button(const char* label, const ImVec2& size_arg = ImVec2(0, 0));
     bool Checkbox(const char* label, bool* v);
     void Tooltip(const char* text, bool hovered = true);
