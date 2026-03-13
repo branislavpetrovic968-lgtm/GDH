@@ -1,11 +1,11 @@
 #include "utils.hpp"
 #include <algorithm>
 #include <cctype>
+#include <cmath>
 
 #include <fmt/core.h>
 #include <Geode/Geode.hpp>
 #include <Geode/binding/FLAlertLayer.hpp>
-#include <imgui.h>
 
 std::string GDH::Utils::String::toLowerCase(const std::string& input) {
     std::string result = input;
@@ -141,7 +141,19 @@ float GDH::Utils::easeInOut(float x) {
 }
 
 void GDH::Utils::hsvToRgb(float h, float s, float v, float &r, float &g, float &b) {
-    ImGui::ColorConvertHSVtoRGB(h, s, v, r, g, b);
+    float chroma = v * s;
+    h *= 360.0f;
+    float h_prime = h / 60.0f;
+    float x = chroma * (1.0f - std::fabs(std::fmod(h_prime, 2.0f) - 1.0f));
+    float r1, g1, b1;
+    if (0 <= h_prime && h_prime < 1) { r1 = chroma; g1 = x; b1 = 0; }
+    else if (1 <= h_prime && h_prime < 2) { r1 = x; g1 = chroma; b1 = 0; }
+    else if (2 <= h_prime && h_prime < 3) { r1 = 0; g1 = chroma; b1 = x; }
+    else if (3 <= h_prime && h_prime < 4) { r1 = 0; g1 = x; b1 = chroma; }
+    else if (4 <= h_prime && h_prime < 5) { r1 = x; g1 = 0; b1 = chroma; }
+    else if (5 <= h_prime && h_prime < 6) { r1 = chroma; g1 = 0; b1 = x; }
+    float m = v - chroma;
+    r = r1 + m; g = g1 + m; b = b1 + m;
 }
 
 float GDH::Utils::getFps() {
