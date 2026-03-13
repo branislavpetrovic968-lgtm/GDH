@@ -126,6 +126,7 @@ void ToggleUI()
 
 void SettingsRender() {
     auto& layoutManager = GDH::Layout::Manager::get();
+    auto& config = Config::get();
 
     std::string windowName = "GDH Settings";
     layoutManager.applyWindowTransform(windowName);
@@ -134,6 +135,13 @@ void SettingsRender() {
 
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
     ImGui::InputTextWithHint("##Search", "Search:", &g_search_text);
+
+    float hue = config.get<float>("menu-hue", 240.0f);
+    ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+    if (ImGuiH::DragFloat("##Menu Hue", &hue, 1.0f, 0.0f, 360.0f, "Menu Hue: %.1fdeg")) {
+        config.set<float>("menu-hue", hue);
+        ImGuiH::SetMenuHue(hue/360.0f);
+    }
 
     if (layoutManager.isCollecting()) {
         auto size = ImGui::GetWindowSize();
@@ -232,12 +240,14 @@ class $modify(MyMenuLayer, MenuLayer) {
 		static bool inited = false;
         if (!inited) {
             ImGuiCocos::get().setup([] {
+                auto& config = Config::get();
                 ImGuiIO &io = ImGui::GetIO();
-				io.IniFilename = NULL;
+                io.IniFilename = NULL;
                 ApplyGuiColors(false);
                 ApplyStyle(1.f);
 
                 io.Fonts->AddFontFromMemoryCompressedTTF(roboto_font_data, roboto_font_size, 18.f, nullptr, io.Fonts->GetGlyphRangesCyrillic());
+                ImGuiH::SetMenuHue(config.get<float>("menu-hue", 240.0f)/360.0f);
             }).draw([] {
                 RenderMain();
             });
