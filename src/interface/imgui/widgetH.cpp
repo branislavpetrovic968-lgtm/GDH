@@ -1,4 +1,5 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui.h"
 #include "widgetH.hpp"
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
@@ -100,6 +101,9 @@ namespace ImGuiH {
         SetImGuiColorHSV(ImGuiCol_Button, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
         SetImGuiColorHSV(ImGuiCol_ButtonHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
         SetImGuiColorHSV(ImGuiCol_ButtonActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ScrollbarGrab, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ScrollbarGrabHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ScrollbarGrabActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
         SetImGuiColorHSV(ImGuiCol_Header, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
         SetImGuiColorHSV(ImGuiCol_HeaderHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
         SetImGuiColorHSV(ImGuiCol_HeaderActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
@@ -112,6 +116,7 @@ namespace ImGuiH {
         SetImGuiColorHSV(ImGuiCol_TableRowBg, ImVec4 { hue + (-0.6660f), 0.0000f, 0.1176f, 1.0000f });
         SetImGuiColorHSV(ImGuiCol_TableRowBgAlt, ImVec4 { hue + (-0.6660f), 0.0000f, 0.1373f, 1.0000f });
         SetImGuiColorHSV(ImGuiCol_Separator, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_Border, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
 
         auto *colors = ImGui::GetStyle().Colors;
         colors[ImGuiCol_TitleBgActive] = colors[ImGuiCol_TitleBg];

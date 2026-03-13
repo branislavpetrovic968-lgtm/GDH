@@ -87,50 +87,22 @@ $execute {
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
         ImGuiH::DragFloat("##LabelMidPadDrag", &GDH::Labels::midPadding, 1.0f, 0.0f, 256.0f, "Mid-label Padding: %.1fpx");
 
-        ImVec2 pos = ImGui::GetCursorScreenPos();
-        ImDrawList *drawList = ImGui::GetWindowDrawList();
-        ImGuiStyle &style = ImGui::GetStyle();
-        int alpha = static_cast<int>(style.Alpha * 255);
+        static const char* cornerNames[] = {
+            "Top Left",
+            "Top Center",
+            "Top Right",
+            "Center Left",
+            "Center Center",
+            "Center Right",
+            "Bottom Left",
+            "Bottom Center",
+            "Bottom Right"
+        };
 
-        float width = (ImGui::GetContentRegionAvail().x - style.ItemSpacing.x*2)/3;
-        for (int y = 0; y < 3; y++) {
-            for (int x = 0; x < 3; x++) {
-                GDH::Labels::Corner corner = GDH::Labels::Corner::Top_Left;
-                if (y == 0 && x == 0) corner = GDH::Labels::Corner::Top_Left;
-                if (y == 0 && x == 1) corner = GDH::Labels::Corner::Top_Center;
-                if (y == 0 && x == 2) corner = GDH::Labels::Corner::Top_Right;
-                if (y == 1 && x == 0) corner = GDH::Labels::Corner::Center_Left;
-                if (y == 1 && x == 1) corner = GDH::Labels::Corner::Center_Center;
-                if (y == 1 && x == 2) corner = GDH::Labels::Corner::Center_Right;
-                if (y == 2 && x == 0) corner = GDH::Labels::Corner::Bottom_Left;
-                if (y == 2 && x == 1) corner = GDH::Labels::Corner::Bottom_Center;
-                if (y == 2 && x == 2) corner = GDH::Labels::Corner::Bottom_Right;
-                ImVec2 start(pos.x + width*x + style.ItemSpacing.x*x, pos.y + ImGui::GetFrameHeight()*y + style.ItemSpacing.y*y);
-                ImVec2 end(pos.x + width*(1+x) + style.ItemSpacing.x*x, pos.y + ImGui::GetFrameHeight()*(1+y) + style.ItemSpacing.y*y);
-                ImGui::InvisibleButton(fmt::format("This thing but {}", y * 3 + x).c_str(), ImVec2 { end.x - start.x, end.y - start.y });
-                if (x < 2) ImGui::SameLine();
-                auto color = ImColor(213, 196, 255, alpha);
-                if (ImGui::IsItemClicked() || corner == g_editCorner) {
-                    color = ImColor(228, 215, 255, alpha);
-                    g_editCorner = corner;
-                } else if (ImGui::IsItemHovered()) color = ImColor(185, 165, 240, alpha);
-                drawList->AddRectFilled(start, end, color, style.FrameRounding);
-                ImVec2 pad = style.ItemInnerSpacing, size = { style.ItemInnerSpacing.x * 3.0f, style.ItemInnerSpacing.y * 0.5f };
-                if (y == 0 && x == 0) { start.x += pad.x; start.y += pad.y; end.x = start.x + size.x; end.y = start.y + size.y; }
-                if (y == 0 && x == 1) { start.x += (end.x - start.x) / 2.0f - size.x / 2.0f; start.y += pad.y; end.x = start.x + size.x; end.y = start.y + size.y; }
-                if (y == 0 && x == 2) { start.x += (end.x - start.x) - pad.x - size.x; start.y += pad.y; end.x = start.x + size.x; end.y = start.y + size.y; }
-                if (y == 1 && x == 0) { start.x += pad.x; start.y += (end.y - start.y) / 2.0f - size.y / 2.0f; end.x = start.x + size.x; end.y = start.y + size.y; }
-                if (y == 1 && x == 1) { start.x += (end.x - start.x) / 2.0f - size.x / 2.0f; start.y += (end.y - start.y) / 2.0f - size.y / 2.0f; end.x = start.x + size.x; end.y = start.y + size.y; }
-                if (y == 1 && x == 2) { start.x += (end.x - start.x) - pad.x - size.x; start.y += (end.y - start.y) / 2.0f - size.y / 2.0f; end.x = start.x + size.x; end.y = start.y + size.y; }
-                if (y == 2 && x == 0) { start.x += pad.x; start.y = end.y - pad.y - size.y; end.x = start.x + size.x; end.y = start.y + size.y; }
-                if (y == 2 && x == 1) { start.x += (end.x - start.x) / 2.0f - size.x / 2.0f; start.y = end.y - pad.y - size.y; end.x = start.x + size.x; end.y = start.y + size.y; }
-                if (y == 2 && x == 2) { start.x += (end.x - start.x) - pad.x - size.x; start.y = end.y - pad.y - size.y; end.x = start.x + size.x; end.y = start.y + size.y; }
-                drawList->AddRectFilled(start, end, ImColor(26, 26, 73, alpha));
-            }
-        }
-
-        pos.y += ImGui::GetFrameHeight()*3 + style.ItemSpacing.y*3;
-        ImGui::SetCursorScreenPos(pos);
+        int currentCorner = static_cast<int>(g_editCorner);
+        if (ImGui::Combo("Corner", &currentCorner, cornerNames, IM_ARRAYSIZE(cornerNames)))
+            g_editCorner = static_cast<GDH::Labels::Corner>(currentCorner);
+        
 
         ImGui::Separator();
 
