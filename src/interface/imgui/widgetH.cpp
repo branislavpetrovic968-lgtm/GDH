@@ -87,6 +87,7 @@ namespace ImGuiH {
         SetColorHSV(Color::Drag_Foreground_Hover, ImVec4 { hue + (-0.0585f), 0.1216f, 1.0000f, 1.0000f });
         SetColorHSV(Color::Drag_Foreground_Active, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 1.0000f });;
         SetImGuiColorHSV(ImGuiCol_Text, ImVec4 { hue + (-0.6660f), 0.0000f, 0.8824f, 0.8824f });
+        SetImGuiColorHSV(ImGuiCol_TextDisabled, ImVec4 { hue + (-0.6660f), 0.0000f, 0.8824f, 0.4000f });
         SetImGuiColorHSV(ImGuiCol_WindowBg, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 0.9804f });
         SetImGuiColorHSV(ImGuiCol_Border, ImVec4 { hue + (-0.6660f), 0.0000f, 0.2510f, 1.0000f });
         SetImGuiColorHSV(ImGuiCol_TitleBg, ImVec4 { hue + (0.0007f), 0.5354f, 0.3882f, 1.0000f });

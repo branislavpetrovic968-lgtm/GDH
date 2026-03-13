@@ -52,6 +52,10 @@ bool Layout::Manager::isCollecting() {
     return m_stage == Stage::Collecting;
 }
 
+void Layout::Manager::startApplying() {
+    m_stage = Stage::Applying;
+}
+
 bool Layout::Manager::isApplying() {
     return m_stage == Stage::Applying;
 }
@@ -67,7 +71,7 @@ Layout::WindowInfo* Layout::Manager::getWindowInfo(const std::string& name) {
 }
 
 void Layout::Manager::reset() {
-    m_windows.clear();
+    // m_windows.clear();
     m_stage = Stage::Idle;
 }
 

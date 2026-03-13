@@ -22,7 +22,7 @@ class $modify(FastLevelCompletePlayLayer, PlayLayer) {
 
     void showCompleteEffect() {
         auto& config = Config::get();
-        bool veryFast = config.get<bool>("level.fast_level_complete::veryFast", false);
+        bool veryFast = config.get<bool>("cosmetic.fast_level_complete::veryFast", false);
         runAction(
             cocos2d::CCSequence::create(
                 cocos2d::CCDelayTime::create(0),

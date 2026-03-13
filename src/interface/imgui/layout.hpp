@@ -23,6 +23,7 @@ namespace GDH { namespace Layout {
         void finishCollecting();        
         void addWindowInfo(const std::string& name, float width, float height);        
         
+        void startApplying(); 
         bool isApplying();    
         void finishApplying();   
         

@@ -19,7 +19,7 @@ class $modify(PulseSizePlayLayer, PlayLayer) {
         hack.addHookPtr(self.getHook("PlayLayer::updateVisibility").unwrap());
         hack.setCustomWindowImGui([multiplyKey, noPulseKey, valueKey]() {
             ImGuiWidgetConfig::Checkbox("No Pulse", noPulseKey, false);
-            ImGuiWidgetConfig::Checkbox("Multiply pulsation", multiplyKey, false);
+            ImGuiWidgetConfig::Checkbox("Multiply pulsation", multiplyKey, true);
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             ImGuiWidgetConfig::DragFloat("##PulseSizeValue", valueKey, 0.01f, 0, FLT_MAX, 0.5, "Pulse Size: %.2f");
         });
@@ -31,7 +31,7 @@ class $modify(PulseSizePlayLayer, PlayLayer) {
         bool noPulse = config.get<bool>("cosmetic.pulse_size::noPulse", false);        
 
         if (!noPulse) {
-            bool multiply = config.get<bool>("cosmetic.pulse_size::multiply", false);
+            bool multiply = config.get<bool>("cosmetic.pulse_size::multiply", true);
             float value = config.get<float>("cosmetic.pulse_size::value", 0.5f);
 
             auto fmod = FMODAudioEngine::get();

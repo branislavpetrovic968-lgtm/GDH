@@ -22,6 +22,7 @@ using namespace geode::prelude;
 #include "../../core/labels.hpp"
 
 static bool g_show = false;
+static bool g_resetLayoutCalled = false;
 static bool g_isAnimating = false;
 static bool g_isFadingIn = false;
 static float g_animTime = 0.0f;
@@ -59,7 +60,7 @@ void animateAlpha()
         return;
 
     ImGuiStyle& style = ImGui::GetStyle();
-    float deltaTime   = ImGui::GetIO().DeltaTime;
+    float deltaTime = ImGui::GetIO().DeltaTime;
 
     float duration = 100 / 1000.0f;
     g_animTime += deltaTime;
@@ -80,7 +81,6 @@ void animateAlpha()
     }
 
     style.Alpha = g_isFadingIn ? t : 1.0f - t;
-    style.Alpha = GDH::Utils::easeInOut(style.Alpha);
 }
 
 void PushAnimateFoundColor(const std::string& hackName) {
@@ -102,7 +102,7 @@ void PushAnimateFoundColor(const std::string& hackName) {
     t = ImLerp(t, target, ImGui::GetIO().DeltaTime * speed);
 
     ImVec4 normal = ImGui::GetStyle().Colors[ImGuiCol_Text];
-    ImVec4 faded  = ImColor(100, 100, 100);
+    ImVec4 faded = ImGui::GetStyle().Colors[ImGuiCol_TextDisabled];
 
     ImVec4 col = ImLerp(faded, normal, t);
 
@@ -143,6 +143,10 @@ void SettingsRender() {
         ImGuiH::SetMenuHue(hue/360.0f);
     }
 
+    if (ImGuiH::Button("Refresh Layout", {ImGui::GetContentRegionAvail().x, 0})) {
+        g_resetLayoutCalled = true;
+    }
+
     if (layoutManager.isCollecting()) {
         auto size = ImGui::GetWindowSize();
         layoutManager.addWindowInfo(windowName, size.x, size.y);
@@ -162,6 +166,11 @@ void RenderMain() {
     popup.render();
 
     if (!g_show) return;
+
+    if (g_resetLayoutCalled) {
+        g_resetLayoutCalled = false;
+        layoutManager.startApplying();
+    }
 
     SettingsRender();
     for (auto& window : windows) {
