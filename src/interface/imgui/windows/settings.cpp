@@ -13,6 +13,8 @@ $execute {
     auto& config = Config::get();
     auto& window = gui.getWindow("GDH Settings");
 
+    ImGuiH::SetMenuHue(c.get<float>("menu-hue", 240.0f)/360.0f);
+
     window.setCustomWindowImGui([&config, &gui] {
         Config &c = Config::get();
         float hue = c.get<float>("menu-hue", 240.0f);
