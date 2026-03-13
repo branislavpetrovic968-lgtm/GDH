@@ -6,40 +6,118 @@
 #define COLOR_F32(x) ImVec4 { (((x) >> 24) & 0xFF) / 255.0f, (((x) >> 16) & 0xFF) / 255.0f, (((x) >> 8) & 0xFF) / 255.0f, ((x) & 0xFF) / 255.0f }
 
 namespace ImGuiH {
-    std::map<Colors, ImVec4> colorTable = {
-        {Colors::Button_Background,              COLOR_F32(0xD5C4FFFF)},
-        {Colors::Button_Background_Hover,        COLOR_F32(0xE4D7FFFF)},
-        {Colors::Button_Background_Active,       COLOR_F32(0xB9A5F0FF)},
-        {Colors::Button_Foreground,              COLOR_F32(0x1A1A49FF)},
-        {Colors::Button_Foreground_Hover,        COLOR_F32(0x24245AFF)},
-        {Colors::Button_Foreground_Active,       COLOR_F32(0x121237FF)},
-        {Colors::Button_Border,                  COLOR_F32(0x00000000)},
-        {Colors::Checkbox_Background_Off,        COLOR_F32(0x474783FF)},
-        {Colors::Checkbox_Background_Off_Hover,  COLOR_F32(0x6868BFFF)},
-        {Colors::Checkbox_Background_Off_Active, COLOR_F32(0x37376EFF)},
-        {Colors::Checkbox_Background_On,         COLOR_F32(0xD5C4FFFF)},
-        {Colors::Checkbox_Background_On_Hover,   COLOR_F32(0xE4D7FFFF)},
-        {Colors::Checkbox_Background_On_Active,  COLOR_F32(0xB9A5F0FF)},
-        {Colors::Checkbox_Knob_Off,              COLOR_F32(0xC7D4FAFF)},
-        {Colors::Checkbox_Knob_Off_Hover,        COLOR_F32(0xE0EBFFFF)},
-        {Colors::Checkbox_Knob_Off_Active,       COLOR_F32(0x949ED2FF)},
-        {Colors::Checkbox_Knob_On,               COLOR_F32(0x21214EFF)},
-        {Colors::Checkbox_Knob_On_Hover,         COLOR_F32(0x2E2E63FF)},
-        {Colors::Checkbox_Knob_On_Active,        COLOR_F32(0x16163AFF)},
-        {Colors::Checkbox_Border,                COLOR_F32(0x00000000)},
-        {Colors::Tooltip_Background,             COLOR_F32(0x21214EFF)},
-        {Colors::Tooltip_Foreground,             COLOR_F32(0xD5C4FFFF)},
-        {Colors::Tooltip_Border,                 COLOR_F32(0xD5C4FFFF)},
-        {Colors::Drag_Background,                COLOR_F32(0x474783FF)},
-        {Colors::Drag_Background_Hover,          COLOR_F32(0x6868BFFF)},
-        {Colors::Drag_Background_Active,         COLOR_F32(0xD5C4FFFF)},
-        {Colors::Drag_Middleground,              COLOR_F32(0x635AB4FF)},
-        {Colors::Drag_Middleground_Hover,        COLOR_F32(0x8578DCFF)},
-        {Colors::Drag_Middleground_Active,       COLOR_F32(0xB9A5F0FF)},
-        {Colors::Drag_Foreground,                COLOR_F32(0xC7D4FAFF)},
-        {Colors::Drag_Foreground_Hover,          COLOR_F32(0xE0EBFFFF)},
-        {Colors::Drag_Foreground_Active,         COLOR_F32(0x1A1A49FF)},
+    std::map<Color, ImVec4> colorTable = {
+        {Color::Button_Background,              COLOR_F32(0xD5C4FFFF)},
+        {Color::Button_Background_Hover,        COLOR_F32(0xE4D7FFFF)},
+        {Color::Button_Background_Active,       COLOR_F32(0xB9A5F0FF)},
+        {Color::Button_Foreground,              COLOR_F32(0x1A1A49FF)},
+        {Color::Button_Foreground_Hover,        COLOR_F32(0x24245AFF)},
+        {Color::Button_Foreground_Active,       COLOR_F32(0x121237FF)},
+        {Color::Button_Border,                  COLOR_F32(0x00000000)},
+        {Color::Checkbox_Background_Off,        COLOR_F32(0x474783FF)},
+        {Color::Checkbox_Background_Off_Hover,  COLOR_F32(0x6868BFFF)},
+        {Color::Checkbox_Background_Off_Active, COLOR_F32(0x37376EFF)},
+        {Color::Checkbox_Background_On,         COLOR_F32(0xD5C4FFFF)},
+        {Color::Checkbox_Background_On_Hover,   COLOR_F32(0xE4D7FFFF)},
+        {Color::Checkbox_Background_On_Active,  COLOR_F32(0xB9A5F0FF)},
+        {Color::Checkbox_Knob_Off,              COLOR_F32(0xC7D4FAFF)},
+        {Color::Checkbox_Knob_Off_Hover,        COLOR_F32(0xE0EBFFFF)},
+        {Color::Checkbox_Knob_Off_Active,       COLOR_F32(0x949ED2FF)},
+        {Color::Checkbox_Knob_On,               COLOR_F32(0x21214EFF)},
+        {Color::Checkbox_Knob_On_Hover,         COLOR_F32(0x2E2E63FF)},
+        {Color::Checkbox_Knob_On_Active,        COLOR_F32(0x16163AFF)},
+        {Color::Checkbox_Border,                COLOR_F32(0x00000000)},
+        {Color::Tooltip_Background,             COLOR_F32(0x21214EFF)},
+        {Color::Tooltip_Foreground,             COLOR_F32(0xD5C4FFFF)},
+        {Color::Tooltip_Border,                 COLOR_F32(0xD5C4FFFF)},
+        {Color::Drag_Background,                COLOR_F32(0x474783FF)},
+        {Color::Drag_Background_Hover,          COLOR_F32(0x6868BFFF)},
+        {Color::Drag_Background_Active,         COLOR_F32(0xD5C4FFFF)},
+        {Color::Drag_Middleground,              COLOR_F32(0x635AB4FF)},
+        {Color::Drag_Middleground_Hover,        COLOR_F32(0x8578DCFF)},
+        {Color::Drag_Middleground_Active,       COLOR_F32(0xB9A5F0FF)},
+        {Color::Drag_Foreground,                COLOR_F32(0xC7D4FAFF)},
+        {Color::Drag_Foreground_Hover,          COLOR_F32(0xE0EBFFFF)},
+        {Color::Drag_Foreground_Active,         COLOR_F32(0x1A1A49FF)},
     };
+
+    static inline void SetColorHSV(Color cid, ImVec4 hsv) {
+        float r, g, b; ImGui::ColorConvertHSVtoRGB(hsv.x, hsv.y, hsv.z, r, g, b);
+        colorTable[cid] = ImVec4 { r, g, b, hsv.w };
+    }
+
+    static inline void SetImGuiColorHSV(ImGuiCol cid, ImVec4 hsv) {
+        auto *colors = ImGui::GetStyle().Colors;
+        float r, g, b; ImGui::ColorConvertHSVtoRGB(hsv.x, hsv.y, hsv.z, r, g, b);
+        colors[cid] = ImVec4 { r, g, b, hsv.w };
+    }
+    
+    void SetMenuHue(float hue) {
+        SetColorHSV(Color::Button_Background, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
+        SetColorHSV(Color::Button_Background_Hover, ImVec4 { hue + (0.0548f), 0.1569f, 1.0000f, 1.0000f });
+        SetColorHSV(Color::Button_Background_Active, ImVec4 { hue + (0.0451f), 0.3125f, 0.9412f, 1.0000f });
+        SetColorHSV(Color::Button_Foreground, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 1.0000f });
+        SetColorHSV(Color::Button_Foreground_Hover, ImVec4 { hue + (0.0007f), 0.6000f, 0.3529f, 1.0000f });
+        SetColorHSV(Color::Button_Foreground_Active, ImVec4 { hue + (0.0007f), 0.6727f, 0.2157f, 1.0000f });
+        SetColorHSV(Color::Button_Border, ImVec4 { hue + (-0.6660f), 0.0000f, 0.0000f, 0.0000f });
+        SetColorHSV(Color::Checkbox_Background_Off, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Background_Off_Hover, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Background_Off_Active, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Background_On, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Background_On_Hover, ImVec4 { hue + (0.0548f), 0.1569f, 1.0000f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Background_On_Active, ImVec4 { hue + (0.0451f), 0.3125f, 0.9412f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Knob_Off, ImVec4 { hue + (-0.0418f), 0.2040f, 0.9804f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Knob_Off_Hover, ImVec4 { hue + (-0.0585f), 0.1216f, 1.0000f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Knob_Off_Active, ImVec4 { hue + (-0.0262f), 0.2952f, 0.8235f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Knob_On, ImVec4 { hue + (0.0007f), 0.5769f, 0.3059f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Knob_On_Hover, ImVec4 { hue + (0.0007f), 0.5354f, 0.3882f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Knob_On_Active, ImVec4 { hue + (0.0007f), 0.6207f, 0.2275f, 1.0000f });
+        SetColorHSV(Color::Checkbox_Border, ImVec4 { hue + (-0.6660f), 0.0000f, 0.0000f, 0.0000f });
+        SetColorHSV(Color::Tooltip_Background, ImVec4 { hue + (0.0007f), 0.5769f, 0.3059f, 1.0000f });
+        SetColorHSV(Color::Tooltip_Foreground, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
+        SetColorHSV(Color::Tooltip_Border, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
+        SetColorHSV(Color::Drag_Background, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
+        SetColorHSV(Color::Drag_Background_Hover, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
+        SetColorHSV(Color::Drag_Background_Active, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
+        SetColorHSV(Color::Drag_Middleground, ImVec4 { hue + (0.0173f), 0.5000f, 0.7059f, 1.0000f });
+        SetColorHSV(Color::Drag_Middleground_Hover, ImVec4 { hue + (0.0223f), 0.4545f, 0.8627f, 1.0000f });
+        SetColorHSV(Color::Drag_Middleground_Active, ImVec4 { hue + (0.0451f), 0.3125f, 0.9412f, 1.0000f });
+        SetColorHSV(Color::Drag_Foreground, ImVec4 { hue + (-0.0418f), 0.2040f, 0.9804f, 1.0000f });
+        SetColorHSV(Color::Drag_Foreground_Hover, ImVec4 { hue + (-0.0585f), 0.1216f, 1.0000f, 1.0000f });
+        SetColorHSV(Color::Drag_Foreground_Active, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 1.0000f });;
+        SetImGuiColorHSV(ImGuiCol_Text, ImVec4 { hue + (-0.6660f), 0.0000f, 0.8824f, 0.8824f });
+        SetImGuiColorHSV(ImGuiCol_WindowBg, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 0.9804f });
+        SetImGuiColorHSV(ImGuiCol_Border, ImVec4 { hue + (-0.6660f), 0.0000f, 0.2510f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_TitleBg, ImVec4 { hue + (0.0007f), 0.5354f, 0.3882f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ScrollbarBg, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 0.0000f });
+        SetImGuiColorHSV(ImGuiCol_FrameBg, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_FrameBgHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_FrameBgActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ResizeGrip, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ResizeGripHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ResizeGripActive, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ModalWindowDimBg, ImVec4 { hue + (-0.6660f), 0.0000f, 0.0000f, 0.4980f });
+        SetImGuiColorHSV(ImGuiCol_Button, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ButtonHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_ButtonActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_Header, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_HeaderHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_HeaderActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_Tab, ImVec4 { hue + (0.0007f), 0.0385f, 0.2039f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_TabHovered, ImVec4 { hue + (0.0007f), 0.0278f, 0.2824f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_TabActive, ImVec4 { hue + (0.0007f), 0.0222f, 0.3529f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_TableHeaderBg, ImVec4 { hue + (-0.6660f), 0.0000f, 0.2353f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_TableBorderStrong, ImVec4 { hue + (-0.6660f), 0.0000f, 0.3137f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_TableBorderLight, ImVec4 { hue + (-0.6660f), 0.0000f, 0.2353f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_TableRowBg, ImVec4 { hue + (-0.6660f), 0.0000f, 0.1176f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_TableRowBgAlt, ImVec4 { hue + (-0.6660f), 0.0000f, 0.1373f, 1.0000f });
+        SetImGuiColorHSV(ImGuiCol_Separator, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
+
+        auto *colors = ImGui::GetStyle().Colors;
+        colors[ImGuiCol_TitleBgActive] = colors[ImGuiCol_TitleBg];
+        colors[ImGuiCol_TitleBgCollapsed] = colors[ImGuiCol_TitleBg];
+        colors[ImGuiCol_PopupBg] = colors[ImGuiCol_WindowBg];
+    }
     
     static inline ImU32 ToU32(ImVec4 c, float global_alpha)
     {
@@ -96,13 +174,13 @@ namespace ImGuiH {
         Lerp(st.th,    (hovered || held) ? 1.f : 0.f,  9.f);
         Lerp(st.tHeld, held ? 1.f : 0.f,              18.f);
 
-        const ImVec4 col_bg_idle = colorTable[Colors::Button_Background];
-        const ImVec4 col_bg_hov = colorTable[Colors::Button_Background_Hover];
-        const ImVec4 col_bg_held = colorTable[Colors::Button_Background_Active];
-        const ImVec4 col_txt_idle = colorTable[Colors::Button_Foreground];
-        const ImVec4 col_txt_hov = colorTable[Colors::Button_Foreground_Hover];
-        const ImVec4 col_txt_held = colorTable[Colors::Button_Foreground_Active];
-        const ImVec4 col_border = colorTable[Colors::Button_Border];
+        const ImVec4 col_bg_idle = colorTable[Color::Button_Background];
+        const ImVec4 col_bg_hov = colorTable[Color::Button_Background_Hover];
+        const ImVec4 col_bg_held = colorTable[Color::Button_Background_Active];
+        const ImVec4 col_txt_idle = colorTable[Color::Button_Foreground];
+        const ImVec4 col_txt_hov = colorTable[Color::Button_Foreground_Hover];
+        const ImVec4 col_txt_held = colorTable[Color::Button_Foreground_Active];
+        const ImVec4 col_border = colorTable[Color::Button_Border];
 
         const ImVec4 bg_final = LerpC(LerpC(col_bg_idle,  col_bg_hov,  st.th), col_bg_held,  st.tHeld);
         const ImVec4 txt_final = LerpC(LerpC(col_txt_idle, col_txt_hov, st.th), col_txt_held, st.tHeld);
@@ -175,19 +253,19 @@ namespace ImGuiH {
         Lerp(st.th, (hovered || held) ? 1.f : 0.f,  9.f);
         Lerp(st.tHeld, held ? 1.f : 0.f, 18.f);
 
-        const ImVec4 col_bg_off = colorTable[Colors::Checkbox_Background_Off];
-        const ImVec4 col_bg_off_hov = colorTable[Colors::Checkbox_Background_Off_Hover];
-        const ImVec4 col_bg_off_held = colorTable[Colors::Checkbox_Background_Off_Active];
-        const ImVec4 col_bg_on = colorTable[Colors::Checkbox_Background_On];
-        const ImVec4 col_bg_on_hov = colorTable[Colors::Checkbox_Background_On_Hover];
-        const ImVec4 col_bg_on_held = colorTable[Colors::Checkbox_Background_On_Active];
-        const ImVec4 col_knob_off = colorTable[Colors::Checkbox_Knob_Off];
-        const ImVec4 col_knob_off_hov = colorTable[Colors::Checkbox_Knob_Off_Hover];
-        const ImVec4 col_knob_off_held = colorTable[Colors::Checkbox_Knob_Off_Active];
-        const ImVec4 col_knob_on = colorTable[Colors::Checkbox_Knob_On];
-        const ImVec4 col_knob_on_hov = colorTable[Colors::Checkbox_Knob_On_Hover];
-        const ImVec4 col_knob_on_held = colorTable[Colors::Checkbox_Knob_On_Active];
-        const ImVec4 col_border = colorTable[Colors::Checkbox_Border];
+        const ImVec4 col_bg_off = colorTable[Color::Checkbox_Background_Off];
+        const ImVec4 col_bg_off_hov = colorTable[Color::Checkbox_Background_Off_Hover];
+        const ImVec4 col_bg_off_held = colorTable[Color::Checkbox_Background_Off_Active];
+        const ImVec4 col_bg_on = colorTable[Color::Checkbox_Background_On];
+        const ImVec4 col_bg_on_hov = colorTable[Color::Checkbox_Background_On_Hover];
+        const ImVec4 col_bg_on_held = colorTable[Color::Checkbox_Background_On_Active];
+        const ImVec4 col_knob_off = colorTable[Color::Checkbox_Knob_Off];
+        const ImVec4 col_knob_off_hov = colorTable[Color::Checkbox_Knob_Off_Hover];
+        const ImVec4 col_knob_off_held = colorTable[Color::Checkbox_Knob_Off_Active];
+        const ImVec4 col_knob_on = colorTable[Color::Checkbox_Knob_On];
+        const ImVec4 col_knob_on_hov = colorTable[Color::Checkbox_Knob_On_Hover];
+        const ImVec4 col_knob_on_held = colorTable[Color::Checkbox_Knob_On_Active];
+        const ImVec4 col_border = colorTable[Color::Checkbox_Border];
 
         const ImVec4 bg_base = LerpC(col_bg_off, col_bg_on, st.t);
         const ImVec4 bg_hov = LerpC(col_bg_off_hov, col_bg_on_hov, st.t);
@@ -269,9 +347,9 @@ namespace ImGuiH {
 
         const ImGuiStyle& style = g.Style;
 
-        const ImVec4 col_bg = colorTable[Colors::Tooltip_Background];
-        const ImVec4 col_border = colorTable[Colors::Tooltip_Border];
-        const ImVec4 col_text = colorTable[Colors::Tooltip_Foreground];
+        const ImVec4 col_bg = colorTable[Color::Tooltip_Background];
+        const ImVec4 col_border = colorTable[Color::Tooltip_Border];
+        const ImVec4 col_text = colorTable[Color::Tooltip_Foreground];
 
         const char*  lend = ImGui::FindRenderedTextEnd(text);
         const ImVec2 text_sz = ImGui::CalcTextSize(text, lend, false);
@@ -342,15 +420,15 @@ namespace ImGuiH {
         Lerp(st.th, st.th, 9.f);
         Lerp(st.tHeld, st.tHeld, 18.f);
 
-        const ImVec4 col_bg_idle = colorTable[Colors::Drag_Background];
-        const ImVec4 col_bg_hov = colorTable[Colors::Drag_Background_Hover];
-        const ImVec4 col_bg_held = colorTable[Colors::Drag_Background_Active];
-        const ImVec4 col_fill_idle = colorTable[Colors::Drag_Middleground];
-        const ImVec4 col_fill_hov = colorTable[Colors::Drag_Middleground_Hover];
-        const ImVec4 col_fill_held = colorTable[Colors::Drag_Middleground_Active];
-        const ImVec4 col_txt_idle = colorTable[Colors::Drag_Foreground];
-        const ImVec4 col_txt_hov = colorTable[Colors::Drag_Foreground_Hover];
-        const ImVec4 col_txt_held = colorTable[Colors::Drag_Foreground_Active];
+        const ImVec4 col_bg_idle = colorTable[Color::Drag_Background];
+        const ImVec4 col_bg_hov = colorTable[Color::Drag_Background_Hover];
+        const ImVec4 col_bg_held = colorTable[Color::Drag_Background_Active];
+        const ImVec4 col_fill_idle = colorTable[Color::Drag_Middleground];
+        const ImVec4 col_fill_hov = colorTable[Color::Drag_Middleground_Hover];
+        const ImVec4 col_fill_held = colorTable[Color::Drag_Middleground_Active];
+        const ImVec4 col_txt_idle = colorTable[Color::Drag_Foreground];
+        const ImVec4 col_txt_hov = colorTable[Color::Drag_Foreground_Hover];
+        const ImVec4 col_txt_held = colorTable[Color::Drag_Foreground_Active];
 
         const ImVec4 bg_now = LerpC(LerpC(col_bg_idle, col_bg_hov, st.th), col_bg_held, st.tHeld);
         const ImVec4 fill_now = LerpC(LerpC(col_fill_idle, col_fill_hov, st.th), col_fill_held, st.tHeld);
@@ -429,13 +507,13 @@ namespace ImGuiH {
             if (ImAbs(val - tgt) < 0.004f) val = tgt; else ImGui::MarkItemEdited(id);
         };
 
-        const ImVec4 col_bg_idle = colorTable[Colors::Button_Background];
-        const ImVec4 col_bg_hov = colorTable[Colors::Button_Background_Hover];
-        const ImVec4 col_bg_held = colorTable[Colors::Button_Background_Active];
+        const ImVec4 col_bg_idle = colorTable[Color::Button_Background];
+        const ImVec4 col_bg_hov = colorTable[Color::Button_Background_Hover];
+        const ImVec4 col_bg_held = colorTable[Color::Button_Background_Active];
 
-        const ImVec4 col_arr_idle = colorTable[Colors::Button_Foreground];
-        const ImVec4 col_arr_hov = colorTable[Colors::Button_Foreground_Hover];
-        const ImVec4 col_arr_held = colorTable[Colors::Button_Foreground_Active];
+        const ImVec4 col_arr_idle = colorTable[Color::Button_Foreground];
+        const ImVec4 col_arr_hov = colorTable[Color::Button_Foreground_Hover];
+        const ImVec4 col_arr_held = colorTable[Color::Button_Foreground_Active];
 
         const ImVec4 bg_now  = LerpC(LerpC(col_bg_idle, col_bg_hov,  st.th), col_bg_held,  st.tHeld);
         const ImVec4 arr_now = LerpC(LerpC(col_arr_idle, col_arr_hov, st.th), col_arr_held, st.tHeld);

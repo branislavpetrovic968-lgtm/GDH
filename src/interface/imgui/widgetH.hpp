@@ -1,7 +1,7 @@
 #include <imgui-cocos.hpp>
 
 namespace ImGuiH {
-    enum Colors {
+    enum Color {
         Button_Background,
         Button_Background_Hover,
         Button_Background_Active,
@@ -34,10 +34,12 @@ namespace ImGuiH {
         Drag_Foreground,
         Drag_Foreground_Hover,
         Drag_Foreground_Active,
-        Colors_Count,
+        Color_Count,
     };
 
-    extern std::map<Colors, ImVec4> colors;
+    extern std::map<Color, ImVec4> colors;
+
+    void SetMenuHue(float hue);
     
     bool Button(const char* label, const ImVec2& size_arg = ImVec2(0, 0));
     bool Checkbox(const char* label, bool* v);
