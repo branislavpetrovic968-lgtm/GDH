@@ -157,7 +157,6 @@ void GDH::Utils::UncompleteLevel() {
     level->m_attemptTime = 0;
     level->m_firstCoinVerified = 0;
     level->m_secondCoinVerified = 0;
-    level->m_secondCoinVerified = 0;
     level->m_thirdCoinVerified = 0;
     level->m_isVerified = 0;
     level->m_isVerifiedRaw = 0;
@@ -166,11 +165,9 @@ void GDH::Utils::UncompleteLevel() {
     level->m_inputsTime = "";
     level->m_personalBests = "";
     level->m_jumps = 0;
-    level->m_newNormalPercent2 = 0;
     level->m_clicks = 0;
     level->m_orbCompletion = 0;
     level->m_platformerSeed = 0;
-    level->m_bestTime = 0;
     level->m_bestPoints = 0;
     level->m_isCompletionLegitimate = true;
 }
