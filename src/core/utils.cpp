@@ -115,25 +115,64 @@ void GDH::Utils::UncompleteLevel() {
         // rated levels 11
         // collected list rewards 41
         // players destroyed 9
+        // orbs 14
     }  
 
+    // removing orbs
+    auto currencyKey = gsm->getCurrencyKey(level);
+    int awardedCurrency = gsm->getAwardedCurrencyForLevel(level);
+    gsm->setStat("14", gsm->getStat("14") - awardedCurrency);
+
+    cocos2d::CCDictionary* dict = nullptr;
+    if (level->m_dailyID > 0) {
+        dict = gsm->m_timelyCurrencyScores;
+    }
+    else if (level->m_levelType == GJLevelType::Main) {
+        dict = gsm->m_mainCurrencyScores;
+    }
+    else if (level->m_gauntletLevel) {
+        dict = gsm->m_gauntletCurrencyScores;
+    }
+    else {
+        dict = gsm->m_onlineCurrencyScores;
+    }
+    dict->removeObjectForKey(currencyKey);
+
+
+    // removing coins
+    for (auto i = 0; i < level->m_coins; i++) {
+        auto key = level->getCoinKey(i + 1);
+        if (gsm->hasUserCoin(key))
+            gsm->m_verifiedUserCoins->removeObjectForKey(key);
+        else if (gsm->hasPendingUserCoin(key))
+            gsm->m_pendingUserCoins->removeObjectForKey(key);
+        else if (gsm->hasSecretCoin(key))
+            gsm->m_playerStats->removeObjectForKey(fmt::format("unique_{}", key));
+    }
 
     level->m_normalPercent = 0;
+    level->m_newNormalPercent2 = 0;
     level->m_practicePercent = 0;
     level->m_attempts = 0;
+    level->m_attemptTime = 0;
+    level->m_firstCoinVerified = 0;
+    level->m_secondCoinVerified = 0;
+    level->m_secondCoinVerified = 0;
+    level->m_thirdCoinVerified = 0;
+    level->m_isVerified = 0;
+    level->m_isVerifiedRaw = 0;
+    level->m_bestTime = 0;
+    level->m_localBestTimes = "";
+    level->m_inputsTime = "";
+    level->m_personalBests = "";
     level->m_jumps = 0;
     level->m_newNormalPercent2 = 0;
     level->m_clicks = 0;
     level->m_orbCompletion = 0;
+    level->m_platformerSeed = 0;
     level->m_bestTime = 0;
     level->m_bestPoints = 0;
     level->m_isCompletionLegitimate = true;
-    // level->m_k111 = 0;
-
-    for (auto i = 0; i < level->m_coins; i++) {
-        auto key = level->getCoinKey(i + 1);
-        gsm->m_verifiedUserCoins->removeObjectForKey(key);
-    }
 }
 
 float GDH::Utils::easeInOut(float x) {

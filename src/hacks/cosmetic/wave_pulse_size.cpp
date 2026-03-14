@@ -40,7 +40,7 @@ class $modify(MyHardStreak, HardStreak) {
                 m_pulseSize = value;
         }
         else {
-            m_pulseSize = 0.5f;
+            m_pulseSize = 2.f;
         }
 
         HardStreak::updateStroke(p0);
