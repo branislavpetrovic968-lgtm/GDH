@@ -22,7 +22,14 @@ void Hack::setGameVariableID(const std::string& key) {
     bool enabled = GameManager::get()->getGameVariable(key.c_str());
     config.set<bool>(m_ID, enabled);
 }
-        
+
+void Hack::setEarlyInit(bool value) {
+    m_earlyInit = value;
+}
+
+bool Hack::getEarlyInit() const {
+    return m_earlyInit;
+}
 
 void Hack::toggle() {
     auto& config = Config::get();
@@ -40,7 +47,7 @@ void Hack::setHandler(std::function<void(bool)> func) {
     auto& config = Config::get();
     m_handlerFunc = std::move(func);
 
-    if (config.get(m_ID, false))
+    if (m_earlyInit && config.get(m_ID, false))
         callHandler(true);
 } 
 

@@ -357,7 +357,7 @@ namespace ImGuiH {
         const ImVec4 col_border = colorTable[Color::Tooltip_Border];
         const ImVec4 col_text = colorTable[Color::Tooltip_Foreground];
 
-        const char*  lend = ImGui::FindRenderedTextEnd(text);
+        const char* lend = ImGui::FindRenderedTextEnd(text);
         const ImVec2 text_sz = ImGui::CalcTextSize(text, lend, false);
         const ImVec2 pad = style.WindowPadding;
         const ImVec2 box_sz = { text_sz.x + pad.x * 2.f, text_sz.y + pad.y * 2.f };
@@ -486,10 +486,90 @@ namespace ImGuiH {
 
     bool DragInt(const char* label, int* v, float speed, int v_min, int v_max, const char* fmt)
     {
-        float fv = static_cast<float>(*v);
-        const bool changed = DragFloat(label, &fv, speed, static_cast<float>(v_min), static_cast<float>(v_max), fmt);
-        if (changed) *v = static_cast<int>(fv);
-        return changed;
+        struct DragState { float th, tHeld; };
+        static std::unordered_map<ImGuiID, DragState> s_states;
+
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+        if (window->SkipItems) return false;
+        ImGuiContext& g = *GImGui;
+        const ImGuiStyle& style = g.Style;
+        const ImGuiIO& io = g.IO;
+        const ImGuiID id = window->GetID(label);
+        DragState& st = s_states.emplace(id, DragState{ 0.f, 0.f }).first->second;
+
+        const ImVec2 pos = window->DC.CursorPos;
+        const float  drag_w = ImGui::CalcItemWidth();
+        const ImRect drag_bb = { pos, { pos.x + drag_w, pos.y + ImGui::GetFrameHeight() } };
+
+        bool wheel_changed = false;
+        if (ImGui::IsMouseHoveringRect(drag_bb.Min, drag_bb.Max) && io.MouseWheel != 0.f)
+        {
+            *v += io.MouseWheel > 0.f ? static_cast<int>(speed) : -static_cast<int>(speed);
+            if (v_min != v_max) *v = ImClamp(*v, v_min, v_max);
+            wheel_changed = true;
+            g.IO.MouseWheel = 0.f;
+        }
+
+        auto Lerp = [&](float& val, float tgt, float spd) {
+            val += (tgt - val) * ImMin(1.f, io.DeltaTime * spd);
+            if (ImAbs(val - tgt) < 0.004f) val = tgt;
+        };
+
+        const ImVec4 col_bg_idle = colorTable[Color::Drag_Background];
+        const ImVec4 col_bg_hov = colorTable[Color::Drag_Background_Hover];
+        const ImVec4 col_bg_held = colorTable[Color::Drag_Background_Active];
+        const ImVec4 col_fill_idle = colorTable[Color::Drag_Middleground];
+        const ImVec4 col_fill_hov = colorTable[Color::Drag_Middleground_Hover];
+        const ImVec4 col_fill_held = colorTable[Color::Drag_Middleground_Active];
+        const ImVec4 col_txt_idle = colorTable[Color::Drag_Foreground];
+        const ImVec4 col_txt_hov  = colorTable[Color::Drag_Foreground_Hover];
+        const ImVec4 col_txt_held = colorTable[Color::Drag_Foreground_Active];
+
+        const ImVec4 bg_now = LerpC(LerpC(col_bg_idle,   col_bg_hov,   st.th), col_bg_held,   st.tHeld);
+        const ImVec4 fill_now = LerpC(LerpC(col_fill_idle, col_fill_hov, st.th), col_fill_held, st.tHeld);
+        const ImVec4 txt_now = LerpC(LerpC(col_txt_idle,  col_txt_hov,  st.th), col_txt_held,  st.tHeld);
+
+        ImGui::PushStyleColor(ImGuiCol_FrameBg,bg_now);
+        ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, bg_now);
+        ImGui::PushStyleColor(ImGuiCol_FrameBgActive, bg_now);
+        ImGui::PushStyleColor(ImGuiCol_SliderGrab, fill_now);
+        ImGui::PushStyleColor(ImGuiCol_SliderGrabActive, fill_now);
+        ImGui::PushStyleColor(ImGuiCol_Text, txt_now);
+
+        ImGui::PushItemWidth(drag_w);
+        const bool native_changed = ImGui::DragInt(
+            fmt::format("##DragWidget_{}", label).c_str(),
+            v, speed, v_min, v_max,
+            fmt ? fmt : "%d"
+        );
+        ImGui::PopItemWidth();
+        ImGui::PopStyleColor(6);
+
+        const char* label_display = label;
+        if (label_display[0] == '#' && label_display[1] == '#')
+            label_display = "";
+        if (label_display[0] != '\0')
+        {
+            const ImVec2 label_pos = {
+                drag_bb.Max.x + style.ItemInnerSpacing.x,
+                drag_bb.Min.y + style.FramePadding.y
+            };
+            ImGui::RenderText(label_pos, label_display);
+        }
+
+        const bool is_hov  = ImGui::IsItemHovered();
+        const bool is_active = ImGui::IsItemActive();
+        const bool is_typing = ImGui::TempInputIsActive(id);
+        const bool held = is_active && !is_typing;
+
+        Lerp(st.th, (is_hov || is_active) ? 1.f : 0.f, 9.f);
+        Lerp(st.tHeld, held ? 1.f : 0.f, 18.f);
+
+        if (st.th != (is_hov || is_active ? 1.f : 0.f) ||
+            st.tHeld != (held ? 1.f : 0.f))
+            ImGui::MarkItemEdited(id);
+
+        return native_changed || wheel_changed;
     }
 
     bool ArrowButton(const char* str_id, ImGuiDir dir)
@@ -502,7 +582,7 @@ namespace ImGuiH {
 
         ImGuiContext& g = *GImGui;
         const ImGuiStyle& style = g.Style;
-        const ImGuiIO& io    = g.IO;
+        const ImGuiIO& io = g.IO;
         const float alpha = style.Alpha;
 
         const ImGuiID id = window->GetID(str_id);
@@ -521,7 +601,7 @@ namespace ImGuiH {
         const ImVec4 col_arr_hov = colorTable[Color::Button_Foreground_Hover];
         const ImVec4 col_arr_held = colorTable[Color::Button_Foreground_Active];
 
-        const ImVec4 bg_now  = LerpC(LerpC(col_bg_idle, col_bg_hov,  st.th), col_bg_held,  st.tHeld);
+        const ImVec4 bg_now = LerpC(LerpC(col_bg_idle, col_bg_hov, st.th), col_bg_held,  st.tHeld);
         const ImVec4 arr_now = LerpC(LerpC(col_arr_idle, col_arr_hov, st.th), col_arr_held, st.tHeld);
 
         ImGui::PushStyleColor(ImGuiCol_Button, bg_now);

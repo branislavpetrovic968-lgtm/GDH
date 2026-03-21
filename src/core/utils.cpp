@@ -212,3 +212,30 @@ float GDH::Utils::getFps() {
 
     return static_cast<float>(count) / frameTimeSum;
 }
+
+void GDH::Utils::setPitchShifter(int semitones) {
+    static FMOD::DSP* pitch_shifter = nullptr;
+    auto fmod_engine = FMODAudioEngine::get();
+    FMOD::System* system = fmod_engine->m_system;
+    
+    float pitch = std::pow(2.0f, semitones / 12.0f);
+
+    if (semitones == 0) {
+        if (pitch_shifter) {
+            fmod_engine->m_backgroundMusicChannel->removeDSP(pitch_shifter);
+            pitch_shifter->release();
+            pitch_shifter = nullptr;
+        }
+        return;
+    }
+
+    if (!pitch_shifter) {
+        if (system->createDSPByType(FMOD_DSP_TYPE_PITCHSHIFT, &pitch_shifter) != FMOD_OK) {
+            return;
+        }
+        fmod_engine->m_backgroundMusicChannel->addDSP(0, pitch_shifter);
+    }
+
+    pitch_shifter->setParameterFloat(FMOD_DSP_PITCHSHIFT_FFTSIZE, 2048);
+    pitch_shifter->setParameterFloat(FMOD_DSP_PITCHSHIFT_PITCH, pitch);
+}

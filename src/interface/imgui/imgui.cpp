@@ -243,7 +243,7 @@ void RenderMain() {
     }
 }
 
-class $modify(MyMenuLayer, MenuLayer) {
+class $modify(ImGuiInitMenuLayer, MenuLayer) {
     bool init() {
         if (!MenuLayer::init()) return false;
         

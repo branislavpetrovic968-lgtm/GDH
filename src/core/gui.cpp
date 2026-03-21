@@ -84,3 +84,23 @@ Hack* Window::findHackByID(const std::string& ID) {
 
     return it != m_hacks.end() ? &(*it) : nullptr;
 }
+
+#include <Geode/modify/MenuLayer.hpp>
+class $modify(LateHacksInitMenuLayer, MenuLayer) {
+    bool init() {
+        if (!MenuLayer::init()) return false;
+        
+		static bool inited = false;
+        if (!inited) {
+            auto& gui = Gui::get();
+            auto& windows = gui.getWindows();
+
+            for (auto& window : windows)
+                for (auto& hack : window.getHacks())
+                    if (hack.getEnabled() && !hack.getEarlyInit())
+                        hack.callHandler(true);
+        }
+
+		return true;
+    }
+};

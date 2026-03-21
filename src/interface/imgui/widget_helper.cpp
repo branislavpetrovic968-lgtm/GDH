@@ -51,3 +51,15 @@ bool ImGuiWidgetConfig::DragFloat(const char* label, const std::string& config_k
     }
     return false;
 }
+
+bool ImGuiWidgetConfig::DragInt(const char* label, const std::string& config_key, float step, int min, int max, int default_value, const char* format)
+{
+    auto& config = Config::get();
+    int value = config.get<int>(config_key, default_value);
+    if (ImGuiH::DragInt(label, &value, step, min, max, format))
+    {
+        config.set<int>(config_key, value);
+        return true;
+    }
+    return false;
+}

@@ -1,7 +1,7 @@
 #include <string>
 
 namespace GDH { namespace Utils {
-
+    
     namespace String {
         std::string toLowerCase(const std::string& input);
         std::string toUpperCase(const std::string& input);
@@ -16,4 +16,5 @@ namespace GDH { namespace Utils {
     void hsvToRgb(float h, float s, float v, float &r, float &g, float &b);
 
     float getFps();
+    void setPitchShifter(int semitones);
 } }

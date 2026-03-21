@@ -2,8 +2,6 @@
 #ifdef GEODE_IS_WINDOWS
 
 #include <Geode/Geode.hpp>
-using namespace geode::prelude;
-
 #include <imgui-cocos.hpp>
 #include "../../core/gui.hpp"
 #include "../../core/config.hpp"

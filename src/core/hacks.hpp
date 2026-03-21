@@ -22,6 +22,7 @@ namespace GDH {
         void setDesc(const std::string& d) { m_desc = d; }
         void setCheating(bool value) { m_cheating = value; }
         void setHandler(std::function<void(bool)> func);
+        void setEarlyInit(bool value);
         void addHookPtr(geode::Hook* ptr);
         void setKeybind(int key) { m_keybind = key; }        
         void setGameVariableID(const std::string& key);
@@ -30,6 +31,7 @@ namespace GDH {
         void setCustomWindowCocos(std::function<void()> func) { m_handlerCocos = std::move(func); };
 
         bool getEnabled() const;
+        bool getEarlyInit() const;
         void toggle();
 
         const std::string& getID() const { return m_ID; }
@@ -67,5 +69,7 @@ namespace GDH {
 
         std::function<void()> m_handlerImGui = nullptr;
         std::function<void()> m_handlerCocos = nullptr;
+
+        bool m_earlyInit = true;
     };
 } // namespace GDH
