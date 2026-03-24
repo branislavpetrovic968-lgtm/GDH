@@ -1,4 +1,3 @@
-#include "Geode/loader/Loader.hpp"
 #ifdef GEODE_IS_WINDOWS
 
 #include <Geode/Geode.hpp>
