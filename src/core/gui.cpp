@@ -85,6 +85,20 @@ Hack* Window::findHackByID(const std::string& ID) {
     return it != m_hacks.end() ? &(*it) : nullptr;
 }
 
+Hack* Gui::findHackByIDGlobal(const std::string& ID) {
+    for (auto& window : m_windows) {
+        auto& hacks = window.getHacks();
+        auto it = std::find_if(hacks.begin(), hacks.end(), [&ID](const Hack& h) {
+            return h.getID() == ID;
+        });
+
+        if (it != hacks.end()) {
+            return &(*it);
+        }
+    }
+    return nullptr;
+}
+
 #include <Geode/modify/MenuLayer.hpp>
 class $modify(LateHacksInitMenuLayer, MenuLayer) {
     bool init() {

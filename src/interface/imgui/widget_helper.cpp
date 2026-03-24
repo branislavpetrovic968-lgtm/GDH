@@ -5,15 +5,16 @@
 #include <fmt/format.h>
 #include <imgui-cocos.hpp>
 
-bool ImGuiWidgetConfig::HackCheckbox(const char* label, const std::string& window, const std::string& config_key, bool default_value = false) {
+bool ImGuiWidgetConfig::HackCheckbox(const char* label, const std::string& config_key, bool default_value = false) {
     auto& config = Config::get();
     
     bool value = config.get<bool>(config_key, default_value);
     if (ImGuiH::Checkbox(label, &value))
     {
         auto& gui = GDH::Gui::get();
-        auto* hack = gui.getWindow(window).findHackByID(config_key);
-        if (hack != nullptr) hack->toggle();     
+        auto* hack = gui.findHackByIDGlobal(config_key);
+        if (hack != nullptr)
+            hack->toggle();
     }
     return false;
 }

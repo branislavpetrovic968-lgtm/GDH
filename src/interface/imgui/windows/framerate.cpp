@@ -20,7 +20,7 @@ $execute {
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - (43.f + style.ItemSpacing.x));
         ImGuiWidgetConfig::DragFloat("##Speedhack_Value", "invisible.speedhack::value", 0.01f, 0, FLT_MAX, 1.f, "Speed: %.2fx");
         ImGui::SameLine();
-        ImGuiWidgetConfig::HackCheckbox("##Speedhack_Enabled", "Invisible", "invisible.speedhack", false);
+        ImGuiWidgetConfig::HackCheckbox("##Speedhack_Enabled", "invisible.speedhack", false);
 
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - (43.f + style.ItemSpacing.x));
         if (ImGuiWidgetConfig::DragInt("##Pitch_Shifter_Value", "invisible.pitch_shifter::value", 1.f, -12, 12, 0, "Pitch: %d ST")) {
@@ -28,9 +28,9 @@ $execute {
             GDH::Utils::setPitchShifter(enabled ? config.get<int>("invisible.pitch_shifter::value", 0) : 0);
         }
         ImGui::SameLine();
-        ImGuiWidgetConfig::HackCheckbox("##Pitch_Shifter_Enabled", "Invisible", "invisible.pitch_shifter", false);
+        ImGuiWidgetConfig::HackCheckbox("##Pitch_Shifter_Enabled", "invisible.pitch_shifter", false);
         
-        ImGuiWidgetConfig::HackCheckbox("Speedhack Audio", "Invisible", "invisible.speedhack_audio", false);
+        ImGuiWidgetConfig::HackCheckbox("Speedhack Audio", "invisible.speedhack_audio", false);
     });
 }
 #endif

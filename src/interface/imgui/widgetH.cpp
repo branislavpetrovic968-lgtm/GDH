@@ -159,11 +159,11 @@ namespace ImGuiH {
 
         const char*  lend = ImGui::FindRenderedTextEnd(label);
         const ImVec2 label_sz = ImGui::CalcTextSize(label, lend, false);
-        const ImVec2 pad  = style.FramePadding;
+        const ImVec2 pad = style.FramePadding;
         const ImVec2 total_sz = ImGui::CalcItemSize(size_arg, label_sz.x + pad.x * 2.f, label_sz.y + pad.y * 2.f);
 
         const ImVec2 pos = window->DC.CursorPos;
-        const ImRect bb  = { pos, pos + total_sz };
+        const ImRect bb = { pos, pos + total_sz };
         ImGui::ItemSize(total_sz, pad.y);
         if (!ImGui::ItemAdd(bb, id)) return false;
 
@@ -177,8 +177,16 @@ namespace ImGuiH {
             val += (tgt - val) * ImMin(1.f, io.DeltaTime * spd);
             if (ImAbs(val - tgt) < 0.004f) val = tgt; else ImGui::MarkItemEdited(id);
         };
-        Lerp(st.th,    (hovered || held) ? 1.f : 0.f,  9.f);
-        Lerp(st.tHeld, held ? 1.f : 0.f,              18.f);
+        Lerp(st.th, (hovered || held) ? 1.f : 0.f,  9.f);
+        Lerp(st.tHeld, held ? 1.f : 0.f, held ? 10.f : 6.f);
+
+        auto Smootherstep = [](float t) -> float {
+            t = ImClamp(t, 0.f, 1.f);
+            return t * t * t * (t * (t * 6.f - 15.f) + 10.f);
+        };
+
+        const float easedHeld = Smootherstep(st.tHeld);
+        const float rnd = style.FrameRounding * (1.f - easedHeld * 0.8f);
 
         const ImVec4 col_bg_idle = colorTable[Color::Button_Background];
         const ImVec4 col_bg_hov = colorTable[Color::Button_Background_Hover];
@@ -188,16 +196,15 @@ namespace ImGuiH {
         const ImVec4 col_txt_held = colorTable[Color::Button_Foreground_Active];
         const ImVec4 col_border = colorTable[Color::Button_Border];
 
-        const ImVec4 bg_final = LerpC(LerpC(col_bg_idle,  col_bg_hov,  st.th), col_bg_held,  st.tHeld);
-        const ImVec4 txt_final = LerpC(LerpC(col_txt_idle, col_txt_hov, st.th), col_txt_held, st.tHeld);
+        const ImVec4 bg_final = LerpC(LerpC(col_bg_idle,  col_bg_hov,  st.th), col_bg_held,  easedHeld);
+        const ImVec4 txt_final = LerpC(LerpC(col_txt_idle, col_txt_hov, st.th), col_txt_held, easedHeld);
 
-        ImDrawList* dl  = window->DrawList;
-        const float rnd = style.FrameRounding;
+        ImDrawList* dl = window->DrawList;
 
         dl->AddRectFilled(
             { bb.Min.x + 1.f, bb.Min.y + 2.f },
             { bb.Max.x + 1.f, bb.Max.y + 2.f },
-            ImGui::ColorConvertFloat4ToU32({ 0.f, 0.f, 0.f, 0.14f * alpha * (1.f - st.tHeld) }), rnd
+            ImGui::ColorConvertFloat4ToU32({ 0.f, 0.f, 0.f, 0.14f * alpha * (1.f - easedHeld) }), rnd
         );
 
         dl->AddRectFilled(bb.Min, bb.Max, ToU32(bg_final, alpha), rnd);
@@ -214,7 +221,6 @@ namespace ImGuiH {
 
         return pressed;
     }
-
 
     bool Checkbox(const char* label, bool* v)
     {

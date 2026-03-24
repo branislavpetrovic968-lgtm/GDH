@@ -46,6 +46,8 @@ namespace GDH {
 
         Window& getWindow(const std::string& name);
         std::vector<Window>& getWindows() { return m_windows; };
+
+        Hack* findHackByIDGlobal(const std::string& ID);
     private:
         Gui() = default;
 
