@@ -109,11 +109,11 @@ $execute {
         drawLabelCornerControls(g_editCorner);
         
         if (g_openPopup) {
-            ImGui::OpenPopup("Add a label");
+            ImGui::OpenPopup("Add a label##Modal");
             g_openPopup = false;
         }
 
-        if (ImGui::BeginPopupModal("Add a label")) {
+        if (ImGui::BeginPopupModal("Add a label##Modal")) {
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             ImGui::ColorEdit4("##Color", g_newLabelColor);
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
