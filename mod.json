@@ -9,5 +9,10 @@
 	"version": "v5.1.0-alpha.1",
 	"developer": "TobyAdd",
 	"description": "Mod menu for Geometry Dash",
-	"early-load": true
+	"early-load": true,
+		"resources": {
+		"sprites": [
+			"res/*.png"
+		]
+	}
 }
