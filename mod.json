@@ -10,9 +10,15 @@
 	"developer": "TobyAdd",
 	"description": "Mod menu for Geometry Dash",
 	"early-load": true,
-		"resources": {
+	"resources": {
 		"sprites": [
 			"res/*.png"
-		]
+		],
+		"fonts": {
+            "GoogleSans": {
+                "path": "res/GoogleSans-Regular.ttf",
+                "size": 80
+            }
+        }
 	}
 }
