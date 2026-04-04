@@ -1,6 +1,7 @@
 #include "hacks_layer.hpp"
 #include "../../core/config.hpp"
 #include "../../core/gui.hpp"
+#include "../../core/labels.hpp"
 
 HacksLayer* HacksLayer::instance = nullptr;
 
@@ -16,6 +17,7 @@ bool HacksLayer::init() {
     auto& config = Config::get();
 
     m_index = config.get<int>("gui_mobile.index", 0);
+    m_lastIndexScroll = config.get<int>("gui_mobile.lastIndexScroll", 20.f);
 
     auto windows = gui.getWindows();
 
@@ -66,14 +68,17 @@ bool HacksLayer::init() {
         tab->setVisible(i == m_index);
         tab->setID(fmt::format("{}"_spr, winName));
         m_mainLayer->addChild(tab);
-
+        
         for (auto& hack : win.getHacks()) {
             tab->addToggle(hack);          
         }
         tab->addPadding(2.5f);
-
+        
         tab->m_scrollLayer->m_contentLayer->updateLayout();
-        tab->m_scrollLayer->moveToTop();
+        if (i == m_index && m_lastIndexScroll != 20.f)
+            tab->m_scrollLayer->m_contentLayer->setPositionY(m_lastIndexScroll);
+        else
+            tab->m_scrollLayer->moveToTop();
 
         m_tabs.push_back(tab);
 
@@ -124,6 +129,11 @@ bool HacksLayer::isOpened() {
 }
 
 void HacksLayer::onClose(CCObject* object) {
+    auto& config = Config::get();
+    config.set<int>("gui_mobile.lastIndexScroll", m_tabs[m_index]->m_scrollLayer->m_contentLayer->getPositionY());
+    config.save(fileDataPath);
+    GDH::Labels::save();
+
     Popup::onClose(object);
     instance = nullptr;
 }
