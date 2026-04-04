@@ -1,8 +1,6 @@
 #include "hacks_layer.hpp"
 #include "../../core/config.hpp"
 #include "../../core/gui.hpp"
-#include "Geode/cocos/CCDirector.h"
-#include "Geode/cocos/label_nodes/CCLabelBMFont.h"
 
 HacksLayer* HacksLayer::instance = nullptr;
 
@@ -26,7 +24,7 @@ bool HacksLayer::init() {
     auto version = CCLabelBMFont::create(geode::Mod::get()->getVersion().toVString().c_str(), "GoogleSans.fnt"_spr);
     version->setAnchorPoint({1.f, 0.f});
     version->setScale(0.5f);
-    version->setPosition({CCDirector::get()->getScreenRight() - 3.f, 8.f});
+    version->setPosition({CCDirector::get()->getScreenRight() - 6.f, 10.f});
     version->setOpacity(0);
     version->runAction(CCFadeTo::create(0.15f, 175));
     addChild(version);
@@ -34,7 +32,7 @@ bool HacksLayer::init() {
     auto logo = cocos2d::CCSprite::create("GDH_logo.png"_spr);
     logo->setAnchorPoint({1.f, 0.f});
     logo->setScale(0.3f);
-    logo->setPosition({CCDirector::get()->getScreenRight() - 3.f - version->getScaledContentWidth(), 4.f});
+    logo->setPosition({CCDirector::get()->getScreenRight() - 6.f - version->getScaledContentWidth(), 6.f});
     logo->setOpacity(0);
     logo->runAction(CCFadeTo::create(0.15f, 200));
     addChild(logo);
@@ -65,7 +63,7 @@ bool HacksLayer::init() {
         m_buttonMenu->addChild(buttonClick);
 
         auto tab = HacksTab::create();
-        tab->setVisible(i == 0);
+        tab->setVisible(i == m_index);
         tab->setID(fmt::format("{}"_spr, winName));
         m_mainLayer->addChild(tab);
 
@@ -91,7 +89,7 @@ void HacksLayer::switchTab(int newIndex) {
 
     auto& config = Config::get();
     m_index = newIndex;
-    config.set<bool>("gui_mobile.index", m_index);
+    config.set<int>("gui_mobile.index", m_index);
 
     for (int i = 0; i < m_tabs.size(); i++) {
         m_tabs[i]->setVisible(i == m_index);
