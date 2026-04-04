@@ -1,7 +1,8 @@
 #include "hacks_layer.hpp"
 #include "../../core/config.hpp"
 #include "../../core/gui.hpp"
-#include "Geode/cocos/base_nodes/CCNode.h"
+#include "Geode/cocos/CCDirector.h"
+#include "Geode/cocos/label_nodes/CCLabelBMFont.h"
 
 HacksLayer* HacksLayer::instance = nullptr;
 
@@ -16,17 +17,37 @@ bool HacksLayer::init() {
     auto& gui = GDH::Gui::get();
     auto& config = Config::get();
 
+    m_index = config.get<int>("gui_mobile.index", 0);
+
     auto windows = gui.getWindows();
 
     m_closeBtn->setVisible(false);
-
+    
+    auto version = CCLabelBMFont::create(geode::Mod::get()->getVersion().toVString().c_str(), "GoogleSans.fnt"_spr);
+    version->setAnchorPoint({1.f, 0.f});
+    version->setScale(0.5f);
+    version->setPosition({CCDirector::get()->getScreenRight() - 3.f, 8.f});
+    version->setOpacity(0);
+    version->runAction(CCFadeTo::create(0.15f, 175));
+    addChild(version);
+    
     auto logo = cocos2d::CCSprite::create("GDH_logo.png"_spr);
-    logo->setScale(0.6f);
-    logo->setPosition({45.f, 230.f});
-    m_mainLayer->addChild(logo);
+    logo->setAnchorPoint({1.f, 0.f});
+    logo->setScale(0.3f);
+    logo->setPosition({CCDirector::get()->getScreenRight() - 3.f - version->getScaledContentWidth(), 4.f});
+    logo->setOpacity(0);
+    logo->runAction(CCFadeTo::create(0.15f, 200));
+    addChild(logo);
+
+    auto panel = geode::NineSlice::create("GDH_roundBG.png"_spr);
+    panel->setAnchorPoint({0, 0});
+    panel->setColor({50, 50, 107});
+    panel->setPosition({5.f, 5.f});
+    panel->setContentSize({100.f, 250.f});
+    m_mainLayer->addChild(panel);
 
     int i = 0;
-    float tabPositionY = 195.f;
+    float tabPositionY = 235.f;
     for (auto& win : windows) {
         auto winName = win.getName();
         if (winName == "Framerate" || winName == "Invisible")
@@ -51,7 +72,7 @@ bool HacksLayer::init() {
         for (auto& hack : win.getHacks()) {
             tab->addToggle(hack);          
         }
-        tab->addPadding();
+        tab->addPadding(2.5f);
 
         tab->m_scrollLayer->m_contentLayer->updateLayout();
         tab->m_scrollLayer->moveToTop();
@@ -68,7 +89,9 @@ bool HacksLayer::init() {
 void HacksLayer::switchTab(int newIndex) {
     if (newIndex < 0 || newIndex >= m_tabs.size()) return;
 
+    auto& config = Config::get();
     m_index = newIndex;
+    config.set<bool>("gui_mobile.index", m_index);
 
     for (int i = 0; i < m_tabs.size(); i++) {
         m_tabs[i]->setVisible(i == m_index);
@@ -105,91 +128,4 @@ bool HacksLayer::isOpened() {
 void HacksLayer::onClose(CCObject* object) {
     Popup::onClose(object);
     instance = nullptr;
-}
-
-HacksTab* HacksTab::create() {
-    auto ret = new HacksTab();
-    if (ret->init()) {
-        ret->autorelease();
-        return ret;
-    }
-    delete ret;
-    return nullptr;
-}
-
-void HacksTab::addToggle(GDH::Hack& hck) {
-    const std::string ID = hck.getID();
-    auto& gui = GDH::Gui::get();
-
-    auto toggle = CCMenuItemExt::createTogglerWithFilename("GDH_togglerOn.png"_spr, "GDH_togglerOff.png"_spr, 0.75f, [this, &gui, ID](CCMenuItemToggler* sender) {
-        auto* hack = gui.findHackByIDGlobal(ID);
-        hack->toggle();
-    });
-
-    toggle->setPosition({ 25, 10 });
-    toggle->toggle(hck.getEnabled());
-
-    auto label = CCLabelBMFont::create(hck.getName().c_str(), "GoogleSans.fnt"_spr);
-    label->setAnchorPoint({0.f, 0.5f});
-    label->setScale(0.75f);
-    label->setPosition({ toggle->getPositionX() + 20.f, 10 });
-
-    auto hack = CCMenu::create();
-    hack->setContentSize({325, 23});
-    hack->addChild(toggle);
-    hack->addChild(label);
-
-    std::string desc = hck.getDesc();
-    if (!desc.empty()) {
-        auto descSprite = CCSprite::createWithSpriteFrameName("GJ_infoIcon_001.png");
-        descSprite->setScale(0.4f);
-        auto descClick = CCMenuItemExt::createSpriteExtra(descSprite, [this, desc](CCMenuItemSpriteExtra* sender) {
-            FLAlertLayer::create("Description", desc.c_str(), "OK")->show();
-        });
-        descClick->setPosition(label->getPositionX() + label->getScaledContentWidth() + 5.f, label->getScaledContentHeight());
-        hack->addChild(descClick);
-    }
-
-    if (hck.avaibleCustomWindowCocos()) {
-        auto moreSettingsSprite = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
-        moreSettingsSprite->setScale(0.5f);
-        auto moreSettingsSpriteClick = CCMenuItemExt::createSpriteExtra(moreSettingsSprite, [this, &gui, ID](CCMenuItemSpriteExtra* sender) {
-            auto* hack = gui.findHackByIDGlobal(ID);
-            hack->callCustomWindowCocos();
-        });
-        moreSettingsSpriteClick->setPosition(label->getPositionX() + label->getScaledContentWidth() + 25.f, label->getPositionY());
-        hack->addChild(moreSettingsSpriteClick);
-    }
-
-    m_scrollLayer->m_contentLayer->addChild(hack);
-}
-
-bool HacksTab::init() {
-    if (!CCMenu::init())
-        return false;
-
-    setPosition({0, 0});
-
-    m_scrollLayer = ScrollLayer::create({325.f, 240.f});
-    m_scrollLayer->m_contentLayer->setLayout(
-        geode::ColumnLayout::create()
-            ->setAutoScale(false)
-            ->setAxisReverse(true)
-            ->setAutoGrowAxis(false)
-            ->setGap(0.f)
-    );
-    m_scrollLayer->setPosition({105.f, 10.f});
-    m_scrollLayer->m_peekLimitTop = 15;
-    m_scrollLayer->m_peekLimitBottom = 15;
-    
-    addChild(m_scrollLayer);
-    
-    return true;
-}
-
-void HacksTab::addPadding() {
-    auto node = cocos2d::CCNode::create();
-    node->setContentHeight(5.f);
-
-    m_scrollLayer->m_contentLayer->addChild(node);
 }

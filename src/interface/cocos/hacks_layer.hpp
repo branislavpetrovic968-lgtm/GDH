@@ -1,22 +1,6 @@
 #pragma once
 #include <Geode/Geode.hpp>
-#include "../../core/hacks.hpp"
-
-class HacksTab : public cocos2d::CCMenu {
-public:
-    static HacksTab* create();
-    void addToggle(GDH::Hack& hck);
-    float x_lastToggle;
-    float y_lastToggle;
-
-    geode::prelude::ScrollLayer* m_scrollLayer;
-
-    void addPadding();
-private:
-    HacksTab() = default;
-
-    bool init();
-};
+#include "hacks_tab.hpp"
 
 class HacksLayer : public geode::Popup {
 private:
