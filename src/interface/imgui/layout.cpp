@@ -44,7 +44,10 @@ bool Layout::Manager::applyWindowTransform(const std::string& name) {
         WindowInfo* info = getWindowInfo(name);
         if (info) {
             ImGui::SetNextWindowPos(ImVec2(info->x, info->y), ImGuiCond_Always);
-            ImGui::SetNextWindowSize(ImVec2(info->w, info->h), ImGuiCond_Always);
+
+            // imgui so badly calculating height of window
+            // so i use a hardcoded increment to prevent unnecessary scrollbars
+            ImGui::SetNextWindowSize(ImVec2(info->w, info->h + 3.f), ImGuiCond_Always);
             return true;
         }
     }
@@ -151,12 +154,12 @@ void Layout::Manager::calculateWindowPositions() {
     m_scale = std::min({scale_x, scale_y, 1.0f});
     ApplyStyle(m_scale);
 
-    float current_x = std::round(PADDING_X * m_scale);
+    float current_x = PADDING_X * m_scale;
     
     for (const auto& column : m_layout) {
         float max_width = getMaxWidthInColumn(column);
-        float current_y = std::round(PADDING_Y * m_scale);
-        float scaled_max_width = std::round(max_width * m_scale);
+        float current_y = PADDING_Y * m_scale;
+        float scaled_max_width = max_width * m_scale;
         
         for (const auto& name : column) {
             WindowInfo* window = findWindow(name);
@@ -165,16 +168,13 @@ void Layout::Manager::calculateWindowPositions() {
                 window->y = current_y;
 
                 window->w = scaled_max_width;
-
-                // imgui so badly calculating height of window
-                // so i use a hardcoded increment to prevent unnecessary scrollbars
-                window->h = std::round(window->h * m_scale) + (3.f * m_scale);
+                window->h = window->h * m_scale;
                 
-                current_y += window->h + std::round(SPACING_Y * m_scale);
+                current_y += window->h + SPACING_Y * m_scale;
             }
         }
         
-        current_x += scaled_max_width + std::round(PADDING_X * m_scale);
+        current_x += scaled_max_width + PADDING_X * m_scale;
     }
     
     m_stage = Stage::Applying;
