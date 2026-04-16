@@ -51,6 +51,8 @@ static void ApplyGuiColors(bool invert) {
 
 static void ApplyStyle(float scale) {
     ImGuiStyle& style = ImGui::GetStyle();  
+    ImGuiIO& io = ImGui::GetIO();
+    io.FontGlobalScale = scale;
 
     style.WindowPadding = ImVec2(10.f * scale, 10.f * scale);
     style.FramePadding = ImVec2(4.f * scale, 3.f * scale);

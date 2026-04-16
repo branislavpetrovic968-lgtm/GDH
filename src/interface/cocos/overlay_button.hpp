@@ -22,6 +22,7 @@ class OverlayButton : public cocos2d::CCMenu {
     void registerWithTouchDispatcher() override;
 
 public:
+    static OverlayButton* instance;
     static OverlayButton* create(const char* file);
     static OverlayButton* get(const char* file = "GDH_buttonUI.png"_spr);
     void setCallback(std::function<void()>&& cb) { m_callback = std::move(cb); }

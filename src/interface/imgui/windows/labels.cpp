@@ -4,6 +4,7 @@
 #ifdef GEODE_IS_WINDOWS
 #include "../../../core/gui.hpp"
 #include "../../../core/config.hpp"
+#include "../layout.hpp"
 #include "../../../core/labels.hpp"
 #include "../widgetH.hpp"
 #include <imgui-cocos.hpp>
@@ -138,7 +139,8 @@ $execute {
             ImGui::Separator();
             ImGui::Spacing();
 
-            if (ImGuiH::Button("Close", ImVec2 { 240.f, 0.f })) {
+            auto& layout = GDH::Layout::Manager::get();
+            if (ImGuiH::Button("Close", ImVec2 { layout.multipleScale(240.f), 0.f })) {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();

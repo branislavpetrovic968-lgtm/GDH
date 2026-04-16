@@ -1,11 +1,15 @@
 #include "overlay_button.hpp"
+#include "Geode/ui/OverlayManager.hpp"
 #include "hacks_layer.hpp"
 #include "../../core/config.hpp"
 
 #include <Geode/modify/MenuLayer.hpp>
+#include <Geode/modify/GameManager.hpp>
 
 using namespace cocos2d;
 using namespace geode::prelude;
+
+OverlayButton* OverlayButton::instance = nullptr;
 
 OverlayButton* OverlayButton::create(const char* file) {
     auto* ret = new OverlayButton();
@@ -15,8 +19,9 @@ OverlayButton* OverlayButton::create(const char* file) {
 }
 
 OverlayButton* OverlayButton::get(const char* file) {
-    static OverlayButton* instance = nullptr;
-    if (!instance) instance = create(file);
+    if (!instance) {
+        instance = create(file);
+    }
     return instance;
 }
 
@@ -99,18 +104,28 @@ void OverlayButton::registerWithTouchDispatcher() {
     CCTouchDispatcher::get()->addTargetedDelegate(this, -1000, true);
 }
 
+static bool inited = false;
 class $modify(CocosInitMenuLayer, MenuLayer) {
     bool init() {
         if (!MenuLayer::init()) return false;
-        static bool inited = false;
         if (!inited) {
             inited = true;
             auto button = OverlayButton::get();
+            button->setID("gdh.toggle.ui"_spr);
             button->setCallback([]() {
                 HacksLayer::isOpened() ? HacksLayer::get()->onClose(nullptr) : HacksLayer::get()->show();
             });
             OverlayManager::get()->addChild(button);
         }
         return true;
+    }
+};
+
+class $modify(RefreshSpriteHook, GameManager) {
+    void reloadAll(bool switchingModes, bool toFullscreen, bool borderless, bool fix, bool unused) {
+        OverlayManager::get()->removeChildByID("gdh.toggle.ui"_spr);
+        OverlayButton::instance = nullptr;
+        inited = false;
+        GameManager::reloadAll(switchingModes, toFullscreen, borderless, fix, unused);
     }
 };

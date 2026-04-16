@@ -28,6 +28,8 @@ namespace GDH { namespace Layout {
         void finishApplying();   
         
         bool applyWindowTransform(const std::string& name);
+
+        float multipleScale(float value) const { return value * m_scale; }
         
         WindowInfo* getWindowInfo(const std::string& name);        
         
@@ -51,8 +53,13 @@ namespace GDH { namespace Layout {
 
         std::vector<WindowInfo> m_windows;
         std::vector<WindowInfo> m_fixedWindows;
+        std::vector<WindowInfo> m_baseWindows;
         std::vector<std::vector<std::string>> m_layout;
         Stage m_stage = Stage::Idle;
+
+        
+        bool m_isBaseCollected = false;
+        float m_scale = 1.0f;
         
         const float PADDING_X = 10.0f;
         const float PADDING_Y = 10.0f;

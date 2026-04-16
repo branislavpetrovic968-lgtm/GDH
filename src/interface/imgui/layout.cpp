@@ -1,4 +1,5 @@
 #include "layout.hpp"
+#include "theme.hpp"
 #include <imgui.h>
 
 using namespace GDH;
@@ -17,6 +18,8 @@ void Layout::Manager::startCollecting() {
 }
 
 void Layout::Manager::addWindowInfo(const std::string& name, float width, float height) {
+    if (m_stage != Stage::Collecting) return;
+
     if (WindowInfo* window = findFixedWindow(name)) {
         if (window->w != 0.f) width = window->w;
         if (window->h != 0.f) height = window->h;
@@ -40,8 +43,8 @@ bool Layout::Manager::applyWindowTransform(const std::string& name) {
     if (m_stage == Stage::Applying) {
         WindowInfo* info = getWindowInfo(name);
         if (info) {
-            ImGui::SetNextWindowPos(ImVec2(info->x, info->y));
-            ImGui::SetNextWindowSize(ImVec2(info->w, info->h));
+            ImGui::SetNextWindowPos(ImVec2(info->x, info->y), ImGuiCond_Always);
+            ImGui::SetNextWindowSize(ImVec2(info->w, info->h), ImGuiCond_Always);
             return true;
         }
     }
@@ -54,6 +57,7 @@ bool Layout::Manager::isCollecting() {
 
 void Layout::Manager::startApplying() {
     m_stage = Stage::Applying;
+    
 }
 
 bool Layout::Manager::isApplying() {
@@ -119,23 +123,58 @@ float Layout::Manager::getColumnHeight(const std::vector<std::string>& column) {
 }
 
 void Layout::Manager::calculateWindowPositions() {
-    float current_x = PADDING_X;
+    if (m_layout.empty()) return;
+
+    if (!m_isBaseCollected && !m_windows.empty()) {
+        m_baseWindows = m_windows;
+        m_isBaseCollected = true;
+    }
+
+    if (m_isBaseCollected) {
+        m_windows = m_baseWindows;
+    }
+
+    float total_width = PADDING_X;
+    float max_layout_height = 0.0f;
+
+    for (const auto& column : m_layout) {
+        float col_width = getMaxWidthInColumn(column);
+        float col_height = getColumnHeight(column) + (PADDING_Y * 2);
+        total_width += col_width + PADDING_X;
+        if (col_height > max_layout_height) max_layout_height = col_height;
+    }
+
+    ImVec2 display = ImGui::GetIO().DisplaySize;
+    float scale_x = (display.x > 0) ? (display.x / total_width) : 1.0f;
+    float scale_y = (display.y > 0) ? (display.y / max_layout_height) : 1.0f;
+    
+    m_scale = std::min({scale_x, scale_y, 1.0f});
+    ApplyStyle(m_scale);
+
+    float current_x = std::round(PADDING_X * m_scale);
     
     for (const auto& column : m_layout) {
         float max_width = getMaxWidthInColumn(column);
-        float current_y = PADDING_Y;
+        float current_y = std::round(PADDING_Y * m_scale);
+        float scaled_max_width = std::round(max_width * m_scale);
         
         for (const auto& name : column) {
             WindowInfo* window = findWindow(name);
             if (window) {
                 window->x = current_x;
                 window->y = current_y;
-                window->w = max_width;
-                current_y += window->h + SPACING_Y;
+
+                window->w = scaled_max_width;
+
+                // imgui so badly calculating height of window
+                // so i use a hardcoded increment to prevent unnecessary scrollbars
+                window->h = std::round(window->h * m_scale) + (3.f * m_scale);
+                
+                current_y += window->h + std::round(SPACING_Y * m_scale);
             }
         }
         
-        current_x += max_width + PADDING_X;
+        current_x += scaled_max_width + std::round(PADDING_X * m_scale);
     }
     
     m_stage = Stage::Applying;

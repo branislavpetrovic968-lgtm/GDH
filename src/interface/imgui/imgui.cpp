@@ -1,3 +1,4 @@
+#include "imgui.h"
 #include <Geode/Geode.hpp>
 #ifdef GEODE_IS_WINDOWS
 #include <imgui-cocos.hpp>
@@ -162,16 +163,11 @@ void RenderMain() {
     auto& windows = gui.getWindows();
     auto& config = Config::get();
     auto& layoutManager = GDH::Layout::Manager::get();
-
+    
     animateAlpha();
     popup.render();
-
+    
     if (!g_show) return;
-
-    if (g_resetLayoutCalled) {
-        g_resetLayoutCalled = false;
-        layoutManager.startApplying();
-    }
 
     SettingsRender();
     for (auto& window : windows) {
@@ -181,7 +177,7 @@ void RenderMain() {
         layoutManager.applyWindowTransform(windowName);
 
         ImGui::Begin(windowName.c_str());
-
+        
         if (window.avaibleCustomWindowImGui()) window.callCustomWindowImGui();
 
         for (auto& hack : window.getHacks()) {
@@ -227,14 +223,26 @@ void RenderMain() {
 
     }
 
-
-    if (layoutManager.isCollecting())
-        layoutManager.finishCollecting();
-    else if (layoutManager.isApplying())
-        layoutManager.finishApplying();
+    if (layoutManager.isCollecting()) layoutManager.finishCollecting();
+    else if (layoutManager.isApplying()) layoutManager.finishApplying();
     
     static bool g_inited = false;
-    if (!g_inited) {
+    
+    if (g_inited) {
+        static ImVec2 lastSize = ImVec2(0, 0);
+        ImVec2 currentSize = ImGui::GetIO().DisplaySize;
+    
+        if (currentSize.x != lastSize.x || currentSize.y != lastSize.y) {
+            layoutManager.startCollecting(); 
+            lastSize = currentSize;
+        }
+    
+        if (g_resetLayoutCalled) {
+            g_resetLayoutCalled = false;
+            layoutManager.startApplying();
+        }
+    }
+    else {
         layoutManager.setLayout(g_layout);
         layoutManager.setFixedWindowSizeInfo(g_fixedWindowSizes);
 
