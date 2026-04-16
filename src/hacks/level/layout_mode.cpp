@@ -131,7 +131,7 @@ class $modify(LayoutModeGJBaseGameLayer, GJBaseGameLayer) {
 
         if (colorID == 1000) // background
             color = {40, 125, 255};
-        else if (colorID == 1001) // ground (no ground 2???)
+        else if (colorID == 1001 || colorID == 1009) // ground
             color = {0, 102, 255};
         else if (colorID == 1002) // line
             color = {255, 255, 255};

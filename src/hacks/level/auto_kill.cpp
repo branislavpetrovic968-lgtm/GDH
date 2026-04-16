@@ -8,7 +8,7 @@
 
 GUI_HACK_CREATE("Level", "Auto Kill", "Automatically kills the player after a certain percentage of health loss (Classic) or after a set time (Platformer)", false);
 
-class $modify(JumpHackGJBaseGameLayer, GJBaseGameLayer) {
+class $modify(AutoKillGJBaseGameLayer, GJBaseGameLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
         auto& hack = gui.getWindow("Level").findHackByName("Auto Kill");    
