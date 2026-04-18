@@ -35,51 +35,53 @@ void ShowMessage(const std::string& title, const std::string& desc) {
 }
 
 void HacksTab::addToggle(GDH::Hack& hck) {
-    const std::string ID = hck.getID();
     auto& gui = GDH::Gui::get();
+    const std::string ID = hck.getID();
 
-    auto toggle = CCMenuItemExt::createTogglerWithFilename("GDH_togglerOn.png"_spr, "GDH_togglerOff.png"_spr, 0.75f, [this, &gui, ID](CCMenuItemToggler* sender) {
+    auto hackNode = CCMenu::create();
+    hackNode->setContentSize({160, 25});
+    hackNode->setAnchorPoint({0, 0.5f});
+
+    auto toggle = CCMenuItemExt::createTogglerWithFilename("GDH_togglerOn.png"_spr, "GDH_togglerOff.png"_spr, 0.65f, [&gui, ID](CCMenuItemToggler* sender) {
         auto* hack = gui.findHackByIDGlobal(ID);
         hack->toggle();
     });
-
-    toggle->setPosition({ 25, 10 });
+    toggle->setPosition({20, 12.5f});
     toggle->toggle(hck.getEnabled());
+    hackNode->addChild(toggle);
 
-    std::string name = hck.getName();
-    auto label = CCLabelBMFont::create(name.c_str(), "GoogleSans.fnt"_spr);
+    auto label = CCLabelBMFont::create(hck.getName().c_str(), "GoogleSans.fnt"_spr);
     label->setAnchorPoint({0.f, 0.5f});
-    label->setScale(0.75f);
-    label->setPosition({ toggle->getPositionX() + 20.f, 10 });
-
-    auto hack = CCMenu::create();
-    hack->setContentSize({325, 23});
-    hack->addChild(toggle);
-    hack->addChild(label);
+    label->setScale(0.55f); 
+    label->setPosition({toggle->getPositionX() + 18.f, 12.5f});
+    hackNode->addChild(label);
 
     std::string desc = hck.getDesc();
     if (!desc.empty()) {
         auto descSprite = CCSprite::create("GDH_infoIcon.png"_spr);
         descSprite->setScale(0.4f);
-        auto descClick = CCMenuItemExt::createSpriteExtra(descSprite, [this, name, desc](CCMenuItemSpriteExtra* sender) {
-            ShowMessage(name, desc);
+        auto descClick = CCMenuItemExt::createSpriteExtra(descSprite, [hck, desc](CCMenuItemSpriteExtra* sender) {
+            ShowMessage(hck.getName(), desc);
         });
-        descClick->setPosition(label->getPositionX() + label->getScaledContentWidth() + 8.f, label->getScaledContentHeight() - 3.f);
-        hack->addChild(descClick);
+        descClick->setPosition(label->getPositionX() + label->getScaledContentWidth() + 8.f, 15.f);
+        hackNode->addChild(descClick);
     }
 
-    if (hck.avaibleCustomWindowCocos()) {
-        auto moreSettingsSprite = CCSprite::createWithSpriteFrameName("GJ_optionsBtn_001.png");
-        moreSettingsSprite->setScale(0.5f);
-        auto moreSettingsSpriteClick = CCMenuItemExt::createSpriteExtra(moreSettingsSprite, [this, &gui, ID](CCMenuItemSpriteExtra* sender) {
-            auto* hack = gui.findHackByIDGlobal(ID);
-            hack->callCustomWindowCocos();
-        });
-        moreSettingsSpriteClick->setPosition(label->getPositionX() + label->getScaledContentWidth() + 25.f, label->getPositionY());
-        hack->addChild(moreSettingsSpriteClick);
+    if (!m_currentRow || m_currentRow->getChildrenCount() >= 2) {
+        m_currentRow = CCMenu::create();
+        m_currentRow->setContentSize({325, 28});
+        m_currentRow->setLayout(
+            geode::RowLayout::create()
+                ->setGap(2.f)
+                ->setAxisAlignment(geode::AxisAlignment::Start)
+                ->setCrossAxisAlignment(geode::AxisAlignment::Center)
+                ->setAutoScale(false)
+        );
+        m_scrollLayer->m_contentLayer->addChild(m_currentRow);
     }
 
-    m_scrollLayer->m_contentLayer->addChild(hack);
+    m_currentRow->addChild(hackNode);
+    m_currentRow->updateLayout();
 }
 
 bool HacksTab::init() {
@@ -88,7 +90,7 @@ bool HacksTab::init() {
 
     setPosition({0, 0});
 
-    m_scrollLayer = ScrollLayer::create({325.f, 250.f});
+    m_scrollLayer = ScrollLayer::create({500.f, 250.f});
     m_scrollLayer->m_contentLayer->setLayout(
         geode::ColumnLayout::create()
             ->setAutoScale(false)
@@ -96,7 +98,7 @@ bool HacksTab::init() {
             ->setAutoGrowAxis(false)
             ->setGap(0.f)
     );
-    m_scrollLayer->setPosition({105.f, 5.f});
+    m_scrollLayer->setPosition({110.f, 5.f});
     m_scrollLayer->m_peekLimitTop = 15;
     m_scrollLayer->m_peekLimitBottom = 15;
     
@@ -108,6 +110,5 @@ bool HacksTab::init() {
 void HacksTab::addPadding(float height) {
     auto node = cocos2d::CCNode::create();
     node->setContentHeight(height);
-
     m_scrollLayer->m_contentLayer->addChild(node);
 }

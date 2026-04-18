@@ -52,4 +52,6 @@ namespace ImGuiH {
         int v_max = 0, const char* fmt = "%d");
 
     bool ArrowButton(const char* str_id, ImGuiDir dir);
+    void AddRadialGradient(ImDrawList* draw_list, const ImVec2& center, float radius, ImU32 col_in, ImU32 col_out);
+    void GlowWindow();
 }

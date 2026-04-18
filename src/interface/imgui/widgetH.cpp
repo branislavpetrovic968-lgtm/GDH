@@ -628,4 +628,42 @@ namespace ImGuiH {
         return pressed;
     }
 
+    void AddRadialGradient(ImDrawList* draw_list, const ImVec2& center, float radius, ImU32 col_in, ImU32 col_out)
+    {
+        if (((col_in | col_out) & IM_COL32_A_MASK) == 0 || radius < 0.5f)
+            return;
+
+        draw_list->_PathArcToFastEx(center, radius, 0, IM_DRAWLIST_ARCFAST_SAMPLE_MAX, 0);
+        const int count = draw_list->_Path.Size - 1;
+
+        unsigned int vtx_base = draw_list->_VtxCurrentIdx;
+        draw_list->PrimReserve(count * 3, count + 1);
+
+        const ImVec2 uv = draw_list->_Data->TexUvWhitePixel;
+        draw_list->PrimWriteVtx(center, uv, col_in);
+        for (int n = 0; n < count; n++)
+            draw_list->PrimWriteVtx(draw_list->_Path[n], uv, col_out);
+
+        for (int n = 0; n < count; n++)
+        {
+            draw_list->PrimWriteIdx((ImDrawIdx)(vtx_base));
+            draw_list->PrimWriteIdx((ImDrawIdx)(vtx_base + 1 + n));
+            draw_list->PrimWriteIdx((ImDrawIdx)(vtx_base + 1 + ((n + 1) % count)));
+        }
+        draw_list->_Path.Size = 0;
+    }
+
+    void GlowWindow() {
+        ImVec2 pos  = ImGui::GetWindowPos();
+        ImVec2 size = ImGui::GetWindowSize();
+        ImDrawList* dl = ImGui::GetWindowDrawList();
+        ImVec2 center = ImVec2(pos.x + pos.x * 0.5f, pos.y + pos.y * 0.5f);
+        ImVec4 oldClipRect = dl->_ClipRectStack.back(); 
+
+        dl->PushClipRectFullScreen();
+        float radius = ImMax(size.x, size.y) * 1.5f;
+        ImGuiH::AddRadialGradient(dl, center, radius, IM_COL32(71, 71, 131, 100), IM_COL32(100, 100, 255, 0));
+        dl->PopClipRect();
+    }
+
 } // namespace ImGuiH

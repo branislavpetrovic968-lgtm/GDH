@@ -1,14 +1,13 @@
-#include "imgui.h"
-#include <Geode/Geode.hpp>
 
+#include "imgui.h"
 #ifdef GEODE_IS_WINDOWS
-#include "../../../core/gui.hpp"
-#include "../../../core/config.hpp"
-#include "../layout.hpp"
-#include "../../../core/labels.hpp"
-#include "../widgetH.hpp"
+#include <imgui_internal.h>
 #include <imgui-cocos.hpp>
 #include <imgui_stdlib.h>
+#include "../../../core/gui.hpp"
+#include "../../../core/config.hpp"
+#include "../../../core/labels.hpp"
+#include "../widgetH.hpp"
 
 GDH::Labels::Corner g_editCorner = GDH::Labels::Corner::Top_Left;
 
@@ -114,7 +113,12 @@ $execute {
             g_openPopup = false;
         }
 
-        if (ImGui::BeginPopupModal("Add a label##Modal")) {
+        ImVec4 bgColor = ImGui::GetStyleColorVec4(ImGuiCol_WindowBg);
+        bgColor.w = 1.0f;
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, bgColor);
+        if (ImGui::BeginPopupModal("Add a label##Modal", 0, ImGuiWindowFlags_AlwaysAutoResize)) {
+            ImGuiH::GlowWindow();
+
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             ImGui::ColorEdit4("##Color", g_newLabelColor);
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
@@ -139,12 +143,12 @@ $execute {
             ImGui::Separator();
             ImGui::Spacing();
 
-            auto& layout = GDH::Layout::Manager::get();
-            if (ImGuiH::Button("Close", ImVec2 { layout.multipleScale(240.f), 0.f })) {
+            if (ImGuiH::Button("Close", ImVec2 { ImGui::GetContentRegionAvail().x, 0.f })) {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
         }
+        ImGui::PopStyleColor();
 
         if (g_editPopup) {
             ImGui::OpenPopup("Editing the label");

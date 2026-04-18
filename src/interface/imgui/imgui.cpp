@@ -36,12 +36,14 @@ static std::vector<std::vector<std::string>> g_layout = {
     {"Cosmetic"},
     {"Level", "Framerate", "GDH Settings"},
     {"Creator", "Labels"},
+    // {"Replay Engine"},
     {"Shortcuts"}
 };
 
 static std::vector<GDH::Layout::WindowInfo> g_fixedWindowSizes = {
     {"Cosmetic", 0.f, 675.f},
     {"Labels", 240.f, 350.f},
+    // {"Replay Engine", 300.f, 200.f},
     {"Shortcuts", 180.f, 0.f}
 };
 

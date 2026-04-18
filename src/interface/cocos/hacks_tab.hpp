@@ -6,14 +6,12 @@ class HacksTab : public cocos2d::CCMenu {
 public:
     static HacksTab* create();
     void addToggle(GDH::Hack& hck);
-    float x_lastToggle;
-    float y_lastToggle;
-
+    
     geode::prelude::ScrollLayer* m_scrollLayer;
+    cocos2d::CCMenu* m_currentRow = nullptr;
 
     void addPadding(float height = 0.f);
 private:
     HacksTab() = default;
-
     bool init();
 };
