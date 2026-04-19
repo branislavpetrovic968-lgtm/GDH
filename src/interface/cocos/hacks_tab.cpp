@@ -37,42 +37,50 @@ void ShowMessage(const std::string& title, const std::string& desc) {
 void HacksTab::addToggle(GDH::Hack& hck) {
     auto& gui = GDH::Gui::get();
     const std::string ID = hck.getID();
+    
+    float columnWidth = 175.f; 
 
     auto hackNode = CCMenu::create();
-    hackNode->setContentSize({160, 25});
+    hackNode->setContentSize({columnWidth, 30.f});
     hackNode->setAnchorPoint({0, 0.5f});
 
-    auto toggle = CCMenuItemExt::createTogglerWithFilename("GDH_togglerOn.png"_spr, "GDH_togglerOff.png"_spr, 0.65f, [&gui, ID](CCMenuItemToggler* sender) {
+    auto toggle = CCMenuItemExt::createTogglerWithFilename("GDH_togglerOn.png"_spr, "GDH_togglerOff.png"_spr, 0.8f, [&gui, ID](CCMenuItemToggler* sender) {
         auto* hack = gui.findHackByIDGlobal(ID);
         hack->toggle();
     });
-    toggle->setPosition({20, 12.5f});
+    toggle->setPosition({25.f, 15.f});
     toggle->toggle(hck.getEnabled());
     hackNode->addChild(toggle);
 
     auto label = CCLabelBMFont::create(hck.getName().c_str(), "GoogleSans.fnt"_spr);
     label->setAnchorPoint({0.f, 0.5f});
-    label->setScale(0.55f); 
-    label->setPosition({toggle->getPositionX() + 18.f, 12.5f});
+    label->setScale(0.65f); 
+    label->setPosition({toggle->getPositionX() + 22.f, 15.f});
+    
+    float maxLabelWidth = columnWidth - label->getPositionX() - 30.f; 
+    if (label->getScaledContentWidth() > maxLabelWidth) {
+        label->setScale(label->getScale() * (maxLabelWidth / label->getScaledContentWidth()));
+    }
     hackNode->addChild(label);
 
     std::string desc = hck.getDesc();
     if (!desc.empty()) {
         auto descSprite = CCSprite::create("GDH_infoIcon.png"_spr);
-        descSprite->setScale(0.4f);
+        descSprite->setScale(0.45f);
         auto descClick = CCMenuItemExt::createSpriteExtra(descSprite, [hck, desc](CCMenuItemSpriteExtra* sender) {
             ShowMessage(hck.getName(), desc);
         });
-        descClick->setPosition(label->getPositionX() + label->getScaledContentWidth() + 8.f, 15.f);
+        
+        descClick->setPosition({label->getPositionX() + label->getScaledContentWidth() + 10.f, 17.f});
         hackNode->addChild(descClick);
     }
 
     if (!m_currentRow || m_currentRow->getChildrenCount() >= 2) {
         m_currentRow = CCMenu::create();
-        m_currentRow->setContentSize({325, 28});
+        m_currentRow->setContentSize({columnWidth * 2 + 5.f, 32.f});
         m_currentRow->setLayout(
             geode::RowLayout::create()
-                ->setGap(2.f)
+                ->setGap(0.f)
                 ->setAxisAlignment(geode::AxisAlignment::Start)
                 ->setCrossAxisAlignment(geode::AxisAlignment::Center)
                 ->setAutoScale(false)
@@ -98,7 +106,7 @@ bool HacksTab::init() {
             ->setAutoGrowAxis(false)
             ->setGap(0.f)
     );
-    m_scrollLayer->setPosition({110.f, 5.f});
+    m_scrollLayer->setPosition({107.f, 5.f});
     m_scrollLayer->m_peekLimitTop = 15;
     m_scrollLayer->m_peekLimitBottom = 15;
     
