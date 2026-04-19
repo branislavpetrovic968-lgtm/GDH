@@ -2,6 +2,8 @@
 #include "hacks.hpp"
 
 namespace GDH {
+    FLAlertLayer* MaterialLayer(FLAlertLayer* falert);
+
     class Window {
     public:
         explicit Window(std::string name)

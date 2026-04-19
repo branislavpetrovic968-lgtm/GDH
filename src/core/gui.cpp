@@ -3,6 +3,36 @@
 
 using namespace GDH;
 
+FLAlertLayer* GDH::MaterialLayer(FLAlertLayer* falert) {
+    if (falert == nullptr) return nullptr;
+
+    if (auto* sprite9 = falert->m_mainLayer->getChildByType<cocos2d::extension::CCScale9Sprite>(0)) {
+        auto* frame = cocos2d::CCSpriteFrame::create("GDH_square.png"_spr, {0, 0, 0, 0});
+        auto size = sprite9->getContentSize();
+        sprite9->setSpriteFrame(frame);
+        sprite9->setContentSize(size);
+    }
+
+    if (auto* label = falert->m_mainLayer->getChildByType<cocos2d::CCLabelBMFont>(0)) {
+        label->setFntFile("GoogleSans.fnt"_spr);
+        label->setColor({255, 188, 29});
+    }
+
+    if (falert->m_button1 != nullptr) {
+        falert->m_button1->updateBGImage("GDH_button_01.png"_spr);
+        falert->m_button1->m_label->setColor(ccColor3B({255, 255, 255}));
+        falert->m_button1->m_label->setFntFile("GoogleSans.fnt"_spr);
+    }
+
+    if (falert->m_button2 != nullptr) {
+        falert->m_button2->updateBGImage("GDH_button_01.png"_spr);
+        falert->m_button2->m_label->setColor(ccColor3B({255, 255, 255}));
+        falert->m_button2->m_label->setFntFile("GoogleSans.fnt"_spr);
+    }
+
+    return falert;
+}
+
 Window& Gui::getWindow(const std::string& name) {
     auto it = std::find_if(
         m_windows.begin(),

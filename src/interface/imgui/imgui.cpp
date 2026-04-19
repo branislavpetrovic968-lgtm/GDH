@@ -1,6 +1,6 @@
+#ifdef GEODE_IS_WINDOWS
 #include "imgui.h"
 #include <Geode/Geode.hpp>
-#ifdef GEODE_IS_WINDOWS
 #include <imgui-cocos.hpp>
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>

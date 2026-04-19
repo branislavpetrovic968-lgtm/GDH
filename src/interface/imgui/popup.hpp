@@ -1,3 +1,4 @@
+#ifdef GEODE_IS_WINDOWS
 #pragma once
 #include "imgui.h"
 #include <imgui-cocos.hpp>
@@ -76,3 +77,4 @@ namespace GDH {
         Popup() = default;
     };
 }
+#endif

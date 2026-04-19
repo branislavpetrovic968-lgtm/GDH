@@ -1,3 +1,4 @@
+#ifdef GEODE_IS_WINDOWS
 #include <string>
 
 namespace ImGuiWidgetConfig {
@@ -9,3 +10,4 @@ namespace ImGuiWidgetConfig {
     bool DragFloat(const char* label, const std::string& config_key, float step, float min, float max, float default_value, const char* format);
     bool DragInt(const char* label, const std::string& config_key, float step, int min, int max, int default_value, const char* format);
 }
+#endif

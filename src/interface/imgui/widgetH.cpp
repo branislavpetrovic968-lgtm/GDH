@@ -1,3 +1,4 @@
+#ifdef GEODE_IS_WINDOWS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
 #include "widgetH.hpp"
@@ -653,17 +654,18 @@ namespace ImGuiH {
         draw_list->_Path.Size = 0;
     }
 
-    void GlowWindow() {
+    void GlowWindow(ImU32 col_in, ImU32 col_out) {
         ImVec2 pos  = ImGui::GetWindowPos();
         ImVec2 size = ImGui::GetWindowSize();
         ImDrawList* dl = ImGui::GetWindowDrawList();
-        ImVec2 center = ImVec2(pos.x + pos.x * 0.5f, pos.y + pos.y * 0.5f);
+        ImVec2 center = ImVec2(pos.x + size.x * 0.5f, pos.y + size.y * 0.5f);
         ImVec4 oldClipRect = dl->_ClipRectStack.back(); 
 
         dl->PushClipRectFullScreen();
         float radius = ImMax(size.x, size.y) * 1.5f;
-        ImGuiH::AddRadialGradient(dl, center, radius, IM_COL32(71, 71, 131, 100), IM_COL32(100, 100, 255, 0));
+        ImGuiH::AddRadialGradient(dl, center, radius, col_in, col_out);
         dl->PopClipRect();
     }
 
 } // namespace ImGuiH
+#endif

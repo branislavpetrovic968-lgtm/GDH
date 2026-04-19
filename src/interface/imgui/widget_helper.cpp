@@ -1,3 +1,4 @@
+#ifdef GEODE_IS_WINDOWS
 #include "widget_helper.hpp"
 #include "../../core/config.hpp"
 #include "../../core/gui.hpp"
@@ -75,3 +76,4 @@ bool ImGuiWidgetConfig::DragInt(const char* label, const std::string& config_key
     }
     return false;
 }
+#endif

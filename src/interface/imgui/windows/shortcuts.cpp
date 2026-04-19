@@ -1,7 +1,6 @@
+#ifdef GEODE_IS_WINDOWS
 #include "imgui.h"
 #include <Geode/Geode.hpp>
-
-#ifdef GEODE_IS_WINDOWS
 #include "../../../core/gui.hpp"
 #include "../../../core/utils.hpp"
 #include "../widgetH.hpp"
@@ -58,6 +57,28 @@ $execute {
         if (ImGuiH::Button("GDH AppData", {width, 0.f})) {
             geode::utils::file::openFolder(geode::Mod::get()->getSaveDir());
         }
+
+        if (ImGuiH::Button("Crash Game", {width, 0.f})) {
+            ImGui::OpenPopup("Crash the Game");
+        }
+
+        if (ImGui::BeginPopupModal("Crash the Game")) {
+            ImGuiH::GlowWindow(IM_COL32(71, 71, 131, 100), IM_COL32(255, 128, 128, 0));
+            ImGui::Text("Are you sure you want to crash Geometry Dash?");
+            ImGui::Text("Unsaved data will be lost");
+
+            if (ImGuiH::Button("Cancel", {ImGui::GetContentRegionAvail().x, 0})) {
+                ImGui::CloseCurrentPopup();
+            }
+
+            if (ImGuiH::Button("OK", {ImGui::GetContentRegionAvail().x, 0})) {
+                volatile int* ptr = nullptr;
+                *ptr = 0;
+            }
+
+            ImGui::EndPopup();
+        }
+
     });
 }
 #endif

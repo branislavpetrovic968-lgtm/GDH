@@ -1,3 +1,4 @@
+#ifdef GEODE_IS_WINDOWS
 #pragma once
 #include <string>
 #include <vector>
@@ -66,3 +67,4 @@ namespace GDH { namespace Layout {
         const float SPACING_Y = 10.0f;
     };
 } }
+#endif

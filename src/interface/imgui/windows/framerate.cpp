@@ -1,7 +1,6 @@
+#ifdef GEODE_IS_WINDOWS
 #include "imgui.h"
 #include <Geode/Geode.hpp>
-
-#ifdef GEODE_IS_WINDOWS
 #include "../../../core/gui.hpp"
 #include "../../../core/config.hpp"
 #include "../../../core/utils.hpp"

@@ -1,3 +1,4 @@
+#ifdef GEODE_IS_WINDOWS
 #include <imgui.h>
 
 static void ApplyGuiColors(bool invert) {
@@ -74,3 +75,4 @@ static void ApplyStyle(float scale) {
     style.WindowTitleAlign = ImVec2(0.50, 0.50);
     style.WindowMenuButtonPosition = ImGuiDir_Right;
 }
+#endif

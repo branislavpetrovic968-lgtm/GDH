@@ -11,29 +11,6 @@ HacksTab* HacksTab::create() {
     return nullptr;
 }
 
-void ShowMessage(const std::string& title, const std::string& desc) {
-    auto* falert = FLAlertLayer::create(title.c_str(), desc.c_str(), "OK");
-
-    if (auto* sprite9 = falert->m_mainLayer->getChildByType<cocos2d::extension::CCScale9Sprite>(0)) {
-        auto* frame = cocos2d::CCSpriteFrame::create("GDH_square.png"_spr, {0, 0, 0, 0});
-        auto size = sprite9->getContentSize();
-        sprite9->setSpriteFrame(frame);
-        sprite9->setContentSize(size);
-    }
-
-    if (auto* label = falert->m_mainLayer->getChildByType<cocos2d::CCLabelBMFont>(0)) {
-        label->setFntFile("GoogleSans.fnt"_spr);
-        label->setColor({255, 188, 29});
-    }
-
-    if (falert->m_button1 != nullptr) {
-        falert->m_button1->updateBGImage("GDH_button_01.png"_spr);
-        falert->m_button1->m_label->setColor(ccColor3B({255, 255, 255}));
-        falert->m_button1->m_label->setFntFile("GoogleSans.fnt"_spr);
-    }
-    falert->show();
-}
-
 void HacksTab::addToggle(GDH::Hack& hck) {
     auto& gui = GDH::Gui::get();
     const std::string ID = hck.getID();
@@ -68,7 +45,7 @@ void HacksTab::addToggle(GDH::Hack& hck) {
         auto descSprite = CCSprite::create("GDH_infoIcon.png"_spr);
         descSprite->setScale(0.45f);
         auto descClick = CCMenuItemExt::createSpriteExtra(descSprite, [hck, desc](CCMenuItemSpriteExtra* sender) {
-            ShowMessage(hck.getName(), desc);
+            GDH::MaterialLayer(FLAlertLayer::create(hck.getName().c_str(), desc.c_str(), "OK"))->show();
         });
         
         descClick->setPosition({label->getPositionX() + label->getScaledContentWidth() + 10.f, 17.f});

@@ -1,6 +1,6 @@
 
-#include "imgui.h"
 #ifdef GEODE_IS_WINDOWS
+#include "imgui.h"
 #include <imgui_internal.h>
 #include <imgui-cocos.hpp>
 #include <imgui_stdlib.h>
@@ -117,7 +117,7 @@ $execute {
         bgColor.w = 1.0f;
         ImGui::PushStyleColor(ImGuiCol_WindowBg, bgColor);
         if (ImGui::BeginPopupModal("Add a label##Modal", 0, ImGuiWindowFlags_AlwaysAutoResize)) {
-            ImGuiH::GlowWindow();
+            ImGuiH::GlowWindow(IM_COL32(71, 71, 131, 100), IM_COL32(100, 100, 255, 0));
 
             ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
             ImGui::ColorEdit4("##Color", g_newLabelColor);
