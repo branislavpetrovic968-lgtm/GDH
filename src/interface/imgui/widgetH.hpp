@@ -1,4 +1,3 @@
-#ifdef GEODE_IS_WINDOWS
 #include <imgui-cocos.hpp>
 
 namespace ImGuiH {
@@ -57,4 +56,3 @@ namespace ImGuiH {
     void AddRadialGradient(ImDrawList* draw_list, const ImVec2& center, float radius, ImU32 col_in, ImU32 col_out);
     void GlowWindow(ImU32 col_in, ImU32 col_out);
 }
-#endif

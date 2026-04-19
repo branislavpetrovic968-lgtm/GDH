@@ -1,4 +1,3 @@
-#ifdef GEODE_IS_WINDOWS
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui.h"
 #include "widgetH.hpp"
@@ -668,4 +667,3 @@ namespace ImGuiH {
     }
 
 } // namespace ImGuiH
-#endif
