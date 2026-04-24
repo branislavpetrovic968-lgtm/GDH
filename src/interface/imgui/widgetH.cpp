@@ -665,5 +665,79 @@ namespace ImGuiH {
         ImGuiH::AddRadialGradient(dl, center, radius, col_in, col_out);
         dl->PopClipRect();
     }
+    
+    struct SS { float y=0, t=0, h=0, wh=0, a=0; };
+    static std::unordered_map<ImGuiID, SS> m;
+    static std::vector<ImGuiID> st;
 
+    bool BeginSmoothScroll(const char* name, bool* p_open, ImGuiWindowFlags f)
+    {
+        bool v = ImGui::Begin(name, p_open, f | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+        ImGuiID id = ImGui::GetCurrentWindow()->ID;
+        st.push_back(id);
+        auto& s = m[id];
+        if (!v) return false;
+
+        ImGuiIO& io = ImGui::GetIO();
+        float dt = io.DeltaTime;
+        bool hov = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByPopup);
+
+        if (hov && io.MouseWheel != 0.f) {
+            s.t -= io.MouseWheel * 40.f;
+            io.MouseWheel = 0.f;
+        }
+
+        float maxY = ImMax(0.f, s.h - s.wh);
+        s.t = ImClamp(s.t, 0.f, maxY);
+
+        float k = ImMin(1.f, dt * 8.f);
+        s.y += (s.t - s.y) * k;
+
+        if (ImAbs(s.y - s.t) < 0.2f) s.y = s.t;
+        s.y = ImClamp(s.y, 0.f, maxY);
+
+        ImGui::SetScrollY(s.y);
+
+        float tgtA = (maxY > 0 && (hov || ImAbs(s.y - s.t) > 0.5f)) ? 1.f : 0.f;
+        s.a += (tgtA - s.a) * ImMin(1.f, dt * 10.f);
+        if (s.a < 0.01f) s.a = 0.f;
+
+        return true;
+    }
+
+    void EndSmoothScroll()
+    {
+        if (st.empty()) { ImGui::End(); return; }
+
+        ImGuiID id = st.back();
+        st.pop_back();
+        auto& s = m[id];
+
+        ImGuiWindow* w = ImGui::GetCurrentWindow();
+        s.wh = w->InnerRect.GetHeight();
+        s.h  = s.wh + w->ScrollMax.y;
+
+        if (s.a > 0.f)
+        {
+            float maxY = ImMax(1.f, s.h - s.wh);
+            float frac = ImClamp(s.y / maxY, 0.f, 1.f);
+
+            float barH = ImMax(20.f, (s.wh / ImMax(s.h, s.wh)) * (s.wh - 8.f));
+            float track = s.wh - barH - 8.f;
+
+            float x = w->Pos.x + w->Size.x - 6.f;
+            float y = w->InnerRect.Min.y + 4.f + frac * track;
+
+            ImVec2 a = { x, y };
+            ImVec2 b = { x + 4.f, y + barH };
+
+            ImGui::GetWindowDrawList()->AddRectFilled(
+                a, b,
+                ImGui::GetColorU32(ImVec4(1,1,1,0.6f * s.a)),
+                3.f
+            );
+        }
+
+        ImGui::End();
+    }
 } // namespace ImGuiH

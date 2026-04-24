@@ -178,7 +178,7 @@ void RenderMain() {
         
         layoutManager.applyWindowTransform(windowName);
 
-        ImGui::Begin(windowName.c_str());
+        (windowName == "Framerate") ? ImGui::Begin(windowName.c_str()) : ImGuiH::BeginSmoothScroll(windowName.c_str());
         
         if (window.avaibleCustomWindowImGui()) window.callCustomWindowImGui();
 
@@ -221,7 +221,7 @@ void RenderMain() {
             layoutManager.addWindowInfo(windowName, size.x, size.y);
         }
         
-        ImGui::End();
+        ImGuiH::EndSmoothScroll();
 
     }
 

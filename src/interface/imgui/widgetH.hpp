@@ -55,4 +55,7 @@ namespace ImGuiH {
 
     void AddRadialGradient(ImDrawList* draw_list, const ImVec2& center, float radius, ImU32 col_in, ImU32 col_out);
     void GlowWindow(ImU32 col_in, ImU32 col_out);
+
+    bool BeginSmoothScroll(const char* name, bool* p_open = nullptr, ImGuiWindowFlags f = 0);
+    void EndSmoothScroll();
 }
