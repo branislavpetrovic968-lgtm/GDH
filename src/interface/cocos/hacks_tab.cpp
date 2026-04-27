@@ -97,16 +97,16 @@ bool HacksTab::init() {
 }
 
 void HacksTab::addPadding(float height) {
+    m_currentRow = nullptr;
     auto node = cocos2d::CCNode::create();
     node->setContentHeight(height);
     m_scrollLayer->m_contentLayer->addChild(node);
 }
 
 void HacksTab::addSeparator(float height) {
-    auto node = cocos2d::CCLayerColor::create();
+    m_currentRow = nullptr; 
+    auto node = cocos2d::CCLayerColor::create({104, 104, 191, 255});
     node->setContentSize({335.f, height});
-    node->setColor({104, 104, 191});
-    node->setOpacity(255);
     m_scrollLayer->m_contentLayer->addChild(node);
 }
 
@@ -153,7 +153,7 @@ void HacksTab::addConfigToggle(const std::string& labelText, const std::string& 
     updateRowAlignment(m_currentRow);
 }
 
-void HacksTab::addConfigIntInput(const std::string& labelText, const std::string& key, int defaultValue, std::function<void(int)> callback) {
+void HacksTab::addConfigIntInput(const std::string& labelText, const std::string& key, int defaultValue, int min, int max, std::function<void(int)> callback) {
     auto& config = Config::get();
     float columnWidth = 175.f;
     
@@ -161,15 +161,20 @@ void HacksTab::addConfigIntInput(const std::string& labelText, const std::string
     node->setContentSize({columnWidth, 30.f});
     
     auto input = geode::TextInput::create(60.f, "Val", "GoogleSans.fnt"_spr);
-    if (auto* bg = input->getChildByType<geode::NineSlice>(0)) { bg->setColor({71, 71, 131}); bg->setOpacity(255); }
+    if (auto* bg = input->getChildByType<geode::NineSlice>(0)) { 
+        bg->setColor({71, 71, 131}); 
+        bg->setOpacity(255); 
+    }
     input->setScale(0.7f);
     input->setPosition({30.f, 15.f});
     input->setString(std::to_string(config.get<int>(key, defaultValue)));
     input->setFilter("0123456789-");
-    input->setCallback([key, callback](const std::string& str) {
+    input->setMaxCharCount(8);
+    
+    input->setCallback([key, callback, min, max](const std::string& str) {
         auto value = geode::utils::numFromString<int>(str);
         if (!value.isErr()) {
-            int val = value.unwrap();
+            int val = std::clamp(value.unwrap(), min, max);
             Config::get().set<int>(key, val);
             if (callback) callback(val);
         }
@@ -187,7 +192,7 @@ void HacksTab::addConfigIntInput(const std::string& labelText, const std::string
     updateRowAlignment(m_currentRow);
 }
 
-void HacksTab::addConfigFloatInput(const std::string& labelText, const std::string& key, float defaultValue, std::function<void(float)> callback) {
+void HacksTab::addConfigFloatInput(const std::string& labelText, const std::string& key, float defaultValue, float min, float max, std::function<void(float)> callback) {
     auto& config = Config::get();
     float columnWidth = 175.f;
     
@@ -195,15 +200,20 @@ void HacksTab::addConfigFloatInput(const std::string& labelText, const std::stri
     node->setContentSize({columnWidth, 30.f});
     
     auto input = geode::TextInput::create(60.f, "Val", "GoogleSans.fnt"_spr);
-    if (auto* bg = input->getChildByType<geode::NineSlice>(0)) { bg->setColor({71, 71, 131}); bg->setOpacity(255); }
+    if (auto* bg = input->getChildByType<geode::NineSlice>(0)) { 
+        bg->setColor({71, 71, 131}); 
+        bg->setOpacity(255); 
+    }
     input->setScale(0.7f);
     input->setPosition({30.f, 15.f});
     input->setString(fmt::format("{:.2f}", config.get<float>(key, defaultValue)));
     input->setFilter("0123456789-.");
-    input->setCallback([key, callback](const std::string& str) {
+    input->setMaxCharCount(8);
+    
+    input->setCallback([key, callback, min, max](const std::string& str) {
         auto value = geode::utils::numFromString<float>(str);
         if (!value.isErr()) {
-            float val = value.unwrap();
+            float val = std::clamp(value.unwrap(), min, max);
             Config::get().set<float>(key, val);
             if (callback) callback(val);
         }
