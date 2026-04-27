@@ -72,6 +72,9 @@ bool HacksLayer::init() {
         for (auto& hack : win.getHacks()) {
             tab->addToggle(hack);          
         }
+
+        if (win.avaibleCustomWindowCocos()) win.callCustomWindowCocos(tab);
+
         tab->addPadding(2.5f);
         
         tab->m_scrollLayer->m_contentLayer->updateLayout();

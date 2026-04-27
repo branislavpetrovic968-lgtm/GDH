@@ -19,10 +19,10 @@ namespace GDH {
         std::vector<Hack>& getHacks() { return m_hacks; }
 
         void setCustomWindowImGui(std::function<void()> func) { m_handlerImGui = std::move(func); };
-        void setCustomWindowCocos(std::function<void()> func) { m_handlerCocos = std::move(func); };
+        void setCustomWindowCocos(std::function<void(cocos2d::CCNode*)> func) { m_handlerCocos = std::move(func); };
 
         void callCustomWindowImGui() { if (m_handlerImGui) m_handlerImGui(); };
-        void callCustomWindowCocos() { if (m_handlerCocos) m_handlerCocos(); };
+        void callCustomWindowCocos(cocos2d::CCNode* tab) { if (m_handlerCocos) m_handlerCocos(tab); };
         
         bool avaibleCustomWindowImGui() { return m_handlerImGui != nullptr; };
         bool avaibleCustomWindowCocos() { return m_handlerCocos != nullptr;  };
@@ -33,7 +33,7 @@ namespace GDH {
         std::vector<Hack> m_hacks;
 
         std::function<void()> m_handlerImGui = nullptr;
-        std::function<void()> m_handlerCocos = nullptr;
+        std::function<void(cocos2d::CCNode*)> m_handlerCocos = nullptr;
     };
 
     class Gui {
