@@ -4,6 +4,8 @@
 static void ApplyGuiColors(bool invert) {
     auto* colors = ImGui::GetStyle().Colors;
     colors[ImGuiCol_Text] = ImColor(225, 225, 225, 225).Value;
+    colors[ImGuiCol_TextDisabled] = ImColor(148, 158, 210, 255).Value;
+    
     colors[ImGuiCol_WindowBg] = ImColor(26, 26, 73, 250).Value;
     colors[ImGuiCol_Border] = ImColor(64, 64, 64).Value;
 
@@ -60,7 +62,7 @@ static void ApplyStyle(float scale) {
     style.ItemSpacing = ImVec2(8.f * scale, 4.f * scale);
     style.ItemInnerSpacing = ImVec2(4.f * scale, 4.f * scale);
     style.IndentSpacing = 21.f * scale;
-    style.ScrollbarSize = 14.f * scale;
+    style.ScrollbarSize = 6.f * scale;
     style.GrabMinSize = 12.f * scale;
 
     style.WindowRounding = 12.0f * scale;

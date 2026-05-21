@@ -4,24 +4,26 @@
 #include "../../core/config.hpp"
 #include "../../core/gui.hpp"
 #include "../../interface/imgui/widget_helper.hpp"
+#include "../../interface/imgui/layout.hpp"
 
 GUI_HACK_CREATE("Cosmetic", "Wave Pulse Size", "Resizes the wave trail", false);
 
 class $modify(MyHardStreak, HardStreak) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Cosmetic").findHackByName("Wave Pulse Size");        
+        auto& hack = gui.getWindow("Cosmetic").findHackByName("Wave Pulse Size"); 
+        auto& layout = GDH::Layout::Manager::get();       
 
         auto multiplyKey = hack.formatAdditionalSetting("multiply");
         auto noPulseKey = hack.formatAdditionalSetting("noPulse");
         auto valueKey = hack.formatAdditionalSetting("value");
 
         hack.addHookPtr(self.getHook("HardStreak::updateStroke").unwrap());
-        hack.setCustomWindowImGui([multiplyKey, noPulseKey, valueKey]() {
+        hack.setCustomWindowImGui([multiplyKey, noPulseKey, valueKey, &layout]() {
             ImGuiWidgetConfig::Checkbox("No Pulse", noPulseKey, false);
             ImGuiWidgetConfig::Checkbox("Multiply pulsation", multiplyKey, true);
-            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-            ImGuiWidgetConfig::DragFloat("##PulseSizeValue", valueKey, 0.01f, 0, FLT_MAX, 0.5, "Pulse Size: %.2f");
+            ImGui::SetNextItemWidth(layout.multipleScale(180.f));
+            ImGuiWidgetConfig::DragFloat("##WavePulseSizeValue", valueKey, 0.01f, 0, FLT_MAX, 0.5, "Pulse Size: %.2f");
         });
     }
 

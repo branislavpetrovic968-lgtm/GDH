@@ -108,6 +108,15 @@ public:
     template <typename T, typename R = optional_ref<T>> requires is_valid_type<T>
     R get(const std::string& key, const T& defaultValue) {
         if (!inited) {
+            auto CheckDir = [](const std::filesystem::path& path)
+            {
+                if (!std::filesystem::is_directory(path) || !std::filesystem::exists(path))
+                {
+                    std::filesystem::create_directory(path);
+                }
+            };
+            CheckDir(folderMacroPath);
+
             this->load(fileDataPath);
             inited = true;
         }

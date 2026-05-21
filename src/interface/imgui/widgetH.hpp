@@ -9,6 +9,7 @@ namespace ImGuiH {
         Button_Foreground_Hover,
         Button_Foreground_Active,
         Button_Border,
+
         Checkbox_Background_Off,
         Checkbox_Background_Off_Hover,
         Checkbox_Background_Off_Active,
@@ -22,6 +23,22 @@ namespace ImGuiH {
         Checkbox_Knob_On_Hover,
         Checkbox_Knob_On_Active,
         Checkbox_Border,
+
+        RadioButton_Ring_Off,
+        RadioButton_Ring_Off_Hover,
+        RadioButton_Ring_Off_Active,
+        RadioButton_Ring_On,
+        RadioButton_Ring_On_Hover,
+        RadioButton_Ring_On_Active,
+        RadioButton_Dot_Off,
+        RadioButton_Dot_On,
+        RadioButton_Dot_On_Hover,
+        RadioButton_Dot_On_Active,
+        RadioButton_Layer_Off_Hover,
+        RadioButton_Layer_Off_Active,
+        RadioButton_Layer_On_Hover,
+        RadioButton_Layer_On_Active,
+
         Tooltip_Background,
         Tooltip_Foreground,
         Tooltip_Border,
@@ -36,13 +53,21 @@ namespace ImGuiH {
         Drag_Foreground_Active,
         Color_Count,
     };
+    
+    struct PopupMessage {
+        std::string caption;
+        float expiry_time;
+        float slide_t;
+        float height_t;
+        bool dying;
+    };
 
     extern std::map<Color, ImVec4> colors;
-
-    void SetMenuHue(float hue);
     
     bool Button(const char* label, const ImVec2& size_arg = ImVec2(0, 0));
     bool Checkbox(const char* label, bool* v);
+    bool RadioButton(const char* label, bool active);
+
     void Tooltip(const char* text, bool hovered = true);
     
     bool DragFloat(const char* label, float* v, float speed = 1.f, float v_min = 0.f,
@@ -58,4 +83,7 @@ namespace ImGuiH {
 
     bool BeginSmoothScroll(const char* name, bool* p_open = nullptr, ImGuiWindowFlags f = 0);
     void EndSmoothScroll();
+
+    void AddPopup(const std::string& caption);
+    void RenderPopups();
 }

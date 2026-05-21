@@ -61,7 +61,6 @@ bool Layout::Manager::isCollecting() {
 
 void Layout::Manager::startApplying() {
     m_stage = Stage::Applying;
-    
 }
 
 bool Layout::Manager::isApplying() {
@@ -155,7 +154,17 @@ void Layout::Manager::calculateWindowPositions() {
     m_scale = std::min({scale_x, scale_y, 1.0f});
     ApplyStyle(m_scale);
 
+    // horizontal center
+    // float total_scaled_width = PADDING_X * m_scale;
+    // for (const auto& column : m_layout) {
+    //     float col_width = getMaxWidthInColumn(column);
+    //     total_scaled_width += (col_width * m_scale) + (PADDING_X * m_scale);
+    // }
+
     float current_x = PADDING_X * m_scale;
+    // if (display.x > total_scaled_width) {
+    //     current_x = (display.x - total_scaled_width) / 2.0f + (PADDING_X * m_scale);
+    // }
     
     for (const auto& column : m_layout) {
         float max_width = getMaxWidthInColumn(column);

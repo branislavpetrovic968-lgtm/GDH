@@ -3,6 +3,7 @@
 #include "widgetH.hpp"
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
+#include "layout.hpp"
 
 #define COLOR_F32(x) ImVec4 { (((x) >> 24) & 0xFF) / 255.0f, (((x) >> 16) & 0xFF) / 255.0f, (((x) >> 8) & 0xFF) / 255.0f, ((x) & 0xFF) / 255.0f }
 
@@ -15,6 +16,7 @@ namespace ImGuiH {
         {Color::Button_Foreground_Hover,        COLOR_F32(0x24245AFF)},
         {Color::Button_Foreground_Active,       COLOR_F32(0x121237FF)},
         {Color::Button_Border,                  COLOR_F32(0x00000000)},
+
         {Color::Checkbox_Background_Off,        COLOR_F32(0x474783FF)},
         {Color::Checkbox_Background_Off_Hover,  COLOR_F32(0x6868BFFF)},
         {Color::Checkbox_Background_Off_Active, COLOR_F32(0x37376EFF)},
@@ -28,6 +30,22 @@ namespace ImGuiH {
         {Color::Checkbox_Knob_On_Hover,         COLOR_F32(0x2E2E63FF)},
         {Color::Checkbox_Knob_On_Active,        COLOR_F32(0x16163AFF)},
         {Color::Checkbox_Border,                COLOR_F32(0x00000000)},
+
+        {Color::RadioButton_Ring_Off,          COLOR_F32(0x8585BFFF)},
+        {Color::RadioButton_Ring_Off_Hover,    COLOR_F32(0xA3A3D4FF)},
+        {Color::RadioButton_Ring_Off_Active,   COLOR_F32(0x6464A0FF)},
+        {Color::RadioButton_Ring_On,           COLOR_F32(0xD5C4FFFF)},
+        {Color::RadioButton_Ring_On_Hover,     COLOR_F32(0xE4D7FFFF)},
+        {Color::RadioButton_Ring_On_Active,    COLOR_F32(0xB9A5F0FF)},
+        {Color::RadioButton_Dot_Off,           COLOR_F32(0x00000000)},
+        {Color::RadioButton_Dot_On,            COLOR_F32(0xD5C4FFFF)},
+        {Color::RadioButton_Dot_On_Hover,      COLOR_F32(0xE4D7FFFF)},
+        {Color::RadioButton_Dot_On_Active,     COLOR_F32(0xB9A5F0FF)},
+        {Color::RadioButton_Layer_Off_Hover,   COLOR_F32(0xC7D4FA14)},
+        {Color::RadioButton_Layer_Off_Active,  COLOR_F32(0xC7D4FA1F)},
+        {Color::RadioButton_Layer_On_Hover,    COLOR_F32(0xD5C4FF14)},
+        {Color::RadioButton_Layer_On_Active,   COLOR_F32(0xD5C4FF1F)},
+
         {Color::Tooltip_Background,             COLOR_F32(0x21214EFF)},
         {Color::Tooltip_Foreground,             COLOR_F32(0xD5C4FFFF)},
         {Color::Tooltip_Border,                 COLOR_F32(0xD5C4FFFF)},
@@ -51,78 +69,6 @@ namespace ImGuiH {
         auto *colors = ImGui::GetStyle().Colors;
         float r, g, b; ImGui::ColorConvertHSVtoRGB(hsv.x, hsv.y, hsv.z, r, g, b);
         colors[cid] = ImVec4 { r, g, b, hsv.w };
-    }
-    
-    void SetMenuHue(float hue) {
-        SetColorHSV(Color::Button_Background, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
-        SetColorHSV(Color::Button_Background_Hover, ImVec4 { hue + (0.0548f), 0.1569f, 1.0000f, 1.0000f });
-        SetColorHSV(Color::Button_Background_Active, ImVec4 { hue + (0.0451f), 0.3125f, 0.9412f, 1.0000f });
-        SetColorHSV(Color::Button_Foreground, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 1.0000f });
-        SetColorHSV(Color::Button_Foreground_Hover, ImVec4 { hue + (0.0007f), 0.6000f, 0.3529f, 1.0000f });
-        SetColorHSV(Color::Button_Foreground_Active, ImVec4 { hue + (0.0007f), 0.6727f, 0.2157f, 1.0000f });
-        SetColorHSV(Color::Button_Border, ImVec4 { hue + (-0.6660f), 0.0000f, 0.0000f, 0.0000f });
-        SetColorHSV(Color::Checkbox_Background_Off, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Background_Off_Hover, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Background_Off_Active, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Background_On, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Background_On_Hover, ImVec4 { hue + (0.0548f), 0.1569f, 1.0000f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Background_On_Active, ImVec4 { hue + (0.0451f), 0.3125f, 0.9412f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Knob_Off, ImVec4 { hue + (-0.0418f), 0.2040f, 0.9804f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Knob_Off_Hover, ImVec4 { hue + (-0.0585f), 0.1216f, 1.0000f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Knob_Off_Active, ImVec4 { hue + (-0.0262f), 0.2952f, 0.8235f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Knob_On, ImVec4 { hue + (0.0007f), 0.5769f, 0.3059f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Knob_On_Hover, ImVec4 { hue + (0.0007f), 0.5354f, 0.3882f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Knob_On_Active, ImVec4 { hue + (0.0007f), 0.6207f, 0.2275f, 1.0000f });
-        SetColorHSV(Color::Checkbox_Border, ImVec4 { hue + (-0.6660f), 0.0000f, 0.0000f, 0.0000f });
-        SetColorHSV(Color::Tooltip_Background, ImVec4 { hue + (0.0007f), 0.5769f, 0.3059f, 1.0000f });
-        SetColorHSV(Color::Tooltip_Foreground, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
-        SetColorHSV(Color::Tooltip_Border, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
-        SetColorHSV(Color::Drag_Background, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
-        SetColorHSV(Color::Drag_Background_Hover, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
-        SetColorHSV(Color::Drag_Background_Active, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
-        SetColorHSV(Color::Drag_Middleground, ImVec4 { hue + (0.0173f), 0.5000f, 0.7059f, 1.0000f });
-        SetColorHSV(Color::Drag_Middleground_Hover, ImVec4 { hue + (0.0223f), 0.4545f, 0.8627f, 1.0000f });
-        SetColorHSV(Color::Drag_Middleground_Active, ImVec4 { hue + (0.0451f), 0.3125f, 0.9412f, 1.0000f });
-        SetColorHSV(Color::Drag_Foreground, ImVec4 { hue + (-0.0418f), 0.2040f, 0.9804f, 1.0000f });
-        SetColorHSV(Color::Drag_Foreground_Hover, ImVec4 { hue + (-0.0585f), 0.1216f, 1.0000f, 1.0000f });
-        SetColorHSV(Color::Drag_Foreground_Active, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 1.0000f });;
-        SetImGuiColorHSV(ImGuiCol_Text, ImVec4 { hue + (-0.6660f), 0.0000f, 0.8824f, 0.8824f });
-        SetImGuiColorHSV(ImGuiCol_TextDisabled, ImVec4 { hue + (-0.6660f), 0.0000f, 0.8824f, 0.4000f });
-        SetImGuiColorHSV(ImGuiCol_WindowBg, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 0.9804f });
-        SetImGuiColorHSV(ImGuiCol_Border, ImVec4 { hue + (-0.6660f), 0.0000f, 0.2510f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_TitleBg, ImVec4 { hue + (0.0007f), 0.5354f, 0.3882f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ScrollbarBg, ImVec4 { hue + (0.0007f), 0.6438f, 0.2863f, 0.0000f });
-        SetImGuiColorHSV(ImGuiCol_FrameBg, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_FrameBgHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_FrameBgActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ResizeGrip, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ResizeGripHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ResizeGripActive, ImVec4 { hue + (0.0487f), 0.2314f, 1.0000f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ModalWindowDimBg, ImVec4 { hue + (-0.6660f), 0.0000f, 0.0000f, 0.4980f });
-        SetImGuiColorHSV(ImGuiCol_Button, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ButtonHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ButtonActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ScrollbarGrab, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ScrollbarGrabHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_ScrollbarGrabActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_Header, ImVec4 { hue + (0.0007f), 0.4580f, 0.5137f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_HeaderHovered, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_HeaderActive, ImVec4 { hue + (0.0007f), 0.5000f, 0.4314f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_Tab, ImVec4 { hue + (0.0007f), 0.0385f, 0.2039f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_TabHovered, ImVec4 { hue + (0.0007f), 0.0278f, 0.2824f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_TabActive, ImVec4 { hue + (0.0007f), 0.0222f, 0.3529f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_TableHeaderBg, ImVec4 { hue + (-0.6660f), 0.0000f, 0.2353f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_TableBorderStrong, ImVec4 { hue + (-0.6660f), 0.0000f, 0.3137f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_TableBorderLight, ImVec4 { hue + (-0.6660f), 0.0000f, 0.2353f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_TableRowBg, ImVec4 { hue + (-0.6660f), 0.0000f, 0.1176f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_TableRowBgAlt, ImVec4 { hue + (-0.6660f), 0.0000f, 0.1373f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_Separator, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
-        SetImGuiColorHSV(ImGuiCol_Border, ImVec4 { hue + (0.0007f), 0.4555f, 0.7490f, 1.0000f });
-
-        auto *colors = ImGui::GetStyle().Colors;
-        colors[ImGuiCol_TitleBgActive] = colors[ImGuiCol_TitleBg];
-        colors[ImGuiCol_TitleBgCollapsed] = colors[ImGuiCol_TitleBg];
-        colors[ImGuiCol_PopupBg] = colors[ImGuiCol_WindowBg];
     }
     
     static inline ImU32 ToU32(ImVec4 c, float global_alpha)
@@ -316,6 +262,114 @@ namespace ImGuiH {
         return changed;
     }
 
+    bool RadioButton(const char* label, bool active)
+    {
+        struct RadioState { float t, th, tHeld; };
+        static std::unordered_map<ImGuiID, RadioState> s_states;
+
+        ImGuiWindow* window = ImGui::GetCurrentWindow();
+        if (window->SkipItems) return false;
+
+        ImGuiContext& g     = *GImGui;
+        const ImGuiStyle& style = g.Style;
+        const ImGuiIO&    io    = g.IO;
+        const float alpha = style.Alpha;
+
+        const float H  = ImGui::GetFrameHeight();
+        const float OR = H * 0.5f;
+        const float BW = 2.f;
+        const float IR = OR * 0.50f;
+
+        const float SR = OR * 1.35f;
+
+        const char* lend      = ImGui::FindRenderedTextEnd(label);
+        const ImVec2 label_sz = ImGui::CalcTextSize(label, lend, true);
+        const ImVec2 total_sz = { H + style.ItemInnerSpacing.x + label_sz.x, H };
+        const ImVec2 pos      = window->DC.CursorPos;
+        const ImRect total_bb = { pos, pos + total_sz };
+        const ImRect radio_bb = { pos, { pos.x + H, pos.y + H } };
+        const ImVec2 center   = { pos.x + OR, pos.y + OR };
+
+        ImGui::ItemSize(total_sz, style.FramePadding.y);
+        const ImGuiID id = ImGui::GetID(label);
+        if (!ImGui::ItemAdd(total_bb, id)) return false;
+
+        auto& st = s_states.emplace(id, RadioState{ active ? 1.f : 0.f, 0.f, 0.f })
+                            .first->second;
+
+        bool hovered, held;
+        const bool pressed = ImGui::ButtonBehavior(total_bb, id, &hovered, &held);
+
+        auto Lerp = [&](float& val, float tgt, float spd) {
+            val += (tgt - val) * ImMin(1.f, io.DeltaTime * spd);
+            if (ImAbs(val - tgt) < 0.004f) val = tgt;
+            else ImGui::MarkItemEdited(id);
+        };
+
+        Lerp(st.t,     active ? 1.f : 0.f,             14.f);
+        Lerp(st.th,    (hovered || held) ? 1.f : 0.f,   9.f);
+        Lerp(st.tHeld, held ? 1.f : 0.f,               18.f);
+
+        const ImVec4 col_ring_off      = colorTable[Color::RadioButton_Ring_Off];
+        const ImVec4 col_ring_off_hov  = colorTable[Color::RadioButton_Ring_Off_Hover];
+        const ImVec4 col_ring_off_held = colorTable[Color::RadioButton_Ring_Off_Active];
+        const ImVec4 col_ring_on       = colorTable[Color::RadioButton_Ring_On];
+        const ImVec4 col_ring_on_hov   = colorTable[Color::RadioButton_Ring_On_Hover];
+        const ImVec4 col_ring_on_held  = colorTable[Color::RadioButton_Ring_On_Active];
+
+        const ImVec4 col_dot_off       = colorTable[Color::RadioButton_Dot_Off];
+        const ImVec4 col_dot_on        = colorTable[Color::RadioButton_Dot_On];
+        const ImVec4 col_dot_on_hov    = colorTable[Color::RadioButton_Dot_On_Hover];
+        const ImVec4 col_dot_on_held   = colorTable[Color::RadioButton_Dot_On_Active];
+
+        const ImVec4 col_layer_off_hov  = colorTable[Color::RadioButton_Layer_Off_Hover];
+        const ImVec4 col_layer_off_held = colorTable[Color::RadioButton_Layer_Off_Active];
+        const ImVec4 col_layer_on_hov   = colorTable[Color::RadioButton_Layer_On_Hover];
+        const ImVec4 col_layer_on_held  = colorTable[Color::RadioButton_Layer_On_Active];
+
+        const ImVec4 ring_base  = LerpC(col_ring_off,     col_ring_on,     st.t);
+        const ImVec4 ring_hov   = LerpC(col_ring_off_hov,  col_ring_on_hov,  st.t);
+        const ImVec4 ring_held  = LerpC(col_ring_off_held, col_ring_on_held, st.t);
+        const ImVec4 ring_final = LerpC(LerpC(ring_base, ring_hov, st.th), ring_held, st.tHeld);
+
+        const ImVec4 dot_base  = LerpC(col_dot_off, col_dot_on,     st.t);
+        const ImVec4 dot_hov   = LerpC(col_dot_off, col_dot_on_hov,  st.t);
+        const ImVec4 dot_held  = LerpC(col_dot_off, col_dot_on_held, st.t);
+        const ImVec4 dot_final = LerpC(LerpC(dot_base, dot_hov, st.th), dot_held, st.tHeld);
+
+        const ImVec4 lay_hov  = LerpC(col_layer_off_hov,  col_layer_on_hov,  st.t);
+        const ImVec4 lay_held = LerpC(col_layer_off_held, col_layer_on_held, st.t);
+
+        ImVec4 layer_final = LerpC(lay_hov, lay_held, st.tHeld);
+        layer_final.w *= (st.th + st.tHeld * 0.5f);
+
+        ImDrawList* dl = window->DrawList;
+
+        if (layer_final.w > 0.002f)
+            dl->AddCircleFilled(center, SR, ToU32(layer_final, alpha), 48);
+
+        const float ring_w = BW + st.t * 0.4f;
+        dl->AddCircle(center, OR - ring_w * 0.5f,
+                    ToU32(ring_final, alpha), 48, ring_w);
+
+        const float dot_r = IR * st.t * (1.f - st.tHeld * 0.12f);
+        if (dot_r > 0.5f)
+        {
+            dl->AddCircleFilled({ center.x, center.y + 0.8f }, dot_r + 1.f,
+                                ImGui::ColorConvertFloat4ToU32({ 0.f, 0.f, 0.f, 0.15f * alpha * st.t }),
+                                32);
+            dl->AddCircleFilled(center, dot_r, ToU32(dot_final, alpha), 48);
+            dl->AddCircle(center, dot_r,
+                        ImGui::ColorConvertFloat4ToU32({ 0.f, 0.f, 0.f, 0.06f * alpha }), 48, 1.f);
+        }
+
+        if (lend > label)
+            dl->AddText({ pos.x + H + style.ItemInnerSpacing.x, pos.y + style.FramePadding.y },
+                        ImGui::GetColorU32(ImGuiCol_Text), label, lend);
+
+        IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags);
+        return pressed;
+    }
 
     void Tooltip(const char* text, bool hovered)
     {
@@ -592,7 +646,7 @@ namespace ImGuiH {
         const float alpha = style.Alpha;
 
         const ImGuiID id = window->GetID(str_id);
-        ArrowState& st = s_states.emplace(id, ArrowState{ 0.f, 0.f }).first->second;
+        ArrowState& st = s_states.emplace(id, ArrowState{0.f, 0.f}).first->second;
 
         auto Lerp = [&](float& val, float tgt, float spd) {
             val += (tgt - val) * ImMin(1.f, io.DeltaTime * spd);
@@ -715,29 +769,125 @@ namespace ImGuiH {
 
         ImGuiWindow* w = ImGui::GetCurrentWindow();
         s.wh = w->InnerRect.GetHeight();
-        s.h  = s.wh + w->ScrollMax.y;
+        s.h = s.wh + w->ScrollMax.y;
 
         if (s.a > 0.f)
         {
+            ImGuiStyle& style = ImGui::GetStyle();
+
+            const float scrollbar_size = style.ScrollbarSize;
+            const float rounding = style.ScrollbarRounding;
+
+            const float padding = style.WindowPadding.x * 0.35f;
+            const float width = scrollbar_size * 0.55f;
+
             float maxY = ImMax(1.f, s.h - s.wh);
             float frac = ImClamp(s.y / maxY, 0.f, 1.f);
 
-            float barH = ImMax(20.f, (s.wh / ImMax(s.h, s.wh)) * (s.wh - 8.f));
-            float track = s.wh - barH - 8.f;
+            float barH = ImMax(
+                scrollbar_size,
+                (s.wh / ImMax(s.h, s.wh)) * (s.wh - padding * 2.f)
+            );
 
-            float x = w->Pos.x + w->Size.x - 6.f;
-            float y = w->InnerRect.Min.y + 4.f + frac * track;
+            float track = s.wh - barH - padding * 2.f;
+
+            float x = w->InnerRect.Max.x - width - padding;
+            float y = w->InnerRect.Min.y + padding + frac * track;
 
             ImVec2 a = { x, y };
-            ImVec2 b = { x + 4.f, y + barH };
+            ImVec2 b = { x + width, y + barH };
 
             ImGui::GetWindowDrawList()->AddRectFilled(
-                a, b,
+                a,
+                b,
                 ImGui::GetColorU32(ImVec4(1,1,1,0.6f * s.a)),
-                3.f
+                rounding
             );
         }
-
         ImGui::End();
+    }
+
+    static std::vector<PopupMessage> s_popups;
+
+    void AddPopup(const std::string& caption)
+    {
+        s_popups.insert(s_popups.begin(), {
+            caption,
+            static_cast<float>(ImGui::GetTime()) + 5.0f,
+            0.0f,
+            0.0f,
+            false
+        });
+    }
+
+    void RenderPopups()
+    {
+        ImDrawList* dl = ImGui::GetForegroundDrawList();
+        const ImVec2 dis = ImGui::GetIO().DisplaySize;
+        const float dt = ImGui::GetIO().DeltaTime;
+        const float now = static_cast<float>(ImGui::GetTime());
+        
+        auto& layout = GDH::Layout::Manager::get();
+
+        for (auto& m : s_popups) 
+        {
+            if (!m.dying && now >= m.expiry_time) m.dying = true;
+            if (!m.dying) {
+                m.slide_t  += (1.0f - m.slide_t)  * std::min(1.0f, dt * 10.0f);
+                m.height_t += (1.0f - m.height_t) * std::min(1.0f, dt * 10.0f);
+            } else {
+                m.slide_t  += (0.0f - m.slide_t)  * std::min(1.0f, dt * 10.0f);
+                m.height_t += (0.0f - m.height_t) * std::min(1.0f, dt * 10.0f);
+            }
+        }
+
+        s_popups.erase(
+            std::remove_if(s_popups.begin(), s_popups.end(),
+                [](const PopupMessage& m) { return m.dying && m.slide_t <= 0.01f && m.height_t <= 0.01f; }),
+            s_popups.end()
+        );
+
+        float curY = dis.y - layout.multipleScale(18.0f);
+
+        const ImVec4 col_bg = colorTable[Color::Tooltip_Background];
+        const ImVec4 col_border = colorTable[Color::Tooltip_Border];
+        const ImVec4 col_text = colorTable[Color::Tooltip_Foreground];
+        
+        const float rnd = layout.multipleScale(GImGui->Style.WindowRounding);
+        const ImVec2 pad = { layout.multipleScale(GImGui->Style.WindowPadding.x), layout.multipleScale(GImGui->Style.WindowPadding.y) };
+
+        for (const auto& m : s_popups) 
+        {
+            float sCardW = layout.multipleScale(272.0f);
+            
+            float textMaxW = sCardW - pad.x * 2.0f;
+            ImVec2 textSz = ImGui::CalcTextSize(m.caption.c_str(), nullptr, false, textMaxW);
+            
+            float totalCardH = pad.y * 2.0f + textSz.y;
+            float slotH = totalCardH * m.height_t;
+
+            float xOff = (sCardW + layout.multipleScale(18.0f)) * (1.0f - m.slide_t);
+            float x = dis.x - sCardW - layout.multipleScale(18.0f) + xOff;
+            
+            float y = curY - slotH;
+
+            ImVec2 pMin = { x, y };
+            ImVec2 pMax = { x + sCardW, y + slotH };
+
+            ImU32 u_bg = ImGui::ColorConvertFloat4ToU32({ col_bg.x, col_bg.y, col_bg.z, col_bg.w });
+            ImU32 u_border = ImGui::ColorConvertFloat4ToU32({ col_border.x, col_border.y, col_border.z, col_border.w });
+            ImU32 u_text = ImGui::ColorConvertFloat4ToU32({ col_text.x, col_text.y, col_text.z, col_text.w });
+            ImU32 u_shadow = ImGui::ColorConvertFloat4ToU32({ 0.0f, 0.0f, 0.0f, 0.18f });
+
+            dl->AddRectFilled({ pMin.x + 2.0f, pMin.y + 3.0f }, { pMax.x + 2.0f, pMax.y + 3.0f }, u_shadow, rnd + 1.0f);
+            dl->AddRectFilled(pMin, pMax, u_bg, rnd);
+            dl->AddRect(pMin, pMax, u_border, rnd, 0, 1.0f);
+            
+            dl->PushClipRect(pMin, pMax, true);
+            dl->AddText(ImGui::GetFont(), layout.multipleScale(ImGui::GetFontSize()), { pMin.x + pad.x, pMin.y + pad.y }, u_text, m.caption.c_str(), nullptr, textMaxW);
+            dl->PopClipRect();
+
+            curY -= slotH + layout.multipleScale(8.0f);
+        }
     }
 } // namespace ImGuiH

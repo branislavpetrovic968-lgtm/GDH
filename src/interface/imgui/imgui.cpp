@@ -5,7 +5,6 @@
 #include <imgui_internal.h>
 #include <imgui_stdlib.h>
 #include "layout.hpp"
-#include "popup.hpp"
 
 #include "widgetH.hpp"
 #include "theme.hpp"
@@ -36,14 +35,14 @@ static std::vector<std::vector<std::string>> g_layout = {
     {"Cosmetic"},
     {"Level", "Framerate", "GDH Settings"},
     {"Creator", "Labels"},
-    // {"Replay Engine"},
+    {"Replay Engine"},
     {"Shortcuts"}
 };
 
 static std::vector<GDH::Layout::WindowInfo> g_fixedWindowSizes = {
     {"Cosmetic", 0.f, 675.f},
     {"Labels", 240.f, 350.f},
-    // {"Replay Engine", 300.f, 200.f},
+    {"Replay Engine", 300.f, 200.f},
     {"Shortcuts", 180.f, 0.f}
 };
 
@@ -140,13 +139,6 @@ void SettingsRender() {
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
     ImGui::InputTextWithHint("##Search", "Search:", &g_search_text);
 
-    float hue = config.get<float>("menu-hue", 240.0f);
-    ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-    if (ImGuiH::DragFloat("##Menu Hue", &hue, 1.0f, 0.0f, 360.0f, "Menu Hue: %.1fdeg")) {
-        config.set<float>("menu-hue", hue);
-        ImGuiH::SetMenuHue(hue/360.0f);
-    }
-
     if (ImGuiH::Button("Refresh Layout", {ImGui::GetContentRegionAvail().x, 0})) {
         g_resetLayoutCalled = true;
     }
@@ -161,13 +153,13 @@ void SettingsRender() {
 
 void RenderMain() {
     auto& gui = GDH::Gui::get();
-    auto& popup = GDH::Popup::get();
     auto& windows = gui.getWindows();
     auto& config = Config::get();
     auto& layoutManager = GDH::Layout::Manager::get();
     
     animateAlpha();
-    popup.render();
+
+    ImGuiH::RenderPopups();
     
     if (!g_show) return;
 
@@ -267,7 +259,6 @@ class $modify(ImGuiInitMenuLayer, MenuLayer) {
                 ApplyStyle(1.f);
 
                 io.Fonts->AddFontFromMemoryCompressedTTF(roboto_font_data, roboto_font_size, 18.f, nullptr, io.Fonts->GetGlyphRangesCyrillic());
-                ImGuiH::SetMenuHue(config.get<float>("menu-hue", 240.0f)/360.0f);
             }).draw([] {
                 RenderMain();
             });

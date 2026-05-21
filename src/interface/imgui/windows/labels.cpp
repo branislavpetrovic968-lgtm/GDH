@@ -8,6 +8,7 @@
 #include "../../../core/config.hpp"
 #include "../../../core/labels.hpp"
 #include "../widgetH.hpp"
+#include "../layout.hpp"
 
 GDH::Labels::Corner g_editCorner = GDH::Labels::Corner::Top_Left;
 
@@ -80,8 +81,9 @@ $execute {
     auto& gui = GDH::Gui::get();
     auto& config = Config::get();
     auto& window = gui.getWindow("Labels");
+    auto& layout = GDH::Layout::Manager::get();
 
-    window.setCustomWindowImGui([&config, &gui] {
+    window.setCustomWindowImGui([&config, &gui, &layout] {
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
         ImGuiH::DragFloat("##LabelCorPadDrag", &GDH::Labels::cornerPadding, 1.0f, 0.0f, 256.0f, "Corner Padding: %.1fpx");
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
@@ -129,12 +131,12 @@ $execute {
             ImGui::Spacing();
 
             for (const auto &[name, value] : g_labelTemplates) {
-                if (ImGuiH::Button(name, ImVec2 { ImGui::GetContentRegionAvail().x, 0 })) {
+                if (ImGuiH::Button(name, {ImGui::GetContentRegionAvail().x, 0})) {
                     GDH::Labels::labels[g_popupCorner].push_back(GDH::Labels::Label(value, g_newLabelColor, g_newLabelSize));
                     ImGui::CloseCurrentPopup();
                 }
             }
-            if (ImGuiH::Button("Spacing", ImVec2 { ImGui::GetContentRegionAvail().x, 0.f })) {
+            if (ImGuiH::Button("Spacing", {ImGui::GetContentRegionAvail().x, 0.f})) {
                 GDH::Labels::labels[g_popupCorner].push_back(GDH::Labels::Label(g_newLabelSize));
                 ImGui::CloseCurrentPopup();
             }
@@ -143,7 +145,7 @@ $execute {
             ImGui::Separator();
             ImGui::Spacing();
 
-            if (ImGuiH::Button("Close", ImVec2 { ImGui::GetContentRegionAvail().x, 0.f })) {
+            if (ImGuiH::Button("Close", {layout.multipleScale(290.f), 0.f})) {
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
