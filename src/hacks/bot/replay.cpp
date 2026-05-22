@@ -14,7 +14,7 @@ class $modify(ReplayCCScheduler, cocos2d::CCScheduler) {
 
     void update(float dt) {
         auto &engine = GDH::ReplayEngine::get();
-        if (engine.mode == disable) return CCScheduler::update(dt);
+        if (engine.mode == state::disable) return CCScheduler::update(dt);
 
         auto &config = Config::get();
 
@@ -67,7 +67,9 @@ class $modify(ReplayPlayLayer, PlayLayer) {
         auto &engine = GDH::ReplayEngine::get();
 
         left_over = 0;
-        PlayLayer::resetLevel();        
+        PlayLayer::resetLevel();
+
+        if (engine.mode != disable) m_resumeTimer = 15;
         engine.handle_reset();  
     }
 
@@ -84,5 +86,5 @@ class $modify(ReplayPlayLayer, PlayLayer) {
         if (engine.mode == state::record)
             engine.mode = state::disable;
     }
-
+    
 };
