@@ -1,4 +1,3 @@
-#ifdef GEODE_IS_WINDOWS
 #include "layout.hpp"
 #include "theme.hpp"
 #include <imgui.h>
@@ -189,4 +188,3 @@ void Layout::Manager::calculateWindowPositions() {
     
     m_stage = Stage::Applying;
 }
-#endif
