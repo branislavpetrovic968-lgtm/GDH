@@ -17,4 +17,5 @@ namespace GDH { namespace Utils {
 
     float getFps();
     void setPitchShifter(int semitones);
+    void setReverb(float decayTime);
 } }

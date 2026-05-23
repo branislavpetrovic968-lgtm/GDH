@@ -3,7 +3,6 @@
 #include <imgui-cocos.hpp>
 #include "../../core/config.hpp"
 #include "../../core/gui.hpp"
-#include "../../interface/imgui/layout.hpp"
 #include "../../interface/imgui/widget_helper.hpp"
 
 GUI_HACK_CREATE("Cosmetic", "Pulse Size", "Changes pulsation of falls, orbs, etc", false);
@@ -11,7 +10,6 @@ GUI_HACK_CREATE("Cosmetic", "Pulse Size", "Changes pulsation of falls, orbs, etc
 class $modify(PulseSizePlayLayer, PlayLayer) {
     static void onModify(auto& self) {
         auto& gui = GDH::Gui::get();
-        auto& layout = GDH::Layout::Manager::get();
         auto& hack = gui.getWindow("Cosmetic").findHackByName("Pulse Size");        
 
         auto multiplyKey = hack.formatAdditionalSetting("multiply");
@@ -19,10 +17,9 @@ class $modify(PulseSizePlayLayer, PlayLayer) {
         auto valueKey = hack.formatAdditionalSetting("value");
 
         hack.addHookPtr(self.getHook("PlayLayer::updateVisibility").unwrap());
-        hack.setCustomWindowImGui([multiplyKey, noPulseKey, valueKey, layout]() {
+        hack.setCustomWindowImGui([multiplyKey, noPulseKey, valueKey]() {
             ImGuiWidgetConfig::Checkbox("No Pulse", noPulseKey, false);
             ImGuiWidgetConfig::Checkbox("Multiply pulsation", multiplyKey, true);
-            ImGui::SetNextItemWidth(layout.multipleScale(180.f));
             ImGuiWidgetConfig::DragFloat("##PulseSizeValue", valueKey, 0.01f, 0, FLT_MAX, 0.5, "Pulse Size: %.2f");
         });
     }

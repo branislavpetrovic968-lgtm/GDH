@@ -241,3 +241,24 @@ void GDH::Utils::setPitchShifter(int semitones) {
         dsp->setParameterFloat(FMOD_DSP_PITCHSHIFT_PITCH, factor);
     }
 }
+
+
+void GDH::Utils::setReverb(float decayTime) {
+    static FMOD::DSP* reverb_dsp = nullptr;
+    auto* channel = FMODAudioEngine::get()->m_backgroundMusicChannel;
+    if (!channel) return;
+
+    if (decayTime <= 0.0f) {
+        if (!reverb_dsp) return;
+        channel->removeDSP(reverb_dsp);
+        reverb_dsp->release();
+        return void(reverb_dsp = nullptr);
+    }
+
+    if (!reverb_dsp) {
+        if (FMODAudioEngine::get()->m_system->createDSPByType(FMOD_DSP_TYPE_SFXREVERB, &reverb_dsp) != FMOD_OK) return;
+        channel->addDSP(0, reverb_dsp);
+    }
+
+    reverb_dsp->setParameterFloat(FMOD_DSP_SFXREVERB_DECAYTIME, std::clamp(decayTime, 100.0f, 20000.0f));
+}
