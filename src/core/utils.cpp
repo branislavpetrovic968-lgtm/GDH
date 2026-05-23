@@ -214,28 +214,30 @@ float GDH::Utils::getFps() {
 }
 
 void GDH::Utils::setPitchShifter(int semitones) {
-    static FMOD::DSP* pitch_shifter = nullptr;
-    auto fmod_engine = FMODAudioEngine::get();
-    FMOD::System* system = fmod_engine->m_system;
-    
-    float pitch = std::pow(2.0f, semitones / 12.0f);
+    static std::vector<FMOD::DSP*> shifters;
+    auto* channel = FMODAudioEngine::get()->m_backgroundMusicChannel;
+    if (!channel) return;
 
-    if (semitones == 0) {
-        if (pitch_shifter) {
-            fmod_engine->m_backgroundMusicChannel->removeDSP(pitch_shifter);
-            pitch_shifter->release();
-            pitch_shifter = nullptr;
-        }
-        return;
+    semitones = std::clamp(semitones, -72, 72);
+
+    int count = semitones == 0 ? 0 : std::ceil(std::abs(semitones) / 12.0f);
+
+    while (shifters.size() > count) {
+        channel->removeDSP(shifters.back());
+        shifters.back()->release();
+        shifters.pop_back();
     }
 
-    if (!pitch_shifter) {
-        if (system->createDSPByType(FMOD_DSP_TYPE_PITCHSHIFT, &pitch_shifter) != FMOD_OK) {
-            return;
-        }
-        fmod_engine->m_backgroundMusicChannel->addDSP(0, pitch_shifter);
+    while (shifters.size() < count) {
+        FMOD::DSP* dsp = nullptr;
+        if (FMODAudioEngine::get()->m_system->createDSPByType(FMOD_DSP_TYPE_PITCHSHIFT, &dsp) != FMOD_OK) return;
+        channel->addDSP(0, dsp);
+        shifters.push_back(dsp);
     }
 
-    pitch_shifter->setParameterFloat(FMOD_DSP_PITCHSHIFT_FFTSIZE, 2048);
-    pitch_shifter->setParameterFloat(FMOD_DSP_PITCHSHIFT_PITCH, pitch);
+    float factor = std::pow(2.0f, (static_cast<float>(semitones) / count) / 12.0f);
+    for (auto* dsp : shifters) {
+        dsp->setParameterFloat(FMOD_DSP_PITCHSHIFT_FFTSIZE, 2048);
+        dsp->setParameterFloat(FMOD_DSP_PITCHSHIFT_PITCH, factor);
+    }
 }

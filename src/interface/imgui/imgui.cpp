@@ -151,6 +151,39 @@ void SettingsRender() {
     ImGui::End();
 }
 
+void RenderVersionBadge() {
+    ImGuiIO& io = ImGui::GetIO();
+    auto& layout = GDH::Layout::Manager::get();
+    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+    ImFont* font = ImGui::GetFont();
+    
+    float fontSize = layout.multipleScale(32); 
+    std::string versionText = geode::Mod::get()->getVersion().toVString();
+
+    ImVec2 labelSize = font->CalcTextSizeA(fontSize, FLT_MAX, 0.0f, "GDH");
+    ImVec2 versionSize = font->CalcTextSizeA(fontSize, FLT_MAX, 0.0f, versionText.c_str());
+
+    float pillWidth = layout.multipleScale(24.0f) + labelSize.x;
+    float pillHeight = labelSize.y + layout.multipleScale(10.0f);
+    float sidePadding = layout.multipleScale(12.0f); 
+    float totalWidth = sidePadding + pillWidth + layout.multipleScale(12.0f) + versionSize.x + sidePadding;
+    float totalHeight = pillHeight + layout.multipleScale(16.0f);
+
+    float screenPadding = layout.multipleScale(10.0f);
+    ImVec2 badgePosMin = ImVec2(io.DisplaySize.x - totalWidth - screenPadding, io.DisplaySize.y - totalHeight - screenPadding);
+    ImVec2 badgePosMax = ImVec2(io.DisplaySize.x - screenPadding, io.DisplaySize.y - screenPadding);
+    
+    ImVec2 pillPosMin = ImVec2(badgePosMin.x + sidePadding, badgePosMin.y + layout.multipleScale(8.0f));
+    ImVec2 pillPosMax = ImVec2(pillPosMin.x + pillWidth, pillPosMin.y + pillHeight);
+    drawList->AddRectFilled(badgePosMin, badgePosMax, ImGui::GetColorU32(IM_COL32(0, 0, 0, 125)), 999.f);
+    drawList->AddRectFilled(pillPosMin, pillPosMax, ImGui::GetColorU32(IM_COL32(213, 196, 255, 225)), 999.f);
+    
+    ImVec2 labelTextPos = ImVec2(pillPosMin.x + layout.multipleScale(12.0f), pillPosMin.y + layout.multipleScale(5.0f));
+    ImVec2 versionTextPos = ImVec2(pillPosMax.x + layout.multipleScale(12.0f), badgePosMin.y + layout.multipleScale(13.0f));
+    drawList->AddText(font, fontSize, labelTextPos, ImGui::GetColorU32(IM_COL32(33, 33, 78, 225)), "GDH");
+    drawList->AddText(font, fontSize, versionTextPos, ImGui::GetColorU32(IM_COL32(213, 196, 255, 225)), versionText.c_str());
+}
+
 void RenderMain() {
     auto& gui = GDH::Gui::get();
     auto& windows = gui.getWindows();
@@ -163,6 +196,7 @@ void RenderMain() {
     
     if (!g_show) return;
 
+    RenderVersionBadge();
     SettingsRender();
     for (auto& window : windows) {
         std::string windowName = window.getName();
