@@ -193,24 +193,30 @@ void GDH::Utils::hsvToRgb(float h, float s, float v, float &r, float &g, float &
 }
 
 float GDH::Utils::getFps() {
-    static std::chrono::high_resolution_clock::time_point lastTime = std::chrono::high_resolution_clock::now();
-    static float frameTimes[10] = {};
-    static float frameTimeSum = 0.0f;
-    static int index = 0;
-    static int count = 0;
+    static auto lastTime = std::chrono::high_resolution_clock::now();
+    static float frameTimes[240] = {}, frameTimeSum = 0.0f, accumulatedTime = 0.0f, cachedFps = 0.0f;
+    static int index = 0, count = 0;
+    static bool ready = false;
 
     auto now = std::chrono::high_resolution_clock::now();
     float deltaTime = std::chrono::duration<float>(now - lastTime).count();
     lastTime = now;
 
     frameTimeSum -= frameTimes[index];
-    frameTimes[index] = deltaTime;
-    frameTimeSum += deltaTime;
+    frameTimeSum += frameTimes[index] = deltaTime;
+    index = (index + 1) % 240;
+    if (count < 240) count++;
 
-    index = (index + 1) % 10;
-    if (count < 10) ++count;
+    accumulatedTime += deltaTime;
+    if (!ready || accumulatedTime >= 1.0f) {
+        cachedFps = static_cast<float>(count) / frameTimeSum;
+        if (accumulatedTime >= 1.0f) {
+            accumulatedTime = 0.0f;
+            ready = true;
+        }
+    }
 
-    return static_cast<float>(count) / frameTimeSum;
+    return cachedFps;
 }
 
 void GDH::Utils::setPitchShifter(int semitones) {

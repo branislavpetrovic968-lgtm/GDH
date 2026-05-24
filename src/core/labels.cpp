@@ -4,8 +4,6 @@
 #include "config.hpp"
 
 #include <string_view>
-#include <sstream>
-
 #include <json.hpp>
 
 #include <Geode/modify/PlayLayer.hpp>
@@ -102,17 +100,15 @@ void GDH::Labels::save(void) {
             labelObj["enabled"] = label.enabled;
             labelObj["type"] = label.type;
             switch (label.type) {
-            case LabelType::Text: {
-                labelObj["text"] = label.text;
-                labelObj["color"] = { label.color[0], label.color[1], label.color[2], label.color[3] };
-                labelObj["rainbow"] = label.rainbow;
-                labelObj["size"] = label.size;
-            } break;
-            case LabelType::Spacing: {
-                labelObj["spacing"] = label.size;
-            } break;
-                // This should warn if you don't add a case here?
-                // At least any sane compiler would (MSVC, looking at you)
+                case LabelType::Text: {
+                    labelObj["text"] = label.text;
+                    labelObj["color"] = { label.color[0], label.color[1], label.color[2], label.color[3] };
+                    labelObj["rainbow"] = label.rainbow;
+                    labelObj["size"] = label.size;
+                } break;
+                case LabelType::Spacing: {
+                    labelObj["spacing"] = label.size;
+                } break;
             }
             obj[cornerIndice].push_back(labelObj);
         }
