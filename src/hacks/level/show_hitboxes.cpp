@@ -37,7 +37,7 @@ static void drawRect(cocos2d::CCDrawNode* node, cocos2d::CCRect const& rect,
 static void drawOrientedOrRect(GJBaseGameLayer* layer, cocos2d::CCDrawNode* drawNode, GameObject* obj,
                                cocos2d::ccColor4F const& fill, float bw, cocos2d::ccColor4F const& border) 
 {
-    bool isEditor = typeinfo_cast<LevelEditorLayer*>(layer) != nullptr;
+    bool isEditor = layer->m_isEditor;
 
     if (auto* ob = isEditor ? obj->getOrientedBox() : obj->m_orientedBox) {
         drawNode->drawPolygon(ob->m_corners.data(), 4, fill, bw, border);
