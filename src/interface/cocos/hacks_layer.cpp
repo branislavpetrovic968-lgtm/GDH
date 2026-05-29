@@ -74,8 +74,7 @@ bool HacksLayer::init() {
         }
 
         if (win.avaibleCustomWindowCocos()) win.callCustomWindowCocos(tab);
-
-        tab->addPadding(2.5f);
+        else tab->addPadding(2.5f);
         
         tab->m_scrollLayer->m_contentLayer->updateLayout();
         if (i == m_index && m_lastIndexScroll != 20.f)

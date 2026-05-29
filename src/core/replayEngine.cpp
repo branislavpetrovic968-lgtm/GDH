@@ -1,5 +1,6 @@
 #include "replayEngine.hpp"
 #include "config.hpp"
+#include <Geode/binding/GJBaseGameLayer.hpp>
 
 using namespace GDH;
 
@@ -35,12 +36,33 @@ void ReplayEngine::remove_actions(uint64_t currentFrame) {
         }
     }
 
-    for (int i = 0; i < 3; ++i) {
-        if (!released[i]) {
-            handle_button(false, i + 1, false);
+    if (auto gjbgl = GJBaseGameLayer::get()) {
+        bool swapControls = GameManager::get()->getGameVariable("0010");
+
+        gjbgl->m_queuedButtons.clear();
+
+        for (int i = 0; i < 3; ++i) {
+            if (!released[i]) {
+                gjbgl->queueButton(i + 1, false, swapControls, 0.0);
+            }
+            if (!released[i + 3]) {
+                gjbgl->queueButton(i + 1, false, !swapControls, 0.0);
+            }
         }
-        if (!released[i + 3]) {
-            handle_button(false, i + 1, true);
+        
+        auto isJumpButtonPressedForPlayer = [](UILayer* self, bool checkPlayer2, bool swapControls) -> bool {
+            if (swapControls)
+                return checkPlayer2 ? (self->m_p1TouchId != -1 || self->m_p1Jumping) : (self->m_p2TouchId != -1 || self->m_p2Jumping);
+            else
+                return checkPlayer2 ? (self->m_p2TouchId != -1 || self->m_p2Jumping) : (self->m_p1TouchId != -1 || self->m_p1Jumping);
+        };
+
+        if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, false, swapControls)) {
+            gjbgl->queueButton(1, true, swapControls, 0.0);
+        }
+
+        if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, true, swapControls)) {
+            gjbgl->queueButton(1, true, !swapControls, 0.0);
         }
     }
 }
@@ -90,13 +112,19 @@ void ReplayEngine::handle_commands(GJBaseGameLayer* self) {
     if (mode != state::play) return;
     
     auto frame = get_frame();
+    
     while (m_inputIndex < m_inputFrames.size() && frame >= m_inputFrames[m_inputIndex].frame)
     {
         bool isPlayer2 = m_inputFrames[m_inputIndex].isPlayer2;
+        bool isPlayer1 = !isPlayer2;
+
         bool swapControls = GameManager::get()->getGameVariable("0010");
-        isPlayer2 = swapControls ? !isPlayer2 : isPlayer2;
-        
-        self->handleButton(m_inputFrames[m_inputIndex].down, m_inputFrames[m_inputIndex].button, !isPlayer2);
+
+        if (swapControls) {
+            isPlayer1 = !isPlayer1;
+        }
+
+        self->handleButton(m_inputFrames[m_inputIndex].down, m_inputFrames[m_inputIndex].button, isPlayer1);
         m_inputIndex++;
     }
 }
@@ -119,9 +147,6 @@ void ReplayEngine::handle_button(bool down, int button, bool isPlayer1) {
     auto frame = get_frame();
     bool isPlayer2 = !isPlayer1;
 
-    bool swapControls = GameManager::get()->getGameVariable("0010");
-    isPlayer2 = swapControls ? !isPlayer2 : isPlayer2;
-
     m_inputFrames.push_back({frame, down, button, isPlayer2});
 }
 
@@ -133,11 +158,11 @@ size_t ReplayEngine::get_current_index() {
     return m_inputIndex;
 }
 
-std::string ReplayEngine::save(const std::string& macro_name) {
+std::string ReplayEngine::save(const std::string& replay_name) {
     if (m_inputFrames.empty())
         return "Replay doesn't have actions";
 
-    std::ofstream out(folderMacroPath / std::string(macro_name + ".re4"), std::ios::binary);
+    std::ofstream out(folderMacroPath / std::string(replay_name + ".re4"), std::ios::binary);
     if (!out.is_open()) return "Failed to save Replay";
 
     out.write("RE4", 3);
@@ -176,8 +201,8 @@ std::string ReplayEngine::save(const std::string& macro_name) {
     return "Replay Saved";
 }
 
-std::string ReplayEngine::load(const std::string& macro_name) {
-    std::ifstream in(folderMacroPath / std::string(macro_name + ".re4"), std::ios::binary);
+std::string ReplayEngine::load(const std::string& replay_name) {
+    std::ifstream in(folderMacroPath / std::string(replay_name + ".re4"), std::ios::binary);
     if (!in.is_open()) return "Failed to open Replay";
 
     m_physicFrames.clear();

@@ -29,6 +29,9 @@ $execute {
         if (ImGuiH::RadioButton("Record", engine.mode == state::record)) {
             if (engine.mode != state::record)
                 engine.clear();
+
+            auto& hack = gui.getWindow("Level").findHackByName("Practice Fix");   
+            if (!hack.getEnabled()) hack.toggle();
             
             engine.mode = state::record;
         }
@@ -40,17 +43,16 @@ $execute {
         
         ImGui::Separator();
         
-        static std::string macro_name;
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-        ImGui::InputTextWithHint("##replay_name", "Enter the macro name", &macro_name);
+        ImGui::InputTextWithHint("##replay_name", "Enter the macro name", &engine.replay_name);
         
         if (ImGuiH::Button("Save", {ImGui::GetContentRegionAvail().x / 3, NULL})) {
-            ImGuiH::AddPopup(engine.save(macro_name));
+            ImGuiH::AddPopup(engine.save(engine.replay_name));
         }
         ImGui::SameLine();
         
         if (ImGuiH::Button("Load", {ImGui::GetContentRegionAvail().x / 2, NULL})) {
-            ImGuiH::AddPopup(engine.load(macro_name));
+            ImGuiH::AddPopup(engine.load(engine.replay_name));
         }
         ImGui::SameLine();
         

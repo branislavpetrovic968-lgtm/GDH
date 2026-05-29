@@ -243,3 +243,11 @@ void HacksTab::addText(const std::string& text, float scale) {
         m_currentRow->updateLayout();
     }
 }
+
+CCLabelBMFont* HacksTab::AddTextToToggle(const char *str, CCMenuItemToggler* toggler, float x_space) {
+    auto label = CCLabelBMFont::create(str, "GoogleSans.fnt"_spr);
+    label->setAnchorPoint({0.f, 0.5f});
+    label->setPosition({toggler->getPositionX() + x_space, toggler->getPositionY()});
+    label->setScale(0.65f);
+    return label;
+}

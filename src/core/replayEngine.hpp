@@ -32,6 +32,7 @@ namespace GDH {
         ReplayEngine(const ReplayEngine&) = delete;
 
         state mode = state::disable;
+        std::string replay_name;
 
         uint64_t get_frame();
         void remove_actions(uint64_t currentFrame);
@@ -39,8 +40,8 @@ namespace GDH {
         size_t get_actions_size();
         size_t get_current_index();
 
-        std::string save(const std::string& macro_name);
-        std::string load(const std::string& macro_name);
+        std::string save(const std::string& replay_name);
+        std::string load(const std::string& replay_name);
         void clear();
 
         void handle_update(GJBaseGameLayer* self);

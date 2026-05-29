@@ -74,17 +74,21 @@ class $modify(ReplayPlayLayer, PlayLayer) {
     }
 
     void playEndAnimationToPos(cocos2d::CCPoint pos) {
-        auto& engine = GDH::ReplayEngine::get();
         PlayLayer::playEndAnimationToPos(pos);
-        if (engine.mode == state::record)
-            engine.mode = state::disable;
+        geode::queueInMainThread([]() {
+            auto& engine = GDH::ReplayEngine::get();
+            if (engine.mode == state::record)
+                engine.mode = state::disable;
+        });
     }
 
     void playPlatformerEndAnimationToPos(cocos2d::CCPoint pos, bool idk) {
-        auto& engine = GDH::ReplayEngine::get();
         PlayLayer::playPlatformerEndAnimationToPos(pos, idk);
-        if (engine.mode == state::record)
-            engine.mode = state::disable;
+        geode::queueInMainThread([]() {
+            auto& engine = GDH::ReplayEngine::get();
+            if (engine.mode == state::record)
+                engine.mode = state::disable;
+        });
     }
     
 };
