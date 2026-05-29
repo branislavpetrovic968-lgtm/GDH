@@ -270,7 +270,7 @@ struct checkpoint_data {
     float m_somethingPlayerSpeedTime;
     float m_playerSpeedAC;
     bool m_fixRobotJump;
-    gd::map<int, bool> m_holdingButtons;
+    // gd::map<int, bool> m_holdingButtons;
     bool m_inputsLocked;
     bool m_gv0123;
     int m_iconRequestID;
@@ -596,7 +596,7 @@ namespace GDH { namespace PracticeFix {
         state.m_somethingPlayerSpeedTime = player->m_somethingPlayerSpeedTime;
         state.m_playerSpeedAC = player->m_playerSpeedAC;
         state.m_fixRobotJump = player->m_fixRobotJump;
-        state.m_holdingButtons = player->m_holdingButtons;
+        // state.m_holdingButtons = player->m_holdingButtons;
         state.m_inputsLocked = player->m_inputsLocked;
         state.m_gv0123 = player->m_gv0123;
         state.m_iconRequestID = player->m_iconRequestID;
@@ -924,7 +924,7 @@ namespace GDH { namespace PracticeFix {
         player->m_somethingPlayerSpeedTime = state.m_somethingPlayerSpeedTime;
         player->m_playerSpeedAC = state.m_playerSpeedAC;
         player->m_fixRobotJump = state.m_fixRobotJump;
-        player->m_holdingButtons = state.m_holdingButtons;
+        // player->m_holdingButtons = state.m_holdingButtons;
         player->m_inputsLocked = state.m_inputsLocked;
         player->m_gv0123 = state.m_gv0123;
         player->m_iconRequestID = state.m_iconRequestID;
