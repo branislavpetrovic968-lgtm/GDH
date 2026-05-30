@@ -1,6 +1,10 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
+#include <array>
+#include <vector>
+#include <unordered_map>
+#include <string>
 
 namespace GDH {
     namespace Labels {
@@ -19,7 +23,6 @@ namespace GDH {
         enum LabelType {
             Text,
             Spacing,
-            // Cheat indicator maybe?
         };
 
         class Label {
@@ -27,29 +30,33 @@ namespace GDH {
             bool enabled;
             LabelType type;
             std::string text;
-            float color[4];
+            std::array<float, 4> color;
             float size;
+            
             bool rainbow;
+            bool cps;
+            bool noclip;
 
-            Label(std::string text, float *color, float size = 0.3f, bool rainbow = false) {
+            Label(std::string text, std::array<float, 4> color, float size = 0.3f, bool rainbow = false, bool cps = false, bool noclip = false) {
                 this->enabled = true;
                 this->type = LabelType::Text;
                 this->text = text;
-                std::memcpy(this->color, color, sizeof(float) * 4);
+                this->color = color;
                 this->size = size;
                 this->rainbow = rainbow;
+                this->cps = cps;
+                this->noclip = noclip;
             }
             
             Label(float spacing) {
                 this->enabled = true;
                 this->type = LabelType::Spacing;
                 this->text = "";
-                this->color[0] = 1.0f;
-                this->color[1] = 1.0f;
-                this->color[2] = 1.0f;
-                this->color[3] = 1.0f;
+                this->color = {1.0f, 1.0f, 1.0f, 1.0f};
                 this->size = spacing;
                 this->rainbow = false;
+                this->cps = false;
+                this->noclip = false;
             }
 
             std::string render() const;

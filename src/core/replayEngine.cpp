@@ -68,6 +68,9 @@ void ReplayEngine::remove_actions(uint64_t currentFrame) {
 }
 
 void ReplayEngine::handle_update(GJBaseGameLayer* self) {  
+    auto& config = Config::get();
+    if (config.get<bool>("engine::accuracy_fix", true)) return;
+
     auto frame = get_frame();
 
     if (mode == state::record) {

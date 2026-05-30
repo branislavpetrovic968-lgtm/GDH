@@ -34,6 +34,8 @@ namespace GDH {
         state mode = state::disable;
         std::string replay_name;
 
+        bool accuracy_fix = true;
+
         uint64_t get_frame();
         void remove_actions(uint64_t currentFrame);
 
