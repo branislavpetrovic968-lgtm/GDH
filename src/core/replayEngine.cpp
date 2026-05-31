@@ -39,30 +39,31 @@ void ReplayEngine::remove_actions(uint64_t currentFrame) {
     if (auto gjbgl = GJBaseGameLayer::get()) {
         gjbgl->m_queuedButtons.clear();
         
-        for (int i = 0; i < 3; ++i) {
-            if (!released[i]) {
-                gjbgl->queueButton(i + 1, false, false, 0.0);
-            }
-            if (!released[i + 3]) {
-                gjbgl->queueButton(i + 1, false, true, 0.0);
-            }
-        }
-        
         bool swapControls = GameManager::get()->getGameVariable("0010");
         
-        auto isJumpButtonPressedForPlayer = [](UILayer* self, bool checkPlayer2, bool swapControls) -> bool {
-            if (swapControls)
-                return checkPlayer2 ? (self->m_p1TouchId != -1 || self->m_p1Jumping) : (self->m_p2TouchId != -1 || self->m_p2Jumping);
-            else
-                return checkPlayer2 ? (self->m_p2TouchId != -1 || self->m_p2Jumping) : (self->m_p1TouchId != -1 || self->m_p1Jumping);
+        for (int i = 0; i < 3; ++i) {
+            if (!released[i]) {
+                gjbgl->queueButton(i + 1, false, swapControls, 0.0);
+            }
+            if (!released[i + 3]) {
+                gjbgl->queueButton(i + 1, false, !swapControls, 0.0);
+            }
+        }
+        
+        auto isJumpButtonPressedForPlayer = [](UILayer* ui, bool player1) -> bool {
+            if (player1) {
+                return (ui->m_p1TouchId != -1 || ui->m_p1Jumping);
+            } else {
+                return (ui->m_p2TouchId != -1 || ui->m_p2Jumping);
+            }
         };
 
-        if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, false, swapControls)) {
-            gjbgl->queueButton(1, true, swapControls, 0.0);
+        if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, true)) {
+            gjbgl->queueButton(1, true, false, 0.0);
         }
 
-        if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, true, swapControls)) {
-            gjbgl->queueButton(1, true, !swapControls, 0.0);
+        if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, false)) {
+            gjbgl->queueButton(1, true, true, 0.0);
         }
     }
 }
@@ -146,6 +147,12 @@ void ReplayEngine::handle_reset() {
 void ReplayEngine::handle_button(bool down, int button, bool isPlayer1) {
     if (mode != state::record)
         return;
+
+    bool swapControls = GameManager::get()->getGameVariable("0010");
+
+    if (swapControls) {
+        isPlayer1 = !isPlayer1;
+    }
 
     auto frame = get_frame();
     bool isPlayer2 = !isPlayer1;

@@ -47,7 +47,7 @@ class $modify(ReplayGJBaseGameLayer, GJBaseGameLayer) {
         auto &engine = GDH::ReplayEngine::get();
 
         GJBaseGameLayer::update(dt);
-        engine.handle_update(this);
+        // engine.handle_update(this);
     }
 
     void handleButton(bool down, int button, bool isPlayer1) {

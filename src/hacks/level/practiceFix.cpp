@@ -104,25 +104,32 @@ class $modify(PracticeFixPlayLayer, PlayLayer) {
 
         if (auto gjbgl = GJBaseGameLayer::get()) {
             gjbgl->m_queuedButtons.clear();
-
+            
+            bool swapControls = GameManager::get()->getGameVariable("0010");
             for (int i = 0; i < 3; ++i) {
                 if (!m_clickReleased[i]) {
-                    gjbgl->queueButton(i + 1, false, false, 0.0);
+                    gjbgl->queueButton(i + 1, false, swapControls, 0.0);
                 }
                 if (!m_clickReleased[i + 3]) {
-                    gjbgl->queueButton(i + 1, false, true, 0.0);
+                    gjbgl->queueButton(i + 1, false, !swapControls, 0.0);
                 }
             }
 
-            auto isJumpButtonPressedForPlayer = [](UILayer* self, bool checkPlayer2) -> bool {
-                return checkPlayer2 ? (self->m_p2TouchId != -1 || self->m_p2Jumping) : (self->m_p1TouchId != -1 || self->m_p1Jumping);
+            auto isJumpButtonPressedForPlayer = [](UILayer* ui, bool player1) -> bool {
+                if (player1) {
+                    return (ui->m_p1TouchId != -1 || ui->m_p1Jumping);
+                } else {
+                    return (ui->m_p2TouchId != -1 || ui->m_p2Jumping);
+                }
             };
 
-            if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, false)) {
+            if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, true)) {
+                // geode::log::debug("FLIP: {}; PRESS: P1; PLAYER: {}", swapControls, !swapControls ? "P1" : "P2");
                 gjbgl->queueButton(1, true, false, 0.0);
             }
             
-            if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, true)) {
+            if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, false)) {
+                // geode::log::debug("FLIP: {}; PRESS: P2; PLAYER: {}", swapControls, swapControls ? "P1" : "P2");
                 gjbgl->queueButton(1, true, true, 0.0);
             }
         }
