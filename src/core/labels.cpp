@@ -442,7 +442,7 @@ class $modify(LabelsPlayLayer, PlayLayer) {
     }
 };
 
-class $modify(ReplayGJBaseGameLayer, GJBaseGameLayer) {
+class $modify(LabelsGJBaseGameLayer, GJBaseGameLayer) {
     void handleButton(bool down, int button, bool isPlayer1) {
         GJBaseGameLayer::handleButton(down, button, isPlayer1);
         m_push = down;

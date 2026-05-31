@@ -37,18 +37,18 @@ void ReplayEngine::remove_actions(uint64_t currentFrame) {
     }
 
     if (auto gjbgl = GJBaseGameLayer::get()) {
-        bool swapControls = GameManager::get()->getGameVariable("0010");
-
         gjbgl->m_queuedButtons.clear();
-
+        
         for (int i = 0; i < 3; ++i) {
             if (!released[i]) {
-                gjbgl->queueButton(i + 1, false, swapControls, 0.0);
+                gjbgl->queueButton(i + 1, false, false, 0.0);
             }
             if (!released[i + 3]) {
-                gjbgl->queueButton(i + 1, false, !swapControls, 0.0);
+                gjbgl->queueButton(i + 1, false, true, 0.0);
             }
         }
+        
+        bool swapControls = GameManager::get()->getGameVariable("0010");
         
         auto isJumpButtonPressedForPlayer = [](UILayer* self, bool checkPlayer2, bool swapControls) -> bool {
             if (swapControls)

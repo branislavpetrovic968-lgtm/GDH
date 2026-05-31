@@ -49,7 +49,7 @@ class $modify(PracticeFixPlayLayer, PlayLayer) {
         
         return checkpoint;
     }
-    
+
     void removeCheckpoint(bool first) {
         CheckpointObject* checkpoint = nullptr;
         if (m_checkpointArray->count()) {
@@ -88,7 +88,6 @@ class $modify(PracticeFixPlayLayer, PlayLayer) {
         
             return;
         }
-        
         PlayLayer::loadFromCheckpoint(checkpoint);
     }
 
@@ -104,32 +103,27 @@ class $modify(PracticeFixPlayLayer, PlayLayer) {
         if (engine.mode != state::disable) return;
 
         if (auto gjbgl = GJBaseGameLayer::get()) {
-            bool swapControls = GameManager::get()->getGameVariable("0010");
-
             gjbgl->m_queuedButtons.clear();
 
             for (int i = 0; i < 3; ++i) {
                 if (!m_clickReleased[i]) {
-                    gjbgl->queueButton(i + 1, false, swapControls, 0.0);
+                    gjbgl->queueButton(i + 1, false, false, 0.0);
                 }
                 if (!m_clickReleased[i + 3]) {
-                    gjbgl->queueButton(i + 1, false, !swapControls, 0.0);
+                    gjbgl->queueButton(i + 1, false, true, 0.0);
                 }
             }
 
-            auto isJumpButtonPressedForPlayer = [](UILayer* self, bool checkPlayer2, bool swapControls) -> bool {
-                if (swapControls)
-                    return checkPlayer2 ? (self->m_p1TouchId != -1 || self->m_p1Jumping) : (self->m_p2TouchId != -1 || self->m_p2Jumping);
-                else
-                    return checkPlayer2 ? (self->m_p2TouchId != -1 || self->m_p2Jumping) : (self->m_p1TouchId != -1 || self->m_p1Jumping);
+            auto isJumpButtonPressedForPlayer = [](UILayer* self, bool checkPlayer2) -> bool {
+                return checkPlayer2 ? (self->m_p2TouchId != -1 || self->m_p2Jumping) : (self->m_p1TouchId != -1 || self->m_p1Jumping);
             };
 
-            if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, false, swapControls)) {
-                gjbgl->queueButton(1, true, swapControls, 0.0);
+            if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, false)) {
+                gjbgl->queueButton(1, true, false, 0.0);
             }
-
-            if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, true, swapControls)) {
-                gjbgl->queueButton(1, true, !swapControls, 0.0);
+            
+            if (isJumpButtonPressedForPlayer(gjbgl->m_uiLayer, true)) {
+                gjbgl->queueButton(1, true, true, 0.0);
             }
         }
     }
@@ -145,6 +139,12 @@ class $modify(PracticeFixGJBaseGameLayer, GJBaseGameLayer) {
 
     void handleButton(bool down, int button, bool isPlayer1) {
         GJBaseGameLayer::handleButton(down, button, isPlayer1);
+
+        bool swapControls = GameManager::get()->getGameVariable("0010");
+
+        if (swapControls) {
+            isPlayer1 = !isPlayer1;
+        }
 
         int index = button - 1 + (isPlayer1 ? 0 : 3);
         m_clickReleased[index] = !down;
