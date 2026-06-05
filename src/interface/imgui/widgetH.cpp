@@ -103,7 +103,7 @@ namespace ImGuiH {
 
         const ImGuiID id = window->GetID(label);
 
-        const char*  lend = ImGui::FindRenderedTextEnd(label);
+        const char* lend = ImGui::FindRenderedTextEnd(label);
         const ImVec2 label_sz = ImGui::CalcTextSize(label, lend, false);
         const ImVec2 pad = style.FramePadding;
         const ImVec2 total_sz = ImGui::CalcItemSize(size_arg, label_sz.x + pad.x * 2.f, label_sz.y + pad.y * 2.f);
