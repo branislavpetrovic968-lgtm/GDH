@@ -6,8 +6,10 @@ using namespace GDH;
 
 uint64_t ReplayEngine::get_frame() {
     auto gjbgl = GJBaseGameLayer::get();
-    if (gjbgl)
-        return static_cast<uint64_t>(gjbgl->m_gameState.m_levelTime * 240.f);
+    if (gjbgl) {
+        auto& config = Config::get();
+        return static_cast<uint64_t>(gjbgl->m_gameState.m_levelTime * config.get<float>("invisible.tps::value", 240.f));
+    }
     return 0;
 }
 
