@@ -81,8 +81,8 @@ void ReplayEngine::handle_update(GJBaseGameLayer* self) {
         if (!frameExist)
             m_physicFrames.push_back({
                 frame, 
-                self->m_player1->m_position.x,
-                self->m_player1->m_position.y,
+                self->m_player1->getPositionX(),
+                self->m_player1->getPositionY(),
                 self->m_player1->m_yVelocity,
                 false //first player
             });
@@ -93,8 +93,8 @@ void ReplayEngine::handle_update(GJBaseGameLayer* self) {
         if (!frameExist)
             m_physicFrames.push_back({
                 frame, 
-                self->m_player2->m_position.x,
-                self->m_player2->m_position.y,
+                self->m_player2->getPositionX(),
+                self->m_player2->getPositionY(),
                 self->m_player2->m_yVelocity,
                 true //second player
             });
@@ -105,8 +105,7 @@ void ReplayEngine::handle_update(GJBaseGameLayer* self) {
             const auto& physicFrame = m_physicFrames[m_physicIndex];
             auto* player = physicFrame.isPlayer2 ? self->m_player2 : self->m_player1;
 
-            player->m_position.x = physicFrame.x;
-            player->m_position.y = physicFrame.y;
+            player->setPosition({physicFrame.x, physicFrame.y});
             player->m_yVelocity = physicFrame.y_accel;
 
             m_physicIndex++;

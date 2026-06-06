@@ -51,13 +51,13 @@ class $modify(ReplayGJBaseGameLayer, GJBaseGameLayer) {
         hack.addHookPtr(self.getHook("GJBaseGameLayer::getModifiedDelta").unwrap());
     }
 
-    void update(float dt) {
-        auto &config = Config::get();
-        auto &engine = GDH::ReplayEngine::get();
+    // void update(float dt) {
+    //     auto &config = Config::get();
+    //     auto &engine = GDH::ReplayEngine::get();
 
-        GJBaseGameLayer::update(dt);
-        engine.handle_update(this);
-    }
+    //     GJBaseGameLayer::update(dt);
+    //     engine.handle_update(this);
+    // }
 
     double getModifiedDelta(float dt) {
         if (m_resumeTimer > 0)
@@ -82,10 +82,17 @@ class $modify(ReplayGJBaseGameLayer, GJBaseGameLayer) {
         GJBaseGameLayer::handleButton(down, button, isPlayer1);
         GDH::ReplayEngine::get().handle_button(down, button, isPlayer1);
     }
-
+    
+    // void processCommands(float dt, bool isHalfTick, bool isLastTick) {
+        //     GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
+        // }
+        
     void processQueuedButtons(float dt, bool clearInputQueue) {
         GJBaseGameLayer::processQueuedButtons(dt, clearInputQueue);
-        GDH::ReplayEngine::get().handle_commands(this);
+        
+        auto &engine = GDH::ReplayEngine::get();
+        engine.handle_commands(this);
+        engine.handle_update(this);
     }
 };
 
