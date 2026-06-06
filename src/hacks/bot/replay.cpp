@@ -4,21 +4,24 @@
 #include <Geode/modify/CCScheduler.hpp>
 #include "../../core/config.hpp"
 #include "../../core/replayEngine.hpp"
+#include "../../core/gui.hpp"
 
 float left_over = 0.f;
 
 class $modify(ReplayCCScheduler, cocos2d::CCScheduler) {
     static void onModify(auto& self) {
         (void) self.setHookPriority("cocos2d::CCScheduler::update", geode::Priority::Last); 
+
+        auto& gui = GDH::Gui::get();
+        auto& hack = gui.getWindow("Invisible").findHackByName("TPS");        
+        hack.addHookPtr(self.getHook("cocos2d::CCScheduler::update").unwrap());
     }
 
     void update(float dt) {
         auto &engine = GDH::ReplayEngine::get();
-        if (engine.mode == state::disable) return CCScheduler::update(dt);
-
         auto &config = Config::get();
 
-        float tps_value = config.get<float>("tps_value", 240.f);
+        float tps_value = config.get<float>("invisible.tps::value", 240.f);
         float new_dt = 1.f / tps_value;
 
         unsigned times = static_cast<int>((dt + left_over) / new_dt);  
@@ -42,12 +45,37 @@ class $modify(ReplayCCScheduler, cocos2d::CCScheduler) {
 };
 
 class $modify(ReplayGJBaseGameLayer, GJBaseGameLayer) {
+    static void onModify(auto& self) {
+        auto& gui = GDH::Gui::get();
+        auto& hack = gui.getWindow("Invisible").findHackByName("TPS");        
+        hack.addHookPtr(self.getHook("GJBaseGameLayer::getModifiedDelta").unwrap());
+    }
+
     void update(float dt) {
         auto &config = Config::get();
         auto &engine = GDH::ReplayEngine::get();
 
         GJBaseGameLayer::update(dt);
         engine.handle_update(this);
+    }
+
+    double getModifiedDelta(float dt) {
+        if (m_resumeTimer > 0)
+        {
+            --m_resumeTimer;
+            dt = 0.0;
+        }
+        
+        auto& config = Config::get();
+        auto fixed_dt = 1.0 / static_cast<double>(config.get<float>("invisible.tps::value", 240.f));
+
+        auto timestep = std::min(static_cast<double>(m_gameState.m_timeWarp), 1.0) * fixed_dt;
+        auto total_dt = dt + m_extraDelta;
+        auto steps = std::round(total_dt / timestep);
+        auto new_dt = steps * timestep;
+        m_extraDelta = total_dt - new_dt;
+
+        return static_cast<double>(new_dt);
     }
 
     void handleButton(bool down, int button, bool isPlayer1) {
@@ -82,8 +110,8 @@ class $modify(ReplayPlayLayer, PlayLayer) {
         });
     }
 
-    void playPlatformerEndAnimationToPos(cocos2d::CCPoint pos, bool idk) {
-        PlayLayer::playPlatformerEndAnimationToPos(pos, idk);
+    void playPlatformerEndAnimationToPos(cocos2d::CCPoint pos, bool instant) {
+        PlayLayer::playPlatformerEndAnimationToPos(pos, instant);
         geode::queueInMainThread([]() {
             auto& engine = GDH::ReplayEngine::get();
             if (engine.mode == state::record)

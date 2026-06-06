@@ -18,9 +18,9 @@ static void ApplyGuiColors(bool invert) {
     colors[ImGuiCol_FrameBgHovered] = ImColor(104, 104, 191).Value;
     colors[ImGuiCol_FrameBgActive] = ImColor(55, 55, 110).Value;
 
-    colors[ImGuiCol_ScrollbarGrab] = ImColor(71, 71, 131).Value;
-    colors[ImGuiCol_ScrollbarGrabHovered] = ImColor(104, 104, 191).Value;
-    colors[ImGuiCol_ScrollbarGrabActive] = ImColor(55, 55, 110).Value;
+    colors[ImGuiCol_ScrollbarGrab] = ImColor(255, 255, 255, 152).Value;
+    colors[ImGuiCol_ScrollbarGrabHovered] = ImColor(255, 255, 255, 152).Value;
+    colors[ImGuiCol_ScrollbarGrabActive] = ImColor(255, 255, 255, 152).Value;
 
     colors[ImGuiCol_ResizeGrip] = ImColor(71, 71, 131).Value;
     colors[ImGuiCol_ResizeGripHovered] = ImColor(104, 104, 191).Value;

@@ -797,12 +797,10 @@ namespace ImGuiH {
             ImVec2 a = { x, y };
             ImVec2 b = { x + width, y + barH };
 
-            ImGui::GetWindowDrawList()->AddRectFilled(
-                a,
-                b,
-                ImGui::GetColorU32(ImVec4(1,1,1,0.6f * s.a)),
-                rounding
-            );
+            ImVec4 scrollbar = ImGui::GetStyleColorVec4(ImGuiCol_ScrollbarGrab);
+            scrollbar.w *= ImGui::GetStyle().Alpha * s.a;
+            
+            ImGui::GetWindowDrawList()->AddRectFilled(a, b, ImGui::GetColorU32(scrollbar), rounding);
         }
         ImGui::End();
     }

@@ -17,9 +17,14 @@ $execute {
     window.setCustomWindowImGui([&config, &gui, &layout] {
         // ImGuiWidgetConfig::DrawValueToggle("fps_value", 1, 1, FLT_MAX, 60.f, "%0.f FPS");
         // ImGuiWidgetConfig::DrawValueToggle("tps_value", 1, 1, FLT_MAX, 240.f, "%0.f TPS");
-        const ImGuiStyle& style = ImGui::GetStyle();
+
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - layout.multipleScale(52.f));
-        ImGuiWidgetConfig::DragFloat("##Speedhack_Value", "invisible.speedhack::value", 0.01f, 0, FLT_MAX, 1.f, "Speed: %.2fx");
+        ImGuiWidgetConfig::DragFloat("##TPS_Value", "invisible.tps::value", 1, 1, FLT_MAX, 240.f, "%.0f TPS");
+        ImGui::SameLine();
+        ImGuiWidgetConfig::HackCheckbox("##TPS_Enabled", "invisible.tps", false);
+        
+        ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - layout.multipleScale(52.f));
+        ImGuiWidgetConfig::DragFloat("##Speedhack_Value", "invisible.speedhack::value", 0.01f, 0, 500.f, 1.f, "Speed: %.2fx");
         ImGui::SameLine();
         ImGuiWidgetConfig::HackCheckbox("##Speedhack_Enabled", "invisible.speedhack", false);
 

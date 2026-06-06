@@ -176,7 +176,9 @@ std::string ReplayEngine::save(const std::string& replay_name) {
     if (!out.is_open()) return "Failed to save Replay";
 
     out.write("RE4", 3);
-    float fps = 240.f;
+    
+    auto& config = Config::get();
+    float fps = config.get<float>("invisible.tps::value", 240.f);
     out.write(reinterpret_cast<const char*>(&fps), sizeof(fps));
 
     uint64_t physicSize = m_physicFrames.size();
@@ -226,6 +228,8 @@ std::string ReplayEngine::load(const std::string& replay_name) {
 
     float fps;
     in.read(reinterpret_cast<char*>(&fps), sizeof(fps));
+    auto& config = Config::get();
+    config.set<float>("invisible.tps::value", fps);
 
     uint64_t physicSize = 0;
     in.read(reinterpret_cast<char*>(&physicSize), sizeof(physicSize));

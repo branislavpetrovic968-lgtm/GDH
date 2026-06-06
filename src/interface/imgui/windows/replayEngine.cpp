@@ -30,8 +30,11 @@ $execute {
             if (engine.mode != state::record)
                 engine.clear();
 
-            auto& hack = gui.getWindow("Level").findHackByName("Practice Fix");   
-            if (!hack.getEnabled()) hack.toggle();
+            auto& practiceFix = gui.getWindow("Level").findHackByName("Practice Fix");   
+            if (!practiceFix.getEnabled()) practiceFix.toggle();
+            
+            auto& tps_bypass = gui.getWindow("Invisible").findHackByName("TPS");       
+            if (!tps_bypass.getEnabled()) tps_bypass.toggle();
             
             engine.mode = state::record;
         }

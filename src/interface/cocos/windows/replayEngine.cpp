@@ -47,8 +47,12 @@ $execute {
                     engine.clear();
                     engine.mode = state::record;
 
-                    auto& hack = GDH::Gui::get().getWindow("Level").findHackByName("Practice Fix");   
-                    if (!hack.getEnabled()) hack.toggle();
+                    auto& gui = GDH::Gui::get();
+                    auto& practiceFix = gui.getWindow("Level").findHackByName("Practice Fix");   
+                    if (!practiceFix.getEnabled()) practiceFix.toggle();
+                    
+                    auto& tps_bypass = gui.getWindow("Invisible").findHackByName("TPS");       
+                    if (!tps_bypass.getEnabled()) tps_bypass.toggle();
                 } else {
                     engine.mode = state::disable;
                 }

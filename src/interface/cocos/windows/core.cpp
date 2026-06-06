@@ -15,6 +15,12 @@ $execute {
         tab->addSeparator();
         tab->prepareNewRow();
 
+        tab->addConfigFloatInput("TPS Value", "invisible.tps::value", 240.f, 1.f, 50000.f);
+        tab->addConfigToggle("TPS Enabled", "invisible.tps");
+        
+        tab->addSeparator();
+        tab->prepareNewRow();
+
         tab->addConfigFloatInput("Speedhack Value", "invisible.speedhack::value", 1.f, 0.01f, 500.f);
         tab->addConfigToggle("Speedhack Enabled", "invisible.speedhack");
         tab->addConfigToggle("Speedhack Audio", "invisible.speedhack_audio");
