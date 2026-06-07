@@ -28,7 +28,6 @@ static bool g_isFadingIn = false;
 static float g_animTime = 0.0f;
 
 static bool g_inited = false;
-static bool g_layoutReady = false;
 static std::string g_search_text = "";
 
 static std::vector<std::vector<std::string>> g_layout = {
@@ -66,10 +65,7 @@ void animateAlpha()
     ImGuiStyle& style = ImGui::GetStyle();
     float deltaTime = ImGui::GetIO().DeltaTime;
 
-    bool cascade = Config::get().get<bool>("gui::cascade_animation", false);
-    int default_dur = cascade ? 300 : 100;
-    float duration = Config::get().get<int>("gui::anim_durr", default_dur) / 1000.0f;
-    
+    float duration = 100 / 1000.0f;
     g_animTime += deltaTime;
 
     float t = g_animTime / duration;
@@ -88,56 +84,6 @@ void animateAlpha()
     }
 
     style.Alpha = g_isFadingIn ? t : 1.0f - t;
-}
-
-ImVec2 getRandomOffscreenPos(const std::string& name, ImVec2 displaySize) {
-    std::hash<std::string> hasher;
-    size_t hash = hasher(name);
-    int side = hash % 4;
-    float offset = 500.0f;
-    
-    float randX = ((hash % 100) / 100.0f) * displaySize.x;
-    float randY = (((hash >> 2) % 100) / 100.0f) * displaySize.y;
-
-    if (side == 0) return ImVec2(randX, -offset);
-    if (side == 1) return ImVec2(randX, displaySize.y + offset);
-    if (side == 2) return ImVec2(-offset, randY);
-    return ImVec2(displaySize.x + offset, randY);
-}
-
-void applyAnimationTransform(const std::string& windowName, GDH::Layout::Manager& layoutManager) {
-    auto& config = Config::get();
-    layoutManager.applyWindowTransform(windowName);
-
-    bool cascade = config.get<bool>("gui::cascade_animation", false);
-    if (!cascade) return;
-
-    if (!g_layoutReady) {
-        ImGui::SetNextWindowPos(ImVec2(-10000.f, -10000.f), ImGuiCond_Always);
-    } else if (auto* info = layoutManager.getWindowInfo(windowName)) {
-        ImVec2 displaySize = ImGui::GetIO().DisplaySize;
-        ImVec2 startPos = getRandomOffscreenPos(windowName, displaySize);
-        
-        float eased = 1.0f;
-        if (g_isAnimating) {
-            float duration = config.get<int>("gui::anim_durr", 300) / 1000.0f;
-
-            float t = ImClamp(g_animTime / duration, 0.0f, 1.0f);
-            if (g_isFadingIn) {
-                float inv = 1.0f - t;
-                eased = 1.0f - (inv * inv * inv);
-            } else {
-                float inv = 1.0f - t;
-                eased = inv * inv * inv;
-            }
-        }
-
-        ImVec2 currentPos = ImVec2(
-            startPos.x + (info->x - startPos.x) * eased,
-            startPos.y + (info->y - startPos.y) * eased
-        );
-        ImGui::SetNextWindowPos(currentPos, ImGuiCond_Always);
-    }
 }
 
 void PushAnimateFoundColor(const std::string& hackName) {
@@ -186,23 +132,15 @@ void SettingsRender() {
     auto& config = Config::get();
 
     std::string windowName = "GDH Settings";
-    applyAnimationTransform(windowName, layoutManager);
+    layoutManager.applyWindowTransform(windowName);
 
     ImGui::Begin("GDH Settings");
 
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
     ImGui::InputTextWithHint("##Search", "Search:", &g_search_text);
-
-    bool cascade_animation = config.get<bool>("gui::cascade_animation", false);
-    if (ImGuiH::Checkbox("Cascade Animation", &cascade_animation)) {
-        config.set<bool>("gui::cascade_animation", cascade_animation);
-        config.set<int>("gui::anim_durr", cascade_animation ? 300 : 100);
-    }
-
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
     
-    int default_dur = cascade_animation ? 300 : 100;
-    int duration = config.get<int>("gui::anim_durr", default_dur);
+    int duration = config.get<int>("gui::anim_durr", 100);
     if (ImGuiH::DragInt("##gui_anim_durr", &duration, 50.f, 1, 500, "Duration Anim: %dms")) {
         config.set<int>("gui::anim_durr", duration);
     }
@@ -270,7 +208,7 @@ void RenderMain() {
         std::string windowName = window.getName();
         if (windowName == "Invisible") continue;
         
-        applyAnimationTransform(windowName, layoutManager);
+        layoutManager.applyWindowTransform(windowName);
 
         (windowName == "Framerate") ? ImGui::Begin(windowName.c_str()) : ImGuiH::BeginSmoothScroll(windowName.c_str());
         
@@ -314,6 +252,8 @@ void RenderMain() {
     if (layoutManager.isCollecting()) layoutManager.finishCollecting();
     else if (layoutManager.isApplying()) layoutManager.finishApplying();
     
+    static bool g_inited = false;
+    
     if (g_inited) {
         static ImVec2 lastSize = ImVec2(0, 0);
         ImVec2 currentSize = ImGui::GetIO().DisplaySize;
@@ -334,10 +274,6 @@ void RenderMain() {
 
         layoutManager.startCollecting();
         g_inited = true;
-    }
-
-    if (!g_layoutReady && g_inited) {
-        g_layoutReady = true;
     }
 }
 
