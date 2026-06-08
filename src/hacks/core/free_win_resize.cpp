@@ -7,7 +7,6 @@
 #include "../../core/windowsUtils.hpp"
 #include "../../interface/imgui/widget_helper.hpp"
 
-
 GUI_HACK_CREATE("Core", "Free Window Resize", "Allows free window resizing", false);
 
 $execute {

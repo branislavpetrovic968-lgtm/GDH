@@ -1,6 +1,7 @@
 #include "hacks.hpp"
 #include "utils.hpp"
 #include "config.hpp"
+#include "keybinds.hpp"
 
 using namespace GDH;
 
@@ -61,4 +62,9 @@ void Hack::enableHooks(bool state) {
     for (geode::Hook* hookPtr : m_hooksPtr) {
         (void)hookPtr->toggle(state);
     }
+}
+
+void GDH::Hack::setKeybind(geode::Keybind const& keybind) {
+    m_keybind = keybind;
+    GDH::Keybinds::get().rebuildCache();
 }

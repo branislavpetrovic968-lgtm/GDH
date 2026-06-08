@@ -20,9 +20,14 @@ using namespace geode::prelude;
 #include "../../core/config.hpp"
 #include "../../core/utils.hpp"
 #include "../../core/labels.hpp"
+#include "../../core/keybinds.hpp"
 
 static bool g_show = false;
+
 static bool g_resetLayoutCalled = false;
+static bool g_hardRecalculation = false;
+static bool g_reopenAfterRecalc = false;
+
 static bool g_isAnimating = false;
 static bool g_isFadingIn = false;
 static float g_animTime = 0.0f;
@@ -35,14 +40,15 @@ static std::vector<std::vector<std::string>> g_layout = {
     {"Cosmetic"},
     {"Level", "Framerate", "GDH Settings"},
     {"Creator", "Labels"},
-    {"Replay Engine"},
+    {"Replay Engine", "Keybinds"},
     {"Shortcuts"}
 };
 
 static std::vector<GDH::Layout::WindowInfo> g_fixedWindowSizes = {
-    {"Cosmetic", 0.f, 675.f},
+    {"Cosmetic", 0.f, 775.f},
     {"Labels", 240.f, 350.f},
     {"Replay Engine", 300.f, 200.f},
+    {"Keybinds", 0.f, 180.f},
     {"Shortcuts", 180.f, 0.f}
 };
 
@@ -54,7 +60,23 @@ void onClose() {
     GDH::Utils::updateCursorState(g_show);
     Config::get().save(fileDataPath);
     GDH::Labels::save();
+    GDH::Keybinds::get().save();
     g_search_text = "";
+}
+
+void ToggleUI()
+{
+    if (g_isAnimating)
+        return;
+
+    g_isFadingIn = !g_show;
+    g_isAnimating = true;
+    g_animTime = 0.0f;
+
+    if (g_isFadingIn) {
+        g_show = true;
+        onOpen();
+    }
 }
 
 void animateAlpha()
@@ -65,7 +87,7 @@ void animateAlpha()
     ImGuiStyle& style = ImGui::GetStyle();
     float deltaTime = ImGui::GetIO().DeltaTime;
 
-    float duration = 100 / 1000.0f;
+    float duration = Config::get().get<int>("gui::anim_durr", 100) / 1000.0f;
     g_animTime += deltaTime;
 
     float t = g_animTime / duration;
@@ -78,6 +100,12 @@ void animateAlpha()
         {
             g_show = false;
             onClose();
+
+            if (g_reopenAfterRecalc) {
+                g_reopenAfterRecalc = false;
+                g_hardRecalculation = true;
+                ToggleUI();
+            }
         }
 
         return;
@@ -112,21 +140,6 @@ void PushAnimateFoundColor(const std::string& hackName) {
     ImGui::PushStyleColor(ImGuiCol_Text, col);
 }
 
-void ToggleUI()
-{
-    if (g_isAnimating)
-        return;
-
-    g_isFadingIn = !g_show;
-    g_isAnimating = true;
-    g_animTime = 0.0f;
-
-    if (g_isFadingIn) {
-        g_show = true;
-        onOpen();
-    }
-}
-
 void SettingsRender() {
     auto& layoutManager = GDH::Layout::Manager::get();
     auto& config = Config::get();
@@ -134,20 +147,69 @@ void SettingsRender() {
     std::string windowName = "GDH Settings";
     layoutManager.applyWindowTransform(windowName);
 
-    ImGui::Begin("GDH Settings");
+    ImGui::Begin(windowName.c_str());
 
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
     ImGui::InputTextWithHint("##Search", "Search:", &g_search_text);
     ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
     
     int duration = config.get<int>("gui::anim_durr", 100);
-    if (ImGuiH::DragInt("##gui_anim_durr", &duration, 50.f, 1, 500, "Duration Anim: %dms")) {
+    if (ImGuiH::DragInt("##gui_anim_durr", &duration, 50.f, 0, 500, "Duration Anim: %dms")) {
         config.set<int>("gui::anim_durr", duration);
+    }
+
+    bool horizontal_center = config.get<bool>("gui::horizontal_center", false);
+    if (ImGuiH::Checkbox("Horizontal Center", &horizontal_center)) {
+        config.set<bool>("gui::horizontal_center", horizontal_center);
+        g_reopenAfterRecalc = true;
+        ToggleUI();
     }
 
     if (ImGuiH::Button("Refresh Layout", {ImGui::GetContentRegionAvail().x, 0})) {
         g_resetLayoutCalled = true;
     }
+
+    if (layoutManager.isCollecting()) {
+        auto size = ImGui::GetWindowSize();
+        layoutManager.addWindowInfo(windowName, size.x, size.y);
+    }
+
+    ImGui::End();
+}
+
+void DrawKeybindButton(const std::string& windowName, GDH::Hack& hack) {
+    auto& kb = GDH::Keybinds::get();
+    geode::Keybind currentBind = hack.getKeybind();
+
+    std::string statusText = "";
+
+    if (kb.isRecording(windowName, hack.getName()))
+        statusText = "...";
+    else if (currentBind.key == cocos2d::enumKeyCodes::KEY_None)
+        statusText = "None";
+    else
+        statusText = fmt::format("{}", currentBind.toString());
+
+    std::string fullBtnText = fmt::format("{}: {}", hack.getName(), statusText);
+
+    std::string uniqueID = fmt::format("{}##keybind_btn_{}_{}", fullBtnText, windowName, hack.getName());
+
+    if (ImGuiH::Button(uniqueID.c_str(), {ImGui::GetContentRegionAvail().x, 0})) {
+        kb.startRecording(windowName, hack.getName());
+    }
+}
+
+void KeybindsRender() {
+    auto& layoutManager = GDH::Layout::Manager::get();
+    auto& config = Config::get();
+    auto& kb = GDH::Keybinds::get();
+
+    std::string windowName = "Keybinds";
+    layoutManager.applyWindowTransform(windowName);
+
+    ImGui::Begin(windowName.c_str());
+
+    ImGuiH::Checkbox("Keybinds Mode", &kb.m_isKeybindsMode);
 
     if (layoutManager.isCollecting()) {
         auto size = ImGui::GetWindowSize();
@@ -195,6 +257,7 @@ void RenderMain() {
     auto& windows = gui.getWindows();
     auto& config = Config::get();
     auto& layoutManager = GDH::Layout::Manager::get();
+    auto& kb = GDH::Keybinds::get();
     
     animateAlpha();
 
@@ -204,6 +267,8 @@ void RenderMain() {
 
     RenderVersionBadge();
     SettingsRender();
+    KeybindsRender();
+
     for (auto& window : windows) {
         std::string windowName = window.getName();
         if (windowName == "Invisible") continue;
@@ -215,6 +280,11 @@ void RenderMain() {
         if (window.avaibleCustomWindowImGui()) window.callCustomWindowImGui();
 
         for (auto& hack : window.getHacks()) {
+            if (kb.m_isKeybindsMode) {
+                DrawKeybindButton(windowName, hack);
+                continue;
+            }
+
             std::string id = hack.getID();
             std::string hackName = hack.getName();
 
@@ -258,7 +328,8 @@ void RenderMain() {
         static ImVec2 lastSize = ImVec2(0, 0);
         ImVec2 currentSize = ImGui::GetIO().DisplaySize;
     
-        if (currentSize.x != lastSize.x || currentSize.y != lastSize.y) {
+        if (g_hardRecalculation || currentSize.x != lastSize.x || currentSize.y != lastSize.y) {
+            g_hardRecalculation = false;
             layoutManager.startCollecting(); 
             lastSize = currentSize;
         }

@@ -131,7 +131,7 @@ $execute {
             ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing();
 
             for (const auto &[name, value] : g_labelTemplates) {
-                if (ImGuiH::Button(name, {ImGui::GetContentRegionAvail().x, 0})) {
+                if (ImGuiH::Button(name, {layout.multipleScale(290.f), 0})) {
                     std::string_view nameView(name);
                     bool isRainbowButton = (nameView == "Rainbow Text");
                     bool isCPSButton = (nameView == "CPS Counter");
@@ -148,7 +148,7 @@ $execute {
                 }
             }
             
-            if (ImGuiH::Button("Spacing", {ImGui::GetContentRegionAvail().x, 0.f})) {
+            if (ImGuiH::Button("Spacing", {layout.multipleScale(290.f), 0.f})) {
                 GDH::Labels::labels[g_popupCorner].push_back(GDH::Labels::Label(g_newLabelSize));
                 ImGui::CloseCurrentPopup();
             }

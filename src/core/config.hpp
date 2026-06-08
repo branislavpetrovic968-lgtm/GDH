@@ -14,6 +14,7 @@ static const auto folderMacroPath = folderPath / "Macros";
 static const auto fileDataPath = folderPath / "config3.json";
 static const auto labelsDataPath = folderPath / "labels.json";
 static const auto colorsDataPath = folderPath / "colors.txt";
+static const auto keybindsDataPath = folderPath / "keybinds.json";
 
 template <typename T>
 struct requires_ref {

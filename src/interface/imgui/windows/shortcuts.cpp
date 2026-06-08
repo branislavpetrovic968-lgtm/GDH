@@ -24,6 +24,12 @@ $execute {
             }
         }
 
+        if (ImGuiH::Button("Graphics Settings", {width, 0.f})) {
+            if (auto video_options_layer = VideoOptionsLayer::create()) {
+                video_options_layer->show();
+            }
+        }
+
         if (ImGuiH::Button("Reset Level", {width, 0.f})) {
             auto pl = PlayLayer::get();
             if (pl) pl->resetLevel();

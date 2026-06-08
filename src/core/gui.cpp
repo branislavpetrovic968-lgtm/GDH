@@ -1,5 +1,6 @@
 #include "gui.hpp"
 #include "utils.hpp"
+#include "keybinds.hpp"
 
 using namespace GDH;
 
@@ -143,6 +144,8 @@ class $modify(LateHacksInitMenuLayer, MenuLayer) {
                 for (auto& hack : window.getHacks())
                     if (hack.getEnabled() && !hack.getEarlyInit())
                         hack.callHandler(true);
+
+            GDH::Keybinds::get().load();
         }
 
 		return true;

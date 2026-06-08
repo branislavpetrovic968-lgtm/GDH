@@ -1,6 +1,7 @@
 #include "layout.hpp"
 #include "theme.hpp"
 #include <imgui.h>
+#include "../../core/config.hpp"
 
 using namespace GDH;
 
@@ -40,6 +41,11 @@ void Layout::Manager::finishCollecting() {
 }
 
 bool Layout::Manager::applyWindowTransform(const std::string& name) {
+    if (m_stage == Stage::Collecting) {
+        ImGui::SetNextWindowPos(ImVec2(-10000.f, -10000.f), ImGuiCond_Always);
+        return true;
+    }
+
     if (m_stage == Stage::Applying) {
         WindowInfo* info = getWindowInfo(name);
         if (info) {
@@ -154,16 +160,22 @@ void Layout::Manager::calculateWindowPositions() {
     ApplyStyle(m_scale);
 
     // horizontal center
-    // float total_scaled_width = PADDING_X * m_scale;
-    // for (const auto& column : m_layout) {
-    //     float col_width = getMaxWidthInColumn(column);
-    //     total_scaled_width += (col_width * m_scale) + (PADDING_X * m_scale);
-    // }
+    auto& config = Config::get();
+    bool horizontal_center = config.get<bool>("gui::horizontal_center", false);
 
     float current_x = PADDING_X * m_scale;
-    // if (display.x > total_scaled_width) {
-    //     current_x = (display.x - total_scaled_width) / 2.0f + (PADDING_X * m_scale);
-    // }
+
+    if (horizontal_center) {
+        float total_scaled_width = PADDING_X * m_scale;
+        for (const auto& column : m_layout) {
+            float col_width = getMaxWidthInColumn(column);
+            total_scaled_width += (col_width * m_scale) + (PADDING_X * m_scale);
+        }
+
+        if (display.x > total_scaled_width) {
+            current_x = (display.x - total_scaled_width) / 2.0f + (PADDING_X * m_scale);
+        }
+    }
     
     for (const auto& column : m_layout) {
         float max_width = getMaxWidthInColumn(column);
