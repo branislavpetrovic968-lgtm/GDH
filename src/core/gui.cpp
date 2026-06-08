@@ -145,7 +145,10 @@ class $modify(LateHacksInitMenuLayer, MenuLayer) {
                     if (hack.getEnabled() && !hack.getEarlyInit())
                         hack.callHandler(true);
 
-            GDH::Keybinds::get().load();
+            #ifdef GEODE_IS_WINDOWS
+            auto& kb = GDH::Keybinds::get();
+            kb.init();
+            #endif
         }
 
 		return true;

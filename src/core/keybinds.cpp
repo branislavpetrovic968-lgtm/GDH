@@ -5,11 +5,8 @@
 using namespace geode::prelude;
 using namespace GDH;
 
-$execute {
-    GDH::Keybinds::get().init();
-}
-
 void Keybinds::init() {
+    load();
     rebuildCache();
 
     auto listener = geode::KeyboardInputEvent().listen([this](geode::KeyboardInputData& evt) {
