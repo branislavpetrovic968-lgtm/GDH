@@ -2,7 +2,11 @@
 #include <Geode/modify/PlayLayer.hpp>
 #include "../../core/gui.hpp"
 #include "../../core/config.hpp"
+#include "../../core/keybinds.hpp"
 #include "../../interface/imgui/widget_helper.hpp"
+#include "Geode/cocos/robtop/keyboard_dispatcher/CCKeyboardDelegate.h"
+
+using namespace geode::prelude;
 
 GUI_HACK_CREATE("Level", "Startpos Switcher", "The ability to switch between starting positions using the keys that you setted in keybinds", false);
 
@@ -11,6 +15,12 @@ class $modify(StartposSwitcherPlayLayer, PlayLayer) {
         std::vector<StartPosObject*> m_startPositions;
         int m_selectedStartpos = -1;
         cocos2d::CCMenu* startposSwitcherUI = nullptr;
+
+        ~Fields() {
+            auto& kb = GDH::Keybinds::get();
+            kb.removeCallback("startpos_switcher::left_key");
+            kb.removeCallback("startpos_switcher::right_key");
+        }
     };
 
     static void onModify(auto& self) {
@@ -24,6 +34,8 @@ class $modify(StartposSwitcherPlayLayer, PlayLayer) {
 
         hack.setCustomWindowImGui([resetCamera_key] {
             ImGuiWidgetConfig::Checkbox("Reset Camera", resetCamera_key, false);
+            ImGuiWidgetConfig::DrawCustomKeybindButton("startpos_switcher::left", "Left Switch", geode::Keybind(cocos2d::KEY_Q, KeyboardModifier::None));
+            ImGuiWidgetConfig::DrawCustomKeybindButton("startpos_switcher::right", "Right Switch", geode::Keybind(cocos2d::KEY_E, KeyboardModifier::None));
         });
     }
 
@@ -32,7 +44,7 @@ class $modify(StartposSwitcherPlayLayer, PlayLayer) {
         auto pl = PlayLayer::get();
         auto& config = Config::get();
 
-        if (!pl || fields->m_startPositions.empty()) return;
+        if (!pl || fields->m_startPositions.empty() || pl->m_levelEndAnimationStarted) return;
 
         fields->m_selectedStartpos += incBy;
 
@@ -55,7 +67,7 @@ class $modify(StartposSwitcherPlayLayer, PlayLayer) {
             pl->setStartPosObject(obj);
             pl->resetLevel();
 
-            if (config.get<bool>("startpos_switcher::reset_camera", false))
+            if (config.get<bool>("level.startpos_switcher::reset_camera", false))
                 pl->resetCamera();
 
             pl->startMusic();
@@ -138,6 +150,17 @@ class $modify(StartposSwitcherPlayLayer, PlayLayer) {
             fields->startposSwitcherUI->addChild(label);
 
             m_uiLayer->addChild(fields->startposSwitcherUI);
+
+            auto& kb = GDH::Keybinds::get();
+            kb.addCallback("startpos_switcher::left", geode::Keybind(cocos2d::KEY_Q, KeyboardModifier::None), [left_arrowClick]() {
+                if (auto pl = PlayLayer::get()) 
+                    left_arrowClick->activate();
+            });
+
+            kb.addCallback("startpos_switcher::right", geode::Keybind(cocos2d::KEY_E, KeyboardModifier::None), [right_arrowClick]() {
+                if (auto pl = PlayLayer::get()) 
+                    right_arrowClick->activate();
+            });
         }
     }
 

@@ -7,6 +7,7 @@
 #include "layout.hpp"
 
 #include "widgetH.hpp"
+#include "widget_helper.hpp"
 #include "theme.hpp"
 #include "font.hpp"
 
@@ -177,28 +178,6 @@ void SettingsRender() {
     ImGui::End();
 }
 
-void DrawKeybindButton(const std::string& windowName, GDH::Hack& hack) {
-    auto& kb = GDH::Keybinds::get();
-    geode::Keybind currentBind = hack.getKeybind();
-
-    std::string statusText = "";
-
-    if (kb.isRecording(windowName, hack.getName()))
-        statusText = "...";
-    else if (currentBind.key == cocos2d::enumKeyCodes::KEY_None)
-        statusText = "None";
-    else
-        statusText = fmt::format("{}", currentBind.toString());
-
-    std::string fullBtnText = fmt::format("{}: {}", hack.getName(), statusText);
-
-    std::string uniqueID = fmt::format("{}##keybind_btn_{}_{}", fullBtnText, windowName, hack.getName());
-
-    if (ImGuiH::Button(uniqueID.c_str(), {ImGui::GetContentRegionAvail().x, 0})) {
-        kb.startRecording(windowName, hack.getName());
-    }
-}
-
 void KeybindsRender() {
     auto& layoutManager = GDH::Layout::Manager::get();
     auto& config = Config::get();
@@ -210,6 +189,8 @@ void KeybindsRender() {
     ImGui::Begin(windowName.c_str());
 
     ImGuiH::Checkbox("Keybinds Mode", &kb.m_isKeybindsMode);
+
+    ImGuiWidgetConfig::DrawCustomKeybindButton("gui::toggle_ui", "Toggle UI");
 
     if (layoutManager.isCollecting()) {
         auto size = ImGui::GetWindowSize();
@@ -281,7 +262,7 @@ void RenderMain() {
 
         for (auto& hack : window.getHacks()) {
             if (kb.m_isKeybindsMode) {
-                DrawKeybindButton(windowName, hack);
+                ImGuiWidgetConfig::DrawKeybindButton(windowName, hack);
                 continue;
             }
 
@@ -354,6 +335,12 @@ class $modify(ImGuiInitMenuLayer, MenuLayer) {
         
 		static bool inited = false;
         if (!inited) {
+            GDH::Keybinds::get().addCallback("gui::toggle_ui", geode::Keybind(cocos2d::KEY_Tab, geode::KeyboardModifier::None),
+                []() {
+                    ToggleUI();
+                }
+            );
+
             ImGuiCocos::get().setup([] {
                 auto& config = Config::get();
                 ImGuiIO &io = ImGui::GetIO();
@@ -370,15 +357,6 @@ class $modify(ImGuiInitMenuLayer, MenuLayer) {
 
 		return true;
     }
-};
-
-class $modify(CCKeyboardDispatcher) {
-	bool dispatchKeyboardMSG(enumKeyCodes key, bool down, bool repeat, double time) {
-        if (down || repeat) {
-            if (key == KEY_Tab) ToggleUI();
-        }
-		return CCKeyboardDispatcher::dispatchKeyboardMSG(key, down, repeat, time);
-	}
 };
 
 #endif

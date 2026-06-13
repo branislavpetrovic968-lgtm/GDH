@@ -1,5 +1,10 @@
 #pragma once
 #include <Geode/Geode.hpp>
+#include <unordered_set>
+#include <functional>
+#include <vector>
+#include <string>
+#include <unordered_map>
 
 namespace GDH {
     class Keybinds {
@@ -8,29 +13,43 @@ namespace GDH {
             static Keybinds instance;
             return instance;
         }
-
+        
         Keybinds& operator=(const Keybinds&) = delete;
         Keybinds(const Keybinds&) = delete;
 
         void init();
         void rebuildCache();
-
-        void startRecording(const std::string& windowName, const std::string& hackName);
-        bool isRecording(const std::string& windowName, const std::string& hackName) const;
-        void stopRecording();
-
         void load();
         void save() const;
+
+        void startRecording(const std::string& windowName, const std::string& hackName);
+        void startRecordingCustom(const std::string& id);
+
+        bool isRecording(const std::string& windowName, const std::string& hackName) const;
+        bool isRecordingCustom(const std::string& id) const;
+
+        void stopRecording();
+
+        bool isKeyDown(cocos2d::enumKeyCodes key) const;
+        bool isMouseButtonDown(geode::MouseInputData::Button button) const;
+
+        void addCallback(const std::string& id, geode::Keybind defaultBind, std::function<void()> callback);
+        void changeBind(const std::string& id, geode::Keybind newBind);
+        geode::Keybind getBind(const std::string& id) const;
+        void removeCallback(const std::string& id);
         
         bool m_isKeybindsMode = false;
     private:
         Keybinds() = default;
 
         std::unordered_map<geode::Keybind, std::vector<std::pair<std::string, std::string>>> m_bindsMap;
-
-        bool m_isRecordingMode = false;
+        std::unordered_map<std::string, std::pair<geode::Keybind, std::function<void()>>> m_customBinds;
 
         std::string m_recordingWindow = "";
         std::string m_recordingHack = "";
+        std::string m_recordingCustomId = "";
+
+        std::unordered_set<cocos2d::enumKeyCodes> m_pressedKeys;
+        std::unordered_set<geode::MouseInputData::Button> m_pressedMouseButtons;
     };
 }

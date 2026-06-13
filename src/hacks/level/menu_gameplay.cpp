@@ -1,12 +1,11 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/MenuGameLayer.hpp>
-#include <Geode/modify/CCTouchDispatcher.hpp>
 #include "../../core/gui.hpp"
+#include "../../core/keybinds.hpp"
 
 GUI_HACK_CREATE("Level", "Menu Gameplay", "Prevents kicking from certain levels", false);
 
-static bool pushPressed = false;
-static bool releasePressed = false;
+static bool isHolding = false;
 
 class $modify(MenuGameplayMenuGameLayer, MenuGameLayer) {
     static void onModify(auto& self) {
@@ -26,12 +25,18 @@ class $modify(MenuGameplayMenuGameLayer, MenuGameLayer) {
 
     void update(float dt) override {
         if (m_playerObject && !m_playerObject->m_isSpider) {
-            if (pushPressed) {
-                pushPressed = false;
+            auto& kb = GDH::Keybinds::get();
+            
+            bool currentInput = kb.isKeyDown(cocos2d::enumKeyCodes::KEY_W) || 
+                                kb.isKeyDown(cocos2d::enumKeyCodes::KEY_Up) || 
+                                kb.isMouseButtonDown(geode::MouseInputData::Button::Left);
+
+            if (currentInput && !isHolding) {
+                isHolding = true;
                 m_playerObject->pushButton(PlayerButton::Jump);
-            }
-            else if (releasePressed) {
-                releasePressed = false;
+            } 
+            else if (!currentInput && isHolding) {
+                isHolding = false;
                 m_playerObject->releaseButton(PlayerButton::Jump);
             }
         }
@@ -39,23 +44,3 @@ class $modify(MenuGameplayMenuGameLayer, MenuGameLayer) {
         MenuGameLayer::update(dt);
     }    
 };
-
-class $modify(MenuGameplayCCTouchDispatcher, CCTouchDispatcher) {
-    static void onModify(auto& self) {
-        auto& gui = GDH::Gui::get();
-        auto& hack = gui.getWindow("Level").findHackByName("Menu Gameplay");        
-        
-        hack.addHookPtr(self.getHook("cocos2d::CCTouchDispatcher::touches").unwrap());
-    }
-
-	void touches(CCSet* touches, CCEvent* event, unsigned int type) {
-		if (type == CCTOUCHBEGAN)
-            pushPressed = true;
-		else if (type == CCTOUCHENDED || type == CCTOUCHCANCELLED)
-            releasePressed = true;
-
-        CCTouchDispatcher::touches(touches, event, type);
-	}
-};
-
-

@@ -1,6 +1,7 @@
 #include "widget_helper.hpp"
 #include "../../core/config.hpp"
 #include "../../core/gui.hpp"
+#include "../../core/keybinds.hpp"
 #include "widgetH.hpp"
 #include <fmt/format.h>
 #include <imgui-cocos.hpp>
@@ -74,4 +75,52 @@ bool ImGuiWidgetConfig::DragInt(const char* label, const std::string& config_key
         return true;
     }
     return false;
+}
+
+void ImGuiWidgetConfig::DrawCustomKeybindButton(const std::string& id, const std::string& displayName, geode::Keybind defaultBind) {
+    auto& kb = GDH::Keybinds::get();
+    geode::Keybind currentBind = kb.getBind(id);
+
+    if (currentBind.key == cocos2d::enumKeyCodes::KEY_None && defaultBind.key != cocos2d::enumKeyCodes::KEY_None) {
+        kb.changeBind(id, defaultBind);
+        currentBind = defaultBind;
+    }
+
+    std::string statusText = "";
+
+    if (kb.isRecordingCustom(id))
+        statusText = "...";
+    else if (currentBind.key == cocos2d::enumKeyCodes::KEY_None)
+        statusText = "None";
+    else
+        statusText = fmt::format("{}", currentBind.toString());
+
+    std::string fullBtnText = fmt::format("{}: {}", displayName, statusText);
+    std::string uniqueID = fmt::format("{}##keybind_custom_btn_{}", fullBtnText, id);
+
+    if (ImGuiH::Button(uniqueID.c_str(), {ImGui::GetContentRegionAvail().x, 0})) {
+        kb.startRecordingCustom(id);
+    }
+}
+
+void ImGuiWidgetConfig::DrawKeybindButton(const std::string& windowName, GDH::Hack& hack) {
+    auto& kb = GDH::Keybinds::get();
+    geode::Keybind currentBind = hack.getKeybind();
+
+    std::string statusText = "";
+
+    if (kb.isRecording(windowName, hack.getName()))
+        statusText = "...";
+    else if (currentBind.key == cocos2d::enumKeyCodes::KEY_None)
+        statusText = "None";
+    else
+        statusText = fmt::format("{}", currentBind.toString());
+
+    std::string fullBtnText = fmt::format("{}: {}", hack.getName(), statusText);
+
+    std::string uniqueID = fmt::format("{}##keybind_btn_{}_{}", fullBtnText, windowName, hack.getName());
+
+    if (ImGuiH::Button(uniqueID.c_str(), {ImGui::GetContentRegionAvail().x, 0})) {
+        kb.startRecording(windowName, hack.getName());
+    }
 }
