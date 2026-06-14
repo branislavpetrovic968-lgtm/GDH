@@ -1,13 +1,13 @@
 #include "labels.hpp"
 #include "utils.hpp"
-#include "config.hpp"
 #include "replayEngine.hpp"
+#include "config.hpp"
 
 #include <string_view>
 #include <json.hpp>
-#include <fstream>
 
 #include <Geode/modify/PlayLayer.hpp>
+#include <Geode/modify/CCScheduler.hpp>
 #include <Geode/modify/GJBaseGameLayer.hpp>
 
 #include <chrono>
@@ -15,15 +15,11 @@
 
 using namespace GDH::Labels;
 
-float GDH::Labels::cornerPadding = 4.0f;
-float GDH::Labels::midPadding = 2.0f;
-std::unordered_map<Corner, std::vector<Label>> GDH::Labels::labels;
-
 std::chrono::steady_clock::time_point g_sessionStart;
 float g_rainbowHue = 0.0f;
 
 $execute {
-    load();
+    GDH::Labels::Manager::get().load();
 }
 
 class NoclipAccuracy {
@@ -184,7 +180,7 @@ bool renderVariable(geode::utils::StringBuffer<> &stream, std::string_view var_n
             auto parsed = geode::utils::numFromString<int>(var_name, 10);
             if (parsed.ok()) decimal_points = *parsed;
         }
-        stream.append(fmt::format("{:.{}f}", GDH::Utils::getFps(), decimal_points));
+        stream.append(fmt::format("{:.{}f}", GDH::Utils::getFps(true), decimal_points));
     } else {
         return false;
     }
@@ -221,7 +217,7 @@ std::string GDH::Labels::Label::render() const {
     return stream.str();
 }
 
-void GDH::Labels::save(void) {
+void Manager::save() {
     nlohmann::json obj;
     obj["cornerPadding"] = cornerPadding;
     obj["midPadding"] = midPadding;
@@ -261,7 +257,7 @@ void GDH::Labels::save(void) {
     }
 }
 
-void GDH::Labels::load(void) {
+void Manager::load() {
     std::ifstream ifs(labelsDataPath);
     if (!ifs.is_open()) return;
 
@@ -352,13 +348,14 @@ class $modify(LabelsPlayLayer, PlayLayer) {
 
         CpsCounter::get().update();
 
+        auto& manager = GDH::Labels::Manager::get();
         auto windowSize = cocos2d::CCDirector::sharedDirector()->getWinSize();
         g_rainbowHue += 0.125f * dt;
         if (g_rainbowHue > 1.0f) g_rainbowHue -= 1.0f;
         
         for (auto &[corner, labelVec] : m_fields->labelObjs) {
             float y = 0.0f, labelsHeight = 0.0f; int i = 0;
-            for (const auto &labelObj : labels[corner]) {
+            for (const auto &labelObj : manager.labels[corner]) {
                 if (!labelObj.enabled) continue;
                 if (labelObj.type == LabelType::Text) {
                     std::string renderedText = labelObj.render();
@@ -407,35 +404,35 @@ class $modify(LabelsPlayLayer, PlayLayer) {
                     label->setOpacity(static_cast<GLubyte>(labelObj.color[3] * 255));
                     label->setCString(renderedText.c_str());
 
-                    y += label->getContentHeight() * labelObj.size + midPadding;
+                    y += label->getContentHeight() * labelObj.size + manager.midPadding;
                 } else if (labelObj.type == LabelType::Spacing) {
-                    y += labelObj.size + midPadding;
+                    y += labelObj.size + manager.midPadding;
                 }
             }
             for (; i < labelVec.size(); i++) {
                 labelVec[i]->setOpacity(0);
             }
-            labelsHeight = y - midPadding; y = 0.0f; i = 0;
-            for (const auto &labelObj : labels[corner]) {
+            labelsHeight = y - manager.midPadding; y = 0.0f; i = 0;
+            for (const auto &labelObj : manager.labels[corner]) {
                 if (!labelObj.enabled) continue;
                 if (labelObj.type == LabelType::Text) {
                     if (labelObj.render().empty()) continue; 
 
                     cocos2d::CCLabelBMFont *label = labelVec[i++];
                     switch (corner) {
-                    case Corner::Top_Left: label->setPosition({cornerPadding, windowSize.height - cornerPadding - y}); break;
-                    case Corner::Top_Center: label->setPosition({windowSize.width / 2.0f, windowSize.height - cornerPadding - y}); break;
-                    case Corner::Top_Right: label->setPosition({windowSize.width - cornerPadding, windowSize.height - cornerPadding - y}); break;
-                    case Corner::Center_Left: label->setPosition({cornerPadding, windowSize.height / 2.0f + labelsHeight / 2.0f - y}); break;
+                    case Corner::Top_Left: label->setPosition({manager.cornerPadding, windowSize.height - manager.cornerPadding - y}); break;
+                    case Corner::Top_Center: label->setPosition({windowSize.width / 2.0f, windowSize.height - manager.cornerPadding - y}); break;
+                    case Corner::Top_Right: label->setPosition({windowSize.width - manager.cornerPadding, windowSize.height - manager.cornerPadding - y}); break;
+                    case Corner::Center_Left: label->setPosition({manager.cornerPadding, windowSize.height / 2.0f + labelsHeight / 2.0f - y}); break;
                     case Corner::Center_Center: label->setPosition({windowSize.width / 2.0f, windowSize.height / 2.0f + labelsHeight / 2.0f - y}); break;
-                    case Corner::Center_Right: label->setPosition({windowSize.width - cornerPadding, windowSize.height / 2.0f + labelsHeight / 2.0f - y}); break;
-                    case Corner::Bottom_Left: label->setPosition({cornerPadding, cornerPadding + labelsHeight - y}); break;
-                    case Corner::Bottom_Center: label->setPosition({windowSize.width / 2.0f, cornerPadding + labelsHeight - y}); break;
-                    case Corner::Bottom_Right: label->setPosition({windowSize.width - cornerPadding, cornerPadding + labelsHeight - y}); break;
+                    case Corner::Center_Right: label->setPosition({windowSize.width - manager.cornerPadding, windowSize.height / 2.0f + labelsHeight / 2.0f - y}); break;
+                    case Corner::Bottom_Left: label->setPosition({manager.cornerPadding, manager.cornerPadding + labelsHeight - y}); break;
+                    case Corner::Bottom_Center: label->setPosition({windowSize.width / 2.0f, manager.cornerPadding + labelsHeight - y}); break;
+                    case Corner::Bottom_Right: label->setPosition({windowSize.width - manager.cornerPadding, manager.cornerPadding + labelsHeight - y}); break;
                     }
-                    y += label->getContentHeight() * labelObj.size + midPadding;
+                    y += label->getContentHeight() * labelObj.size + manager.midPadding;
                 } else if (labelObj.type == LabelType::Spacing) {
-                    y += labelObj.size + midPadding;
+                    y += manager.midPadding;
                 }
             }
         }
@@ -454,5 +451,16 @@ class $modify(LabelsGJBaseGameLayer, GJBaseGameLayer) {
     void processCommands(float dt, bool isHalfTick, bool isLastTick) {       
         GJBaseGameLayer::processCommands(dt, isHalfTick, isLastTick);
         NoclipAccuracy::get().handle_update(this, dt);
+    }
+};
+
+class $modify(FPSCounterCCScheduler, cocos2d::CCScheduler) {
+    static void onModify(auto& self) {
+        (void) self.setHookPriority("cocos2d::CCScheduler::update", geode::Priority::First); 
+    }
+
+    void update(float dt) {
+        CCScheduler::update(dt);
+        GDH::Utils::getFps();
     }
 };

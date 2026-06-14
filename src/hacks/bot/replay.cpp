@@ -10,7 +10,7 @@ float left_over = 0.f;
 
 class $modify(ReplayCCScheduler, cocos2d::CCScheduler) {
     static void onModify(auto& self) {
-        (void) self.setHookPriority("cocos2d::CCScheduler::update", geode::Priority::Last); 
+        (void) self.setHookPriority("cocos2d::CCScheduler::update", geode::Priority::Normal); 
 
         auto& gui = GDH::Gui::get();
         auto& hack = gui.getWindow("Invisible").findHackByName("TPS");        

@@ -59,28 +59,36 @@ void drawLabelCornerControls(GDH::Labels::Corner corner) {
                     "Every label has its own color and size.\n"
                     "A single text label may contain any number of variables. Add a few examples and change them around to get the feel for it.", ImGui::IsItemHovered());
     
-    int id = 0;
-    auto& currentLabels = GDH::Labels::labels[corner];
-    for (auto &label : currentLabels) {
-        ImGui::PushID(id++);
-        if (ImGuiH::Button("E")) {
-            g_editPopup = true;
-            g_popupCorner = corner;
-            g_popupId = id - 1;
+    auto& manager = GDH::Labels::Manager::get();
+    auto& currentLabels = manager.labels[corner];
+
+    if (currentLabels.empty()) {
+        ImGui::Spacing();
+        ImGui::TextDisabled("No labels in this corner");
+    } else {
+        int id = 0;
+        for (auto &label : currentLabels) {
+            ImGui::PushID(id++);
+            if (ImGuiH::Button("E")) {
+                g_editPopup = true;
+                g_popupCorner = corner;
+                g_popupId = id - 1;
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+            
+            if (!label.enabled) ImGui::BeginDisabled(true);
+            if (label.type == GDH::Labels::LabelType::Text) {
+                ImGui::InputText("##TextInput", &label.text);
+            } else if (label.type == GDH::Labels::LabelType::Spacing) {
+                ImGuiH::DragFloat("##Spacing", &label.size, 1.0f, 1.0f, 256.0f, "Spacing: %.1fpx");
+            }
+            if (!label.enabled) ImGui::EndDisabled();
+            
+            ImGui::PopID();
         }
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-        
-        if (!label.enabled) ImGui::BeginDisabled(true);
-        if (label.type == GDH::Labels::LabelType::Text) {
-            ImGui::InputText("##TextInput", &label.text);
-        } else if (label.type == GDH::Labels::LabelType::Spacing) {
-            ImGuiH::DragFloat("##Spacing", &label.size, 1.0f, 1.0f, 256.0f, "Spacing: %.1fpx");
-        }
-        if (!label.enabled) ImGui::EndDisabled();
-        
-        ImGui::PopID();
     }
+    
     ImGui::PopID();
     ImGui::EndChild();
 }
@@ -92,10 +100,12 @@ $execute {
     auto& layout = GDH::Layout::Manager::get();
 
     window.setCustomWindowImGui([&config, &gui, &layout] {
+        auto& manager = GDH::Labels::Manager::get();
+
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-        ImGuiH::DragFloat("##LabelCorPadDrag", &GDH::Labels::cornerPadding, 1.0f, 0.0f, 256.0f, "Corner Padding: %.1fpx");
+        ImGuiH::DragFloat("##LabelCorPadDrag", &manager.cornerPadding, 1.0f, 0.0f, 256.0f, "Corner Padding: %.1fpx");
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-        ImGuiH::DragFloat("##LabelMidPadDrag", &GDH::Labels::midPadding, 1.0f, 0.0f, 256.0f, "Mid-label Padding: %.1fpx");
+        ImGuiH::DragFloat("##LabelMidPadDrag", &manager.midPadding, 1.0f, 0.0f, 256.0f, "Mid-label Padding: %.1fpx");
 
         static const char* cornerNames[] = {
             "Top Left", "Top Center", "Top Right",
@@ -139,7 +149,7 @@ $execute {
 
                     if (isRainbowButton) g_newLabelColor[3] = 0.85f;
                     
-                    GDH::Labels::labels[g_popupCorner].push_back(
+                    manager.labels[g_popupCorner].push_back(
                         GDH::Labels::Label(value, g_newLabelColor, g_newLabelSize, isRainbowButton, isCPSButton, isNoclip)
                     );
 
@@ -149,7 +159,7 @@ $execute {
             }
             
             if (ImGuiH::Button("Spacing", {layout.multipleScale(290.f), 0.f})) {
-                GDH::Labels::labels[g_popupCorner].push_back(GDH::Labels::Label(g_newLabelSize));
+                manager.labels[g_popupCorner].push_back(GDH::Labels::Label(g_newLabelSize));
                 ImGui::CloseCurrentPopup();
             }
 
@@ -168,7 +178,7 @@ $execute {
         }
 
         if (ImGui::BeginPopup("Editing the label")) {
-            auto& targetLabels = GDH::Labels::labels[g_popupCorner];
+            auto& targetLabels = manager.labels[g_popupCorner];
             auto& currentLabel = targetLabels[g_popupId];
 
             ImGuiH::Checkbox("Enabled", &currentLabel.enabled);

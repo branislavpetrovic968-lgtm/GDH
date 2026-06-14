@@ -15,7 +15,7 @@ namespace GDH { namespace Utils {
     float easeInOut(float t);
     void hsvToRgb(float h, float s, float v, float &r, float &g, float &b);
 
-    float getFps();
+    float getFps(bool only_read = false);
     void setPitchShifter(int semitones);
     void setReverb(float decayTime);
 } }

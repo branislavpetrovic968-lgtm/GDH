@@ -137,6 +137,7 @@ class $modify(LateHacksInitMenuLayer, MenuLayer) {
         
 		static bool inited = false;
         if (!inited) {
+            inited = true;
             auto& gui = Gui::get();
             auto& windows = gui.getWindows();
 

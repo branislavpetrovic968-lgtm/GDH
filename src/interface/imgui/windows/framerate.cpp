@@ -19,6 +19,17 @@ $execute {
         // ImGuiWidgetConfig::DrawValueToggle("tps_value", 1, 1, FLT_MAX, 240.f, "%0.f TPS");
 
         ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - layout.multipleScale(52.f));
+        if (ImGuiWidgetConfig::DragFloat("##FPS_Value", "invisible.fps::value", 1, 1, FLT_MAX, 60.f, "%.0f FPS")) {
+            auto& hack = gui.getWindow("Invisible").findHackByName("FPS");  
+            if (hack.getEnabled()) {
+                hack.toggle(); // off
+                hack.toggle(); // on again
+            }
+        }
+        ImGui::SameLine();
+        ImGuiWidgetConfig::HackCheckbox("##FPS_Enabled", "invisible.fps", false);
+
+        ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x - layout.multipleScale(52.f));
         ImGuiWidgetConfig::DragFloat("##TPS_Value", "invisible.tps::value", 1, 1, FLT_MAX, 240.f, "%.0f TPS");
         ImGui::SameLine();
         ImGuiWidgetConfig::HackCheckbox("##TPS_Enabled", "invisible.tps", false);

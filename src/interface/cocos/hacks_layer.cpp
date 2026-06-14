@@ -134,7 +134,7 @@ void HacksLayer::onClose(CCObject* object) {
     auto& config = Config::get();
     config.set<int>("gui_mobile.lastIndexScroll", m_tabs[m_index]->m_scrollLayer->m_contentLayer->getPositionY());
     config.save(fileDataPath);
-    GDH::Labels::save();
+    GDH::Labels::Manager::get().save();
 
     Popup::onClose(object);
     instance = nullptr;

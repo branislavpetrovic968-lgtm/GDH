@@ -9,6 +9,7 @@ $execute {
     auto& gui = GDH::Gui::get();
     auto& hack = gui.getWindow("Invisible").findHackByName("Vertical Sync");   
     hack.setGameVariableID(GameVar::VerticalSync);
+    hack.setEarlyInit(false);
 
     hack.setHandler([](bool enabled) {
         auto appDelegate = AppDelegate::get();

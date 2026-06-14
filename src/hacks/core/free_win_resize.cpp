@@ -30,10 +30,9 @@ $execute {
         }
     });
 
-    auto hackID = hack.getID();
     auto maximizeKey = hack.formatAdditionalSetting("maximaze_window");
 
-    hack.setCustomWindowImGui([&config, hackID, maximizeKey]{
+    hack.setCustomWindowImGui([&config, maximizeKey]{
         ImGuiWidgetConfig::Checkbox("Maximize on Startup", maximizeKey, true);
     });
 

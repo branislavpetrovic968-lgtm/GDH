@@ -192,11 +192,15 @@ void GDH::Utils::hsvToRgb(float h, float s, float v, float &r, float &g, float &
     r = r1 + m; g = g1 + m; b = b1 + m;
 }
 
-float GDH::Utils::getFps() {
+float GDH::Utils::getFps(bool only_read) {
     static auto lastTime = std::chrono::high_resolution_clock::now();
     static float frameTimes[240] = {}, frameTimeSum = 0.0f, accumulatedTime = 0.0f, cachedFps = 0.0f;
     static int index = 0, count = 0;
     static bool ready = false;
+
+    if (only_read) {
+        return cachedFps;
+    }
 
     auto now = std::chrono::high_resolution_clock::now();
     float deltaTime = std::chrono::duration<float>(now - lastTime).count();

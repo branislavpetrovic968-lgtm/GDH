@@ -38,10 +38,11 @@ void Hack::toggle() {
 
     config.set(m_ID, state);
     enableHooks(state);
-    callHandler(state);
 
     if (!m_key.empty()) 
         GameManager::get()->setGameVariable(this->m_key.c_str(), state);
+
+    callHandler(state);
 }
 
 void Hack::setHandler(std::function<void(bool)> func) {

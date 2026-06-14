@@ -62,10 +62,25 @@ namespace GDH {
             std::string render() const;
         };
 
-        extern float cornerPadding, midPadding;
-        extern std::unordered_map<Corner, std::vector<Label>> labels;
+        class Manager {
+        public:
+            static Manager& get() {
+                static Manager instance;
+                return instance;
+            }
 
-        void save(void);
-        void load(void);
+            Manager& operator=(const Manager&) = delete;
+            Manager(const Manager&) = delete;
+
+            float cornerPadding = 4.0f;
+            float midPadding = 2.0f;
+            std::unordered_map<Corner, std::vector<Label>> labels;
+
+            void save();
+            void load();
+
+        private:
+            Manager() = default;
+        };
     } // namespace Labels
 } // namespace GDH

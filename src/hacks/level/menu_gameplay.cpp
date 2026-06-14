@@ -15,6 +15,7 @@ class $modify(MenuGameplayMenuGameLayer, MenuGameLayer) {
         hack.addHookPtr(self.getHook("MenuGameLayer::tryJump").unwrap());
         hack.addHookPtr(self.getHook("MenuGameLayer::update").unwrap());
         hack.addHookPtr(self.getHook("MenuGameLayer::ccTouchBegan").unwrap());
+        hack.addHookPtr(self.getHook("MenuGameLayer::resetPlayer").unwrap());
     }
 
     void tryJump(float dt) {}
@@ -42,5 +43,12 @@ class $modify(MenuGameplayMenuGameLayer, MenuGameLayer) {
         }
 
         MenuGameLayer::update(dt);
-    }    
+    }  
+    
+    void resetPlayer() {
+        MenuGameLayer::resetPlayer();
+        if (m_playerObject) {
+            m_playerObject->setPositionY(105.f);
+        }
+    }
 };
